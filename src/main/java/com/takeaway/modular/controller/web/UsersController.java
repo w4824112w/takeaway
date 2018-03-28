@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 import com.takeaway.commons.page.PageResult;
 import com.takeaway.core.enums.ErrorEnums;
-import com.takeaway.modular.dao.dto.UsersDto;
-import com.takeaway.modular.dao.model.Users;
+import com.takeaway.modular.dao.dto.Users_bakDto;
+import com.takeaway.modular.dao.model.Users_bak;
 import com.takeaway.modular.service.UsersService;
 
 /**
@@ -70,7 +70,7 @@ public class UsersController {
 
 		HttpSession session = request.getSession();
 		JSONObject result = new JSONObject();
-		UsersDto sys = usersService.isSysLogin(username, password);
+		Users_bakDto sys = usersService.isSysLogin(username, password);
 		if (sys.getRole().equals("0")) {
 			session.setAttribute("s_user", sys);
 			result.put("users", sys);
@@ -78,7 +78,7 @@ public class UsersController {
 			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "系统管理员登录", result);
 		}
 
-		UsersDto users = usersService.login(prison, username, password);
+		Users_bakDto users = usersService.login(prison, username, password);
 		if (users == null) {
 			return ErrorEnums.getResult(ErrorEnums.NAMEORPASW_ERROR,
 					"账号不存在，请确认", null);
@@ -130,12 +130,12 @@ public class UsersController {
 		log.info("调用重置密码接口开始......");
 
 		HttpSession session = request.getSession();
-		UsersDto users = (UsersDto) session.getAttribute("s_user");
+		Users_bakDto users = (Users_bakDto) session.getAttribute("s_user");
 		if (users == null) {
 			return ErrorEnums.getResult(ErrorEnums.NOT_LOGIN, "用户已超时", null);
 		}
 
-		Users old_user = usersService.getUsersByConditions(users.getJailId()
+		Users_bak old_user = usersService.getUsersByConditions(users.getJailId()
 				.toString(), users.getUsername(), old_password);
 
 		if (old_user != null) {
@@ -165,7 +165,7 @@ public class UsersController {
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "rows", defaultValue = "10") int rows,
             String jail, String username, Integer role, HttpServletRequest request) {
-        PageResult<Users> userList = usersService.findPage(page, rows, jail, username, role);
+        PageResult<Users_bak> userList = usersService.findPage(page, rows, jail, username, role);
         JSONObject obj = new JSONObject();
         obj.put("items", userList.getPageList());
         obj.put("itemSize", userList.getPaginator().getTotalCount());
@@ -191,7 +191,7 @@ public class UsersController {
 			return ErrorEnums.getResult(ErrorEnums.NAMEORPASW_ISNULL,
 					"请输入监狱代码、账号和密码", null);
 		}
-		Users users = new Users();
+		Users_bak users = new Users_bak();
 		users.setJailId(prison);
 		users.setRole(role);
 		users.setUsername(username);
@@ -207,11 +207,11 @@ public class UsersController {
 	public JSONObject delete(HttpServletRequest request,
 			HttpServletResponse response, String id) {
 		HttpSession session = request.getSession();
-		UsersDto users = (UsersDto) session.getAttribute("s_user");
+		Users_bakDto users = (Users_bakDto) session.getAttribute("s_user");
 		if (users == null) {
 			return ErrorEnums.getResult(ErrorEnums.NOT_LOGIN, "用户已超时", null);
 		}
-		Users dUser = usersService.getById(id);
+		Users_bak dUser = usersService.getById(id);
 		dUser.setUpdatedAt(new Date());
 		dUser.setSysFlag(0);
 
@@ -234,12 +234,12 @@ public class UsersController {
     @RequestMapping(value = "/to_edit", method = RequestMethod.GET)
     public JSONObject toEdit(HttpServletRequest request, Integer id) {
         HttpSession session = request.getSession();
-        UsersDto users = (UsersDto) session.getAttribute("s_user");
+        Users_bakDto users = (Users_bakDto) session.getAttribute("s_user");
         if (users == null) {
             return ErrorEnums.getResult(ErrorEnums.NOT_LOGIN, "用户已超时", null);
         }
 
-        Users u = usersService.getById(id.toString());
+        Users_bak u = usersService.getById(id.toString());
         return ErrorEnums.getResult(ErrorEnums.SUCCESS, "用户编辑展示", u);
     }
 
@@ -261,7 +261,7 @@ public class UsersController {
             return ErrorEnums.getResult(ErrorEnums.NAMEORPASW_ISNULL,
                     "请输入监狱代码、账号和密码", null);
         }
-        Users users = usersService.getById(id.toString());
+        Users_bak users = usersService.getById(id.toString());
         users.setJailId(prison);
         users.setRole(role);
         users.setUsername(username);

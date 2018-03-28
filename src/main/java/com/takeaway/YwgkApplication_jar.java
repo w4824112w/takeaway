@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan(basePackages = "com.gkyt.ywgk.modular")
+@MapperScan(basePackages = "com.takeaway.modular")
 public class YwgkApplication_jar {
 
 	public static void main(String[] args) {

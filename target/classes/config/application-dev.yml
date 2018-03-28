@@ -5,11 +5,11 @@ spring:
   profiles: dev
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://10.10.10.2:3306/prison_ywgk?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    url: jdbc:mysql://10.10.10.2:3306/takeaway?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
     username: root
     password: Nihaoccj123
 
 logging:
   level.root: info
-  level.com.gkyt.ywgk: debug
-  file: logs/logs.log
+  level.com.takeaway: debug
+  file: logs.log

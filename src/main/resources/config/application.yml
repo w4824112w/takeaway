@@ -9,26 +9,7 @@ server:
 ###################  spring配置  ###################
 spring:
   profiles:
-    active: dev
-#  kafka:
-#    producer:
-#      retries: 0
-#      batch-size: 16384
-#      buffer-memory: 33554432
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      bootstrap-servers: 10.10.10.2:9092
-#    consumer:
-#      zookeeper-connect: zookeeper:2181
-#      bootstrap-servers: 10.10.10.2:9092
-#      group-id: foo
-#      session-timeout: 6000
-#      auto-offset-reset: earliest
-#      enable-auto-commit: true
-#      auto-commit-interval: 100
-#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-
+    active: local
 
 ###################  mybatis配置  ###################
 mybatis:

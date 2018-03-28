@@ -1,27 +1,23 @@
 package com.takeaway.modular.dao.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 系统用户信息
- * 
- * @author hk
- *
- */
-public class Users implements Serializable {
-	private static final long serialVersionUID = 1L;
-
+public class Users {
 	private Integer id;
-	private String username;
-	private String salt;
-	private String hashedPassword;
-	private String md5Password;
-	private Integer role;
-	private Integer jailId;
+	private String name;
+	private String wxToken;
 	private Date createdAt;
-	private Date updatedAt;
-	private Integer sysFlag;
+	private String passwordHash;
+	private String phone;
+	private Integer type;
+	private String realName;
+	private String address;
+	private String inviteCode;
+	private String avatar;
+	private Date birthday;
+	private Integer sex;
+	private Integer status;
+	private String ori;
 
 	public Integer getId() {
 		return id;
@@ -31,52 +27,20 @@ public class Users implements Serializable {
 		this.id = id;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getName() {
+		return name;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getSalt() {
-		return salt;
+	public String getWxToken() {
+		return wxToken;
 	}
 
-	public void setSalt(String salt) {
-		this.salt = salt;
-	}
-
-	public String getHashedPassword() {
-		return hashedPassword;
-	}
-
-	public void setHashedPassword(String hashedPassword) {
-		this.hashedPassword = hashedPassword;
-	}
-
-	public String getMd5Password() {
-		return md5Password;
-	}
-
-	public void setMd5Password(String md5Password) {
-		this.md5Password = md5Password;
-	}
-
-	public Integer getRole() {
-		return role;
-	}
-
-	public void setRole(Integer role) {
-		this.role = role;
-	}
-
-	public Integer getJailId() {
-		return jailId;
-	}
-
-	public void setJailId(Integer jailId) {
-		this.jailId = jailId;
+	public void setWxToken(String wxToken) {
+		this.wxToken = wxToken;
 	}
 
 	public Date getCreatedAt() {
@@ -87,19 +51,92 @@ public class Users implements Serializable {
 		this.createdAt = createdAt;
 	}
 
-	public Date getUpdatedAt() {
-		return updatedAt;
+	public String getPasswordHash() {
+		return passwordHash;
 	}
 
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
+	public void setPasswordHash(String passwordHash) {
+		this.passwordHash = passwordHash;
 	}
 
-	public Integer getSysFlag() {
-		return sysFlag;
+	public String getPhone() {
+		return phone;
 	}
 
-	public void setSysFlag(Integer sysFlag) {
-		this.sysFlag = sysFlag;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	public String getRealName() {
+		return realName;
+	}
+
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getInviteCode() {
+		return inviteCode;
+	}
+
+	public void setInviteCode(String inviteCode) {
+		this.inviteCode = inviteCode;
+	}
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
+
+	public Date getBirthday() {
+		return birthday;
+	}
+
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
+	}
+
+	public Integer getSex() {
+		return sex;
+	}
+
+	public void setSex(Integer sex) {
+		this.sex = sex;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getOri() {
+		return ori;
+	}
+
+	public void setOri(String ori) {
+		this.ori = ori;
+	}
+
 }

@@ -9,7 +9,7 @@ import java.util.Date;
  * @author hk
  *
  */
-public class UsersDto implements Serializable {
+public class Users_bakDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String id;

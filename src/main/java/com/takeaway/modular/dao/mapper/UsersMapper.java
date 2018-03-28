@@ -9,33 +9,33 @@ import org.springframework.stereotype.Repository;
 
 import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageList;
-import com.takeaway.modular.dao.dto.UsersDto;
-import com.takeaway.modular.dao.model.Users;
+import com.takeaway.modular.dao.dto.Users_bakDto;
+import com.takeaway.modular.dao.model.Users_bak;
 
 @Repository
 public interface UsersMapper{
 	
-	UsersDto isSysLogin(UsersDto dto);
+	Users_bakDto isSysLogin(Users_bakDto dto);
 	
-	UsersDto login(UsersDto dto);
+	Users_bakDto login(Users_bakDto dto);
 	
-	Users getUsersByConditions(UsersDto dto);
+	Users_bak getUsersByConditions(Users_bakDto dto);
 	
 	int checkLoginName(String loginName);
 	
-	Users getById(String id);
+	Users_bak getById(String id);
 	
-	PageList<Users> findPage(PageBounds bounds,UsersDto dto);
+	PageList<Users_bak> findPage(PageBounds bounds,Users_bakDto dto);
 	
-	List<Users> getAll();
+	List<Users_bak> getAll();
 	
-	int save(Users menu);
+	int save(Users_bak menu);
 	
-	int update(Users menu);
+	int update(Users_bak menu);
 	
 	int delete(String id);
 
 	int deleteUser(Integer id, Date updateAt);
 
-	PageList<Users> getUserList(PageBounds bounds, Map map);
+	PageList<Users_bak> getUserList(PageBounds bounds, Map map);
 }

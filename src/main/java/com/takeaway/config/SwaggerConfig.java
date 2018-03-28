@@ -37,8 +37,8 @@ public class SwaggerConfig{
         return new ApiInfoBuilder()
                 .title("springboot利用swagger构建api文档")
                 .description("简单优雅的restful风格")
-                .termsOfServiceUrl("http://github.com/w4824112w/ywgk")
-                .contact("ywgk")
+                .termsOfServiceUrl("http://www.baidu.com/")
+                .contact("takeaway")
                 .version("1.0")
                 .build();
     }

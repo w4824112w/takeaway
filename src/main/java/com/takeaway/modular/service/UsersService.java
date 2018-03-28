@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.takeaway.commons.utils.MD5Util;
-import com.takeaway.modular.dao.dto.UsersDto;
+import com.takeaway.modular.dao.dto.Users_bakDto;
 import com.takeaway.modular.dao.mapper.UsersMapper;
-import com.takeaway.modular.dao.model.Users;
+import com.takeaway.modular.dao.model.Users_bak;
 
 /**
  * 
@@ -33,43 +33,43 @@ public class UsersService {
 	 * @param password
 	 * @return
 	 */
-	public UsersDto login(String prison, String username,
+	public Users_bakDto login(String prison, String username,
 			String password) {
-		UsersDto dto = new UsersDto();
+		Users_bakDto dto = new Users_bakDto();
 		dto.setPrison(prison);
 		dto.setUsername(username);
 		dto.setMd5Password(password);
 
 		dto.setMd5Password(MD5Util.MD5(dto.getMd5Password()));
-		UsersDto users = usersMapper.login(dto);
+		Users_bakDto users = usersMapper.login(dto);
 		return users;
 	}
 	
-	public UsersDto isSysLogin( String username,
+	public Users_bakDto isSysLogin( String username,
 			String password) {
-		UsersDto dto = new UsersDto();
+		Users_bakDto dto = new Users_bakDto();
 		dto.setUsername(username);
 		dto.setMd5Password(password);
 
 		dto.setMd5Password(MD5Util.MD5(dto.getMd5Password()));
-		UsersDto users = usersMapper.isSysLogin(dto);
+		Users_bakDto users = usersMapper.isSysLogin(dto);
 		return users;
 	}
 	
-	public Users getUsersByConditions(String jailId, String username,
+	public Users_bak getUsersByConditions(String jailId, String username,
 			String password) {
-		UsersDto dto = new UsersDto();
+		Users_bakDto dto = new Users_bakDto();
 		dto.setJailId(jailId);
 		dto.setUsername(username);
 		dto.setMd5Password(password);
 
 		dto.setMd5Password(MD5Util.MD5(dto.getMd5Password()));
-		Users users = usersMapper.getUsersByConditions(dto);
+		Users_bak users = usersMapper.getUsersByConditions(dto);
 		return users;
 	}
 
 	@Transactional
-	public Map<String, Object> saveOrUpdate(Users user) {
+	public Map<String, Object> saveOrUpdate(Users_bak user) {
 		int result;
 		Map<String, Object> retData = new HashMap<String, Object>();
 
@@ -116,7 +116,7 @@ public class UsersService {
 
 	}
 
-	public Users getById(String id) {
+	public Users_bak getById(String id) {
 		return usersMapper.getById(id);
 	}
 
@@ -144,14 +144,14 @@ public class UsersService {
 		return usersMapper.deleteUser(id, updateAt);
 	}
 
-	public PageResult<Users> findPage(int page, int rows, String jail, String username, Integer role) {
+	public PageResult<Users_bak> findPage(int page, int rows, String jail, String username, Integer role) {
 
 		PageBounds bounds = new PageBounds(page, rows);
 		Map map=new HashMap();
 		map.put("jail", jail);
 		map.put("username", username);
 		map.put("role", role);
-		PageList<Users> users = usersMapper.getUserList(bounds, map);
-		return new PageResult<Users>(users);
+		PageList<Users_bak> users = usersMapper.getUserList(bounds, map);
+		return new PageResult<Users_bak>(users);
 	}
 }

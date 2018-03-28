@@ -7,7 +7,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-@MapperScan(basePackages = "com.gkyt.ywgk.modular")
+@MapperScan(basePackages = "com.takeaway.modular")
 public class YwgkApplication extends SpringBootServletInitializer {
     public static void main(String[] args) {
         SpringApplication.run(YwgkApplication.class, args);
