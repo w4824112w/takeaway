@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gkyt.ywgk.modular.dao.mapper.AccountsMapper">
+	<resultMap id="BaseResultMap" type="com.gkyt.ywgk.modular.dao.model.Accounts">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="prisoner_id" property="prisonerId" jdbcType="INTEGER" />
+		<result column="balance" property="balance" jdbcType="DOUBLE" />
+		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,prisoner_id,balance,created_at,updated_at
+	</sql>
+
+	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from accounts
+		where id = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getByPrisonerId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from accounts
+		where prisoner_id = #{PrisonerId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from accounts order by id desc
+	</select>
+
+	<select id="getListByAccountId" parameterType="java.lang.String"
+		resultType="com.gkyt.ywgk.modular.dao.model.AccountDetails">
+		select
+		*
+		from account_details 
+		where account_id = #{accountId,jdbcType=VARCHAR}
+		order by id desc
+	</select>
+
+	<select id="findPage" parameterType="com.gkyt.ywgk.modular.dao.dto.AccountsDto"
+		resultType="com.gkyt.ywgk.modular.dao.dto.AccountsDto">
+		SELECT p.name, p.prisoner_number as prisonerNumber, p.crimes,
+		a.id,a.prisoner_id as prisonerId, a.balance,a.created_at as createdAt,a.updated_at as updatedAt FROM prisoners p LEFT OUTER JOIN
+		accounts a ON a.prisoner_id = p.id where 1=1
+		<if test="name != null and name != ''">
+			and p.name like "%"#{name,jdbcType=VARCHAR}"%"
+		</if>
+		<if test="prisonerNumber != null and prisonerNumber != ''">
+			and p.prisoner_number like "%"#{prisonerNumber,jdbcType=VARCHAR}"%"
+		</if>
+		order by p.id desc
+	</select>
+
+	<delete id="delete" parameterType="java.lang.String">
+		delete from accounts where id
+		= #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.gkyt.ywgk.modular.dao.model.Accounts">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into accounts (
+		prisoner_id,
+		balance,
+		created_at
+		)
+		values
+		(#{prisonerId,jdbcType=INTEGER}, #{balance,jdbcType=DOUBLE},
+		#{createdAt,jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.gkyt.ywgk.modular.dao.model.Accounts">
+		update accounts
+		set
+		version_code =
+		#{versionCode,jdbcType=VARCHAR},
+		version_number =
+		#{versionNumber,jdbcType=INTEGER},
+		type_id =
+		#{typeId,jdbcType=INTEGER},
+		description =
+		#{description,jdbcType=VARCHAR},
+		download =
+		#{download,jdbcType=VARCHAR},
+		updated_at =
+		#{updatedAt,jdbcType=TIMESTAMP}
+		where id =
+		#{id,jdbcType=INTEGER}
+	</update>
+</mapper>

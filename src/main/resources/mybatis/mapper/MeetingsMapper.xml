@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gkyt.ywgk.modular.dao.mapper.MeetingsMapper">
+	<resultMap id="BaseResultMap" type="com.gkyt.ywgk.modular.dao.model.Meetings">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="application_date" property="applicationDate"
+			jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="meeting_time" property="meetingTime" jdbcType="DATE" />
+		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="phone" property="phone"
+			jdbcType="VARCHAR" />
+		<result column="relationship" property="relationship" jdbcType="VARCHAR" />
+		<result column="prisoner_number" property="prisonerNumber"
+			jdbcType="VARCHAR" />
+		<result column="terminal_number" property="terminalNumber" jdbcType="VARCHAR" />
+		<result column="jail_id" property="jailId" jdbcType="INTEGER" />
+		<result column="family_id" property="familyId" jdbcType="INTEGER" />
+		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
+
+	</resultMap>
+	<select id="findPage" parameterType="map" resultMap="BaseResultMap">
+		select
+		m.id ,
+		m.application_date,
+		m.status,
+		m.meeting_time,
+		m.created_at,
+		r.name,
+		r.uuid,
+		r.phone,
+		r.relationship,
+		r.prisoner_number,
+		t.terminal_number
+		from
+		meetings m
+		left join registrations r on m.family_id=r.id
+		left join terminals t on m.terminal_id=t.id
+		where 1=1
+		<if test="name != null and name != ''">
+			and r.name LIKE "%"#{name,jdbcType=VARCHAR}"%"
+		</if>
+		<if test="prisonerNumber != null and prisonerNumber != ''">
+			and r.prisoner_number like "%"#{prisonerNumber,jdbcType=VARCHAR}"%"
+		</if>
+		<if test="uuid != null and uuid != ''">
+			and r.uuid like "%"#{uuid,jdbcType=VARCHAR}"%"
+		</if>
+		order by m.id desc
+	</select>
+
+	<update id="update" parameterType="map">
+		update meetings
+		set
+		status =
+		#{status,jdbcType=VARCHAR},
+		remarks =
+		#{remarks,jdbcType=VARCHAR},
+		updated_at =
+		#{updatedAt,jdbcType=TIMESTAMP}
+		where id =
+		#{id,jdbcType=INTEGER}
+	</update>
+	
+	<insert id="insert" parameterType="map">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into meetings (
+		family_id,
+		jail_id,
+		prisoner_id,
+		name,
+		phone,
+		relationship,
+		uuid,
+		application_date,
+		status,
+		created_at,
+		updated_at
+		)
+		values
+		(#{familyId,jdbcType=INTEGER},
+		#{jailId,jdbcType=INTEGER},
+		#{prisonerId,jdbcType=INTEGER},
+		#{name,jdbcType=VARCHAR},
+		#{phone,jdbcType=VARCHAR},
+		#{relationship,jdbcType=VARCHAR},
+		#{uuid,jdbcType=VARCHAR},
+		#{applicationDate,jdbcType=DATE},
+		'PENDING',
+		#{createdAt,jdbcType=TIMESTAMP},
+		#{updatedAt,jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+	<select id="getById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		SELECT * FROM meetings WHERE id = #{id,jdbcType=INTEGER}
+	</select>
+</mapper>

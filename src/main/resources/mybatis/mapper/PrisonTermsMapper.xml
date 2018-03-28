@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gkyt.ywgk.modular.dao.mapper.PrisonTermsMapper">
+	<resultMap id="BaseResultMap"
+		type="com.gkyt.ywgk.modular.dao.model.PrisonTerms">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="term_start" property="termStart" jdbcType="VARCHAR" />
+		<result column="term_finish" property="termFinish" jdbcType="VARCHAR" />
+		<result column="prisoner_id" property="prisonerId" jdbcType="INTEGER" />
+		<result column="changetype" property="changetype" jdbcType="VARCHAR" />
+		<result column="sentence" property="sentence" jdbcType="INTEGER" />
+		<result column="courtchange" property="courtchange" jdbcType="INTEGER" />
+		<result column="changeyear" property="changeyear" jdbcType="INTEGER" />
+		<result column="changemonth" property="changemonth" jdbcType="INTEGER" />
+		<result column="changeday" property="changeday" jdbcType="INTEGER" />
+		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,term_start,term_finish,prisoner_id,changetype,sentence,
+		courtchange,changeyear,changemonth,changeday,created_at,updated_at
+	</sql>
+
+	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from prison_terms
+		where id = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from prison_terms order by id desc
+	</select>
+
+	<insert id="save" parameterType="com.gkyt.ywgk.modular.dao.model.PrisonTerms">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into prison_terms (
+		term_start,
+		term_finish,
+		prisoner_id,
+		changetype,
+		sentence,
+		courtchange,
+		changeyear,
+		changemonth,
+		changeday,
+		created_at,
+		updated_at
+		)
+		values
+		(#{termStart,jdbcType=VARCHAR}, #{termFinish,jdbcType=VARCHAR},#{prisonerId,jdbcType=INTEGER},
+		#{changetype,jdbcType=VARCHAR},#{sentence,jdbcType=INTEGER},#{courtchange,jdbcType=INTEGER},
+		#{changeyear,jdbcType=INTEGER},#{changemonth,jdbcType=VARCHAR},#{changeday,jdbcType=VARCHAR},
+		#{createdAt,jdbcType=TIMESTAMP},#{updatedAt,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	
+	<select id="getPrisonTermsForApi" parameterType="map" resultType="map">
+		SELECT
+			pt.id,
+			pt.term_start AS termStart,
+			pt.term_finish AS termFinish,
+			pt.prisoner_id AS prisonerId,
+			pt.changetype,
+			pt.sentence,
+			pt.courtchange,
+			pt.changeyear,
+			pt.changemonth,
+			pt.changeday,
+			pt.created_at AS createdAt,
+			pt.updated_at AS updatedAt,
+			pr.prisoner_number AS prisonerNumber,
+			pr.jail_id AS jailId
+		FROM
+			prison_terms pt
+		LEFT JOIN prisoners pr ON pt.prisoner_id = pr.id
+		WHERE
+			1 = 1
+		
+		<if test="prisonerNumber != null and prisonerNumber != ''">
+			and pr.prisoner_number = #{prisonerNumber,jdbcType=VARCHAR}
+		</if>
+		<if test="jailId != null and jailId != ''">
+			and pr.jail_id = #{jailId,jdbcType=INTEGER}
+		</if>
+	</select>
+
+</mapper>

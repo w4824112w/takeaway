@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gkyt.ywgk.modular.dao.mapper.MailBoxesMapper">
+	<resultMap id="BaseResultMap" type="com.gkyt.ywgk.modular.dao.model.MailBoxes">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title"
+			jdbcType="VARCHAR" />
+		<result column="contents" property="contents" jdbcType="VARCHAR" />
+		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="findPage" parameterType="map" resultMap="BaseResultMap">
+		select
+		mb.id,
+		mb.title,
+		mb.contents,
+		mb.created_at,
+		fa.name
+		from mail_boxes mb
+		left join families fa on fa.id=mb.family_id
+		where mb.sys_flag=1 and
+		mb.jail_id=#{jailId,jdbcType=INTEGER}
+	</select>
+	<select id="findById" parameterType="map" resultType="map">
+		select
+		mb.id,
+		mb.title,
+		mb.contents,
+		mb.created_at as createdAt ,
+		fa.id as familyId,
+		fa.name,
+		fa.relationship,
+		pr.name as prisonerName
+		from mail_boxes mb
+		left join families fa on fa.id=mb.family_id
+		left join prisoners pr on fa.prisoner_id=pr.id
+		where mb.sys_flag=1 and
+		mb.jail_id=#{jailId,jdbcType=INTEGER}
+		and mb.id=#{id,jdbcType=INTEGER}
+	</select>
+	<select id="findReplysById" parameterType="map" resultType="map">
+		select c.contents,c.created_at as createdAt from comments c
+		where c.mail_box_id=#{id,jdbcType=INTEGER}
+	</select>
+	<insert id="insert" parameterType="map">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into comments (
+		mail_box_id,
+		contents,
+		user_id,
+		family_id,
+		created_at,
+		updated_at
+		)
+		values
+		(#{mailBoxId,jdbcType=INTEGER},
+		 #{contents,jdbcType=VARCHAR},
+		 #{userId,jdbcType=INTEGER},
+		 #{familyId,jdbcType=INTEGER},
+		 #{createdAt,jdbcType=TIMESTAMP},
+		 #{updatedAt,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	
+</mapper>

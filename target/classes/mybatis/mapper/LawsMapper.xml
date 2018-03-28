@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gkyt.ywgk.modular.dao.mapper.LawsMapper">
+	<select id="getAll" parameterType="map"
+		resultType="map">
+		select 
+		l.id,
+		l.title,
+		l.contents,
+		l.jail_id,
+		l.created_at,
+		l.updated_at,
+		l.image_file_name,
+		l.image_content_type,
+		l.image_file_size,
+		l.image_updated_at,
+		l.image_url,
+		l.sys_flag
+		from laws l
+		where l.sys_flag=1
+		<if test="jailId != null and jailId != ''">
+			and l.jail_id = #{jailId,jdbcType=INTEGER}
+		</if>
+	</select>
+	
+	<select id="findById" parameterType="map"
+		resultType="map">
+		select 
+		l.id,
+		l.title,
+		l.contents,
+		l.jail_id,
+		l.created_at,
+		l.updated_at,
+		l.image_file_name,
+		l.image_content_type,
+		l.image_file_size,
+		l.image_updated_at,
+		l.image_url,
+		l.sys_flag
+		from laws l
+		where l.sys_flag=1
+		<if test="id != null and id != ''">
+			and l.id = #{id,jdbcType=INTEGER}
+		</if>
+	</select>
+	
+	<!-- 逻辑删除 -->
+	<update id="delete" parameterType="map">
+		update laws
+		set
+		title =
+		#{title,jdbcType=VARCHAR},
+		contents =
+		#{contents,jdbcType=VARCHAR},
+		jail_id =
+		#{jailId,jdbcType=INTEGER},
+		image_file_name =
+		#{imageFileName,jdbcType=VARCHAR},
+		image_content_type =
+		#{imageContentType,jdbcType=VARCHAR},
+		image_url =
+		#{imageUrl,jdbcType=VARCHAR},
+		image_file_size =
+		#{imageFileSize,jdbcType=INTEGER},
+		image_updated_at =
+		#{imageUpdatedAt,jdbcType=TIMESTAMP},
+		sys_flag =
+		#{sysFlag,jdbcType=INTEGER},
+		updated_at =
+		#{updatedAt,jdbcType=TIMESTAMP}
+		where id =
+		#{id,jdbcType=INTEGER}
+	</update>
+	
+	<insert id="insert" parameterType="map">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into laws (
+		title,
+		contents,
+		jail_id,
+		created_at,
+		updated_at,
+		image_file_name,
+		image_content_type,
+		image_file_size,
+		image_updated_at,
+		image_url,
+		sys_flag
+		)
+		values
+		(#{title,jdbcType=VARCHAR},
+		#{contents,jdbcType=VARCHAR},
+		#{jailId,jdbcType=INTEGER},
+		#{createdAt,jdbcType=TIMESTAMP},
+		#{updatedAt,jdbcType=TIMESTAMP},
+		#{imageFileName,jdbcType=VARCHAR},
+		#{imageContentType,jdbcType=VARCHAR},
+		#{imageFileSize,jdbcType=INTEGER},
+		#{imageUpdatedAt,jdbcType=TIMESTAMP},
+		#{imageUrl,jdbcType=VARCHAR},
+		1
+		)
+	</insert>
+</mapper>

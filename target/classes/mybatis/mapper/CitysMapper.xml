@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gkyt.ywgk.modular.dao.mapper.CitysMapper">
+	<resultMap id="BaseResultMap" type="com.gkyt.ywgk.modular.dao.model.Citys">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="provices_id" property="provicesId" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,name,provices_id
+	</sql>
+
+	<select id="getAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from citys order by id asc
+	</select>
+	
+	<select id="getByProvicesId" parameterType="java.lang.String" resultType="com.gkyt.ywgk.modular.dao.dto.CitysDto">
+		select
+		id,name,provices_id as provicesId
+		from citys
+		where provices_id = #{provicesId,jdbcType=VARCHAR}
+	</select>
+
+</mapper>
