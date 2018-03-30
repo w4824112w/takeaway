@@ -1,41 +1,25 @@
 package com.takeaway.modular.dao.mapper;
 
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.stereotype.Repository;
-
 import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageList;
-import com.takeaway.modular.dao.dto.Users_bakDto;
-import com.takeaway.modular.dao.model.Users_bak;
+import com.takeaway.modular.dao.dto.UsersDto;
+import com.takeaway.modular.dao.model.Users;
 
-@Repository
-public interface UsersMapper{
+
+public interface UsersMapper {
 	
-	Users_bakDto isSysLogin(Users_bakDto dto);
-	
-	Users_bakDto login(Users_bakDto dto);
-	
-	Users_bak getUsersByConditions(Users_bakDto dto);
+	Users login(UsersDto dto);
 	
 	int checkLoginName(String loginName);
 	
-	Users_bak getById(String id);
+	Users getById(String id);
 	
-	PageList<Users_bak> findPage(PageBounds bounds,Users_bakDto dto);
+	PageList<Users> findPage(PageBounds bounds,UsersDto dto);
 	
-	List<Users_bak> getAll();
+	int save(Users user);
 	
-	int save(Users_bak menu);
-	
-	int update(Users_bak menu);
+	int update(Users user);
 	
 	int delete(String id);
-
-	int deleteUser(Integer id, Date updateAt);
-
-	PageList<Users_bak> getUserList(PageBounds bounds, Map map);
+	
 }

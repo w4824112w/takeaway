@@ -4,7 +4,7 @@ package com.takeaway.core.enums;
 import com.alibaba.fastjson.JSONObject;
 
 /**
- * @author hk
+ * @author Administrator
  * @Description: 错误代码枚举
  */
 public enum ErrorEnums {

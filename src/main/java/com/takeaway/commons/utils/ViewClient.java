@@ -8,7 +8,7 @@ import java.util.Properties;
 
 /**
  * @Description:
- * @Author: Seaman Luo
+ * @Author: Administrator
  */
 public class ViewClient {
     private static final Logger log = Logger.getLogger(ViewClient.class);

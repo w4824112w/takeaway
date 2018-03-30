@@ -4,7 +4,7 @@ import java.util.Random;
 
 /**
  * 产生8位长度字母和数字的组合，要求每次请求都不重复，区分大小写的随机字符串
- * @author hk
+ * @author Administrator
  *
  */
 public class RandomSequence {

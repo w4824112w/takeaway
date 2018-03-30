@@ -1,6 +1,7 @@
 package com.takeaway.modular.dao.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class Menus {
 	private Integer id;
@@ -11,6 +12,9 @@ public class Menus {
 	private String pidName;
 	private Integer status;
 	private Date createdAt;
+	private Date updatedAt;
+	
+	private List<Menus> subMenus;
 
 	public Integer getId() {
 		return id;
@@ -74,6 +78,22 @@ public class Menus {
 
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public List<Menus> getSubMenus() {
+		return subMenus;
+	}
+
+	public void setSubMenus(List<Menus> subMenus) {
+		this.subMenus = subMenus;
 	}
 
 }

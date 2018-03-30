@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationContextAware;
  * 
  * @ClassName: SpringContextsUtil
  * @Description: 获得spring上下文
- * @author hk
+ * @author Administrator
  * @version V1.0
  */
 public class SpringContextsUtil implements ApplicationContextAware {

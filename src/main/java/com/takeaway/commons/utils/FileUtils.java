@@ -25,7 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  *对文件的一些处理，比如说判断文件大小，判断图片大小等等
- * @author hk
+ * @author Administrator
  * @date 2015-5-7
  */
 public class FileUtils {

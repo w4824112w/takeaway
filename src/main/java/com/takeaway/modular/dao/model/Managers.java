@@ -6,6 +6,7 @@ public class Managers {
 	private Integer id;
 	private String name;
 	private Date createdAt;
+	private Date updatedAt;
 	private String passwordHash;
 	private Integer roleId;
 	private Integer status;
@@ -56,6 +57,14 @@ public class Managers {
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 }

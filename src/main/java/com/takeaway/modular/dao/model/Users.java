@@ -7,6 +7,7 @@ public class Users {
 	private String name;
 	private String wxToken;
 	private Date createdAt;
+	private Date updatedAt;
 	private String passwordHash;
 	private String phone;
 	private Integer type;
@@ -137,6 +138,14 @@ public class Users {
 
 	public void setOri(String ori) {
 		this.ori = ori;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 }

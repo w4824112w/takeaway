@@ -11,7 +11,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
  * 日期工具类
- * @author hk
+ * @author Administrator
  *
  */
 public class DateUtil {
