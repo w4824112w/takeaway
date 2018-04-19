@@ -6,8 +6,12 @@ public class ManagersDto {
 	private String createdAt;
 	private String updatedAt;
 	private String passwordHash;
+	private String type;
 	private String roleId;
+	private String merchantId;
 	private String status;
+
+	private String roleName;
 
 	public String getId() {
 		return id;
@@ -63,6 +67,30 @@ public class ManagersDto {
 
 	public void setUpdatedAt(String updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+
+	public String getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }

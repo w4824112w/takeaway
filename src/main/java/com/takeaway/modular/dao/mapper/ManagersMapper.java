@@ -14,7 +14,7 @@ public interface ManagersMapper {
 	
 	Managers getById(String id);
 	
-	PageList<Managers> findPage(PageBounds bounds,ManagersDto dto);
+	PageList<ManagersDto> findPage(PageBounds bounds,ManagersDto dto);
 	
 	int save(Managers user);
 	

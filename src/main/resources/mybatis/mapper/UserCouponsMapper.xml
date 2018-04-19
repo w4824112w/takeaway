@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.takeaway.modular.dao.mapper.UserCouponsMapper">
+	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.UserCoupons">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="coupon_id" property="couponId" jdbcType="INTEGER" />
+		<result column="coupon_code" property="couponCode" jdbcType="INTEGER" />
+		<result column="amount" property="amount" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="user_name" property="userName" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="is_flag" property="isFlag" jdbcType="INTEGER" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="start_date" property="startDate" jdbcType="DATE" />
+		<result column="end_date" property="endDate" jdbcType="DATE" />
+		<result column="gain_time" property="gainTime" jdbcType="DATE" />
+		<result column="coupon_name" property="couponName" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, coupon_id,coupon_code,amount,user_id,user_name,status,is_flag,type,start_date,end_date,gain_time,coupon_name
+	</sql>
+
+	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_user_coupons
+		where id = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.UserCouponsDto"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_user_coupons uc,tb_users u
+		where uc.user_id=u.id
+		order by u.id desc
+	</select>
+	
+	<select id="getAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_user_coupons order by id asc
+	</select>
+
+	<select id="getByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_user_coupons
+		where user_id = #{userId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getCoupons" parameterType="com.takeaway.modular.dao.dto.UserCouponsDto" resultType="com.takeaway.modular.dao.dto.UserCouponsDto">
+		select
+		uc.id,c.`name` as couponName,c.money,c.activity_type as activityType,
+		c.activity_description as activityDescription,c.exceed,c.discount,
+		c.effective_time as effectiveTime,c.unit,c.limit_used as limitUsed
+		from tb_user_coupons uc,tb_coupons c
+		where uc.coupon_id=c.id   
+		<if test="userId != null and userId != ''">
+			and uc.user_id = #{userId,jdbcType=VARCHAR} 
+		</if>
+		
+	</select>
+
+	<update id="delete" parameterType="java.lang.String">
+		delete from tb_user_coupons where id = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="save" parameterType="com.takeaway.modular.dao.model.UserCoupons">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into tb_user_coupons (
+		coupon_id,coupon_code,amount,user_id,user_name,status,is_flag,type,start_date,end_date,gain_time,coupon_name
+		)
+		values
+		(#{couponId,jdbcType=INTEGER},
+		 #{couponCode,jdbcType=VARCHAR},
+		#{amount,jdbcType=INTEGER},
+		#{userId,jdbcType=INTEGER},
+		#{userName,jdbcType=VARCHAR},
+		#{status,jdbcType=INTEGER},
+		#{isFlag,jdbcType=INTEGER},
+		#{type,jdbcType=INTEGER},
+		#{startDate,jdbcType=TIMESTAMP},
+		#{endDate,jdbcType=TIMESTAMP},
+		#{gainTime,jdbcType=TIMESTAMP},
+		#{couponName,jdbcType=VARCHAR},
+		)
+	</insert>
+
+	<update id="update" parameterType="com.takeaway.modular.dao.model.UserCoupons">
+		update tb_user_coupons
+		set
+		user_id= #{userId,jdbcType=INTEGER}, 
+		favorite_type= #{favoriteType,jdbcType=INTEGER}, 
+		targetId= #{targetId,jdbcType=INTEGER}, 
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

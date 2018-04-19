@@ -2,7 +2,8 @@ package com.takeaway.modular.dao.dto;
 
 public class CouponMerchantsDto {
 	private String id;
-	private String couponId;
+	private String type;
+	private String targetId;
 	private String merchantId;
 
 	public String getId() {
@@ -13,12 +14,20 @@ public class CouponMerchantsDto {
 		this.id = id;
 	}
 
-	public String getCouponId() {
-		return couponId;
+	public String getType() {
+		return type;
 	}
 
-	public void setCouponId(String couponId) {
-		this.couponId = couponId;
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getTargetId() {
+		return targetId;
+	}
+
+	public void setTargetId(String targetId) {
+		this.targetId = targetId;
 	}
 
 	public String getMerchantId() {

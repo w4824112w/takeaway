@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.takeaway.modular.dao.mapper.ProvincesMapper">
+	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.Provinces">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="created_at" property="createdAt" jdbcType="DATE" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,name,status,created_at
+	</sql>
+
+	<select id="getAll" resultType="com.takeaway.modular.dao.dto.ProvincesDto" >
+		select
+		<include refid="Base_Column_List" />
+		from tb_provinces order by id asc
+	</select>
+
+</mapper>

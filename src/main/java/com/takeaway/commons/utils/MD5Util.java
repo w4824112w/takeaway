@@ -77,7 +77,7 @@ public class MD5Util {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-    	System.out.println("123456______"+MD5Util.MD5("123"));
+    	System.out.println("123456______"+MD5Util.MD5("123456"));
         System.out.println(MD5Util.MD5(s));
         //bd854be7a1c571dda9678c371aee1b58
         System.out.println(MD5Util.MD5("加密"));

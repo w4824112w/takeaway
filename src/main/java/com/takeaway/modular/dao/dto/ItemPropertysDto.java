@@ -2,11 +2,8 @@ package com.takeaway.modular.dao.dto;
 
 public class ItemPropertysDto {
 	private String id;
-	private String name;
-	private String value;
 	private String itemId;
-	private String isOpen;
-	private String createdAt;
+	private String propertyId;
 
 	public String getId() {
 		return id;
@@ -14,22 +11,6 @@ public class ItemPropertysDto {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
 	}
 
 	public String getItemId() {
@@ -40,20 +21,12 @@ public class ItemPropertysDto {
 		this.itemId = itemId;
 	}
 
-	public String getIsOpen() {
-		return isOpen;
+	public String getPropertyId() {
+		return propertyId;
 	}
 
-	public void setIsOpen(String isOpen) {
-		this.isOpen = isOpen;
-	}
-
-	public String getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(String createdAt) {
-		this.createdAt = createdAt;
+	public void setPropertyId(String propertyId) {
+		this.propertyId = propertyId;
 	}
 
 }

@@ -1,6 +1,5 @@
 package com.takeaway.modular.service;
 
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -10,13 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSONObject;
 import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageList;
 import com.takeaway.commons.page.PageResult;
+import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.MenusDto;
 import com.takeaway.modular.dao.mapper.MenusMapper;
 import com.takeaway.modular.dao.model.Menus;
-
 
 /**
  * 本地的
@@ -25,93 +25,86 @@ import com.takeaway.modular.dao.model.Menus;
  *
  */
 @Service
-public class MenusService{
+public class MenusService {
 	@Autowired
-	private MenusMapper MenusMapper;
+	private MenusMapper menusMapper;
 
-	public PageResult<Menus> findPage(PageBounds bounds,MenusDto dto) {
-	    PageList<Menus> menus=MenusMapper.findPage(bounds,dto);
+	public PageResult<Menus> findPage(PageBounds bounds, MenusDto dto) {
+		PageList<Menus> menus = menusMapper.findPage(bounds, dto);
 		return new PageResult<Menus>(menus);
 	}
 
 	@Transactional
-	public Map<String,Object> saveOrUpdate(Menus menu) {
+	public JSONObject save(Menus menu) {
 		int result;
-		Map<String,Object> retData=new HashMap<String,Object>();
-		
-		if(menu.getId()!=null){
-			menu.setUpdatedAt(new Date());
-			result = MenusMapper.update(menu);
-			
-			if(result>0){
-				retData.put("code", "0");
-				retData.put("msg", "修改菜单成功");
-			}else{
-				retData.put("code", "1");
-				retData.put("msg", "修改菜单失败");
-			}
-		}else{
-			menu.setCreatedAt(new Date());
-			result = MenusMapper.save(menu);
-			
-			if(result>0){
-				retData.put("code", "0");
-				retData.put("msg", "新增菜单成功");
-			}else{
-				retData.put("code", "1");
-				retData.put("msg", "新增菜单失败");
-			}
+		menu.setCreatedAt(new Date());
+		result = menusMapper.save(menu);
+
+		if (result > 0) {
+			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "新增菜单", result);
+		} else {
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增菜单", result);
 		}
-		
-		return retData;
+	}
+
+	@Transactional
+	public JSONObject update(Menus menu) {
+		int result;
+		menu.setUpdatedAt(new Date());
+		result = menusMapper.update(menu);
+
+		if (result > 0) {
+			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "修改菜单", result);
+		} else {
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "修改菜单", result);
+		}
 	}
 
 	public Menus getById(String id) {
-		Menus menu=MenusMapper.getById(id);
-		MenusDto dto=new MenusDto();
+		Menus menu = menusMapper.getById(id);
+		MenusDto dto = new MenusDto();
 		dto.setId(id);
-		menu.setSubMenus(MenusMapper.getSubmenu(dto));
+		menu.setSubMenus(menusMapper.getSubmenu(dto));
 		return menu;
 	}
 
 	@Transactional
 	public int delete(String id) {
-		MenusMapper.deleteMenuRole(id);
-		return MenusMapper.delete(id);
+		menusMapper.deleteMenuRole(id);
+		return menusMapper.delete(id);
 	}
 
 	public List<Menus> getAll() {
-		List<Menus> menus = MenusMapper.getAll();
-		for(Menus menu:menus){
-			MenusDto dto=new MenusDto();
+		List<Menus> menus = menusMapper.getAll();
+		for (Menus menu : menus) {
+			MenusDto dto = new MenusDto();
 			dto.setId(menu.getId().toString());
-			menu.setSubMenus(MenusMapper.getSubmenu(dto));
+			menu.setSubMenus(menusMapper.getSubmenu(dto));
 		}
 		return menus;
 	}
 
 	public List<Menus> getOneLevelMenu() {
-		return MenusMapper.getOneLevelMenu();
+		return menusMapper.getOneLevelMenu();
 	}
 
 	public List<Menus> getByRoleId(String roleId) {
-		return MenusMapper.getByRoleId(roleId);
+		return menusMapper.getByRoleId(roleId);
 	}
 
 	@Transactional
 	public boolean delBatch(String[] ids) {
-		int ret=0;
-		for(String id:ids){
-			MenusMapper.deleteMenuRole(id);
-			int count=MenusMapper.delete(id);
-			ret=ret+count;
+		int ret = 0;
+		for (String id : ids) {
+			menusMapper.deleteMenuRole(id);
+			int count = menusMapper.delete(id);
+			ret = ret + count;
 		}
-		if(ret==ids.length){
+		if (ret == ids.length) {
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
-
 
 }

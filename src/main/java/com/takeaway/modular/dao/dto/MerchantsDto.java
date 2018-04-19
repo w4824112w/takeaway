@@ -1,8 +1,13 @@
 package com.takeaway.modular.dao.dto;
 
+import java.util.List;
+
+import com.takeaway.modular.dao.model.Coupons;
+
 public class MerchantsDto {
 	private String id;
 	private String typeId;
+	private String typeName;
 	private String name;
 	private String code;
 	private String shortName;
@@ -26,9 +31,19 @@ public class MerchantsDto {
 	private String fullFreeDistribution;
 	private String distributionFee;
 	private String distributionScope;
+	private String isOnline;
 	private String createdAt;
+	private String updatedAt;
 	private String status;
-	private String isDeleted;
+
+	private String monthPrice;
+	private String monthOrder;
+	private String itemCount;
+	private String itemTypeCount;
+	private String activityCount;
+
+	private Boolean isFavorite; // 是否收藏
+	private List<Coupons> coupons; // 优惠活动
 
 	public String getId() {
 		return id;
@@ -246,12 +261,84 @@ public class MerchantsDto {
 		this.status = status;
 	}
 
-	public String getIsDeleted() {
-		return isDeleted;
+	public String getUpdatedAt() {
+		return updatedAt;
 	}
 
-	public void setIsDeleted(String isDeleted) {
-		this.isDeleted = isDeleted;
+	public void setUpdatedAt(String updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public String getIsOnline() {
+		return isOnline;
+	}
+
+	public void setIsOnline(String isOnline) {
+		this.isOnline = isOnline;
+	}
+
+	public String getMonthPrice() {
+		return monthPrice;
+	}
+
+	public void setMonthPrice(String monthPrice) {
+		this.monthPrice = monthPrice;
+	}
+
+	public String getMonthOrder() {
+		return monthOrder;
+	}
+
+	public void setMonthOrder(String monthOrder) {
+		this.monthOrder = monthOrder;
+	}
+
+	public String getItemCount() {
+		return itemCount;
+	}
+
+	public void setItemCount(String itemCount) {
+		this.itemCount = itemCount;
+	}
+
+	public String getItemTypeCount() {
+		return itemTypeCount;
+	}
+
+	public void setItemTypeCount(String itemTypeCount) {
+		this.itemTypeCount = itemTypeCount;
+	}
+
+	public String getActivityCount() {
+		return activityCount;
+	}
+
+	public void setActivityCount(String activityCount) {
+		this.activityCount = activityCount;
+	}
+
+	public Boolean getIsFavorite() {
+		return isFavorite;
+	}
+
+	public void setIsFavorite(Boolean isFavorite) {
+		this.isFavorite = isFavorite;
+	}
+
+	public List<Coupons> getCoupons() {
+		return coupons;
+	}
+
+	public void setCoupons(List<Coupons> coupons) {
+		this.coupons = coupons;
+	}
+
+	public String getTypeName() {
+		return typeName;
+	}
+
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
 	}
 
 }

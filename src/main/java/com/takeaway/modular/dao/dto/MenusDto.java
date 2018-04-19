@@ -6,6 +6,7 @@ public class MenusDto {
 	private String level;
 	private String url;
 	private String pid;
+	private String menuOrder;
 	private String pidName;
 	private String status;
 	private String createdAt;
@@ -81,6 +82,14 @@ public class MenusDto {
 
 	public void setUpdatedAt(String updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public String getMenuOrder() {
+		return menuOrder;
+	}
+
+	public void setMenuOrder(String menuOrder) {
+		this.menuOrder = menuOrder;
 	}
 
 }

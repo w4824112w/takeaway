@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.takeaway.modular.dao.mapper.PropertysMapper">
+	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.Propertys">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="value" property="value" jdbcType="VARCHAR" />
+		<result column="price" property="price" jdbcType="DOUBLE" />
+		<result column="pid" property="pid" jdbcType="INTEGER" />
+		<result column="is_open" property="isOpen" jdbcType="INTEGER" />
+		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,name,value,price,pid,is_open,created_at,updated_at
+	</sql>
+
+	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_propertys
+		where id = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_propertys order by id desc
+	</select>
+	
+	<select id="getByItemId" parameterType="java.lang.String" resultType="com.takeaway.modular.dao.model.Propertys">
+		select p.id from tb_propertys p,tb_item_propertys ip where p.id=ip.item_id
+		where ip.item_id = #{itemId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getByPid" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_propertys
+		where pid = #{pid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.PropertysDto"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_propertys where 1=1
+		<if test="name != null and name != ''">
+			and name like "%"#{name,jdbcType=VARCHAR}"%"
+		</if>
+		order by id desc
+	</select>
+
+	<delete id="delete" parameterType="java.lang.String">
+		delete from tb_propertys
+		where id = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.takeaway.modular.dao.model.Propertys">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into tb_propertys (
+		name,value,price,pid,is_open,created_at
+		)
+		values
+		(#{name,jdbcType=VARCHAR},#{value,jdbcType=VARCHAR},#{price,jdbcType=DOUBLE},
+		#{pid,jdbcType=INTEGER},#{isOpen,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.takeaway.modular.dao.model.Propertys">
+		update tb_propertys
+		set
+		name = #{name,jdbcType=VARCHAR},
+		value = #{value,jdbcType=VARCHAR},
+		price = #{price,jdbcType=DOUBLE},
+		pid = #{pid,jdbcType=INTEGER},
+		is_open =
+		#{isOpen,jdbcType=INTEGER},
+		updated_at =
+		#{updatedAt,jdbcType=TIMESTAMP}
+		where id =
+		#{id,jdbcType=INTEGER}
+	</update>
+</mapper>

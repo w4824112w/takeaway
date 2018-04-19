@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.takeaway.modular.dao.mapper.OrderItemsMapper">
+	<resultMap id="BaseResultMap"
+		type="com.takeaway.modular.dao.model.OrderItems">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="order_id" property="orderId" jdbcType="INTEGER" />
+		<result column="item_id" property="itemId" jdbcType="INTEGER" />
+		<result column="item_nums" property="itemNums" jdbcType="INTEGER" />
+		<result column="item_price" property="itemPrice" jdbcType="DOUBLE" />
+		<result column="item_type" property="itemType" jdbcType="INTEGER" />
+		<result column="item_type_name" property="itemTypeName" jdbcType="VARCHAR" />
+		<result column="item_name" property="itemName" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,order_id,item_id,item_nums,item_price,item_type,item_type_name,item_name
+	</sql>
+
+	<select id="getByOrderId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_order_items
+		where order_id =
+		#{orderId,jdbcType=VARCHAR}
+	</select>
+
+	<delete id="delByOrderId" parameterType="java.lang.String">
+		delete from
+		tb_order_items where order_id =
+		#{orderId,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.takeaway.modular.dao.model.OrderItems">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into tb_order_items (
+		order_id,item_id,item_nums,item_price,item_type,item_type_name,item_name
+		)
+		values (
+		#{orderId,jdbcType=INTEGER},
+		#{itemId,jdbcType=INTEGER},
+		#{itemNums,jdbcType=INTEGER},
+		#{itemPrice,jdbcType=DOUBLE},
+		#{itemType,jdbcType=INTEGER},
+		#{itemTypeName,jdbcType=VARCHAR},
+		#{itemName,jdbcType=VARCHAR}
+		)
+	</insert>
+
+</mapper>

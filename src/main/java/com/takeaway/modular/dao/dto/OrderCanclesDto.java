@@ -10,6 +10,8 @@ public class OrderCanclesDto {
 	private String createdAt;
 	private String operAt;
 	private String operMan;
+	
+	private String orderNo;
 
 	public String getId() {
 		return id;
@@ -81,6 +83,14 @@ public class OrderCanclesDto {
 
 	public void setOperMan(String operMan) {
 		this.operMan = operMan;
+	}
+
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
 	}
 
 }

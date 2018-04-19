@@ -163,6 +163,18 @@
 			    <version>build210</version>
 			</dependency>
 			
+			<!-- webSocket -->
+			<dependency>
+			    <groupId>org.springframework.boot</groupId>
+			    <artifactId>spring-boot-starter-websocket</artifactId>
+			</dependency>
+			
+			<!-- spring security -->
+<!-- 			<dependency>
+			    <groupId>org.springframework.boot</groupId>
+			    <artifactId>spring-boot-starter-security</artifactId>
+			</dependency> -->
+			
 			<!-- 微信支付 -->
 			<dependency>
 				<groupId>com.fasterxml.jackson.dataformat</groupId>

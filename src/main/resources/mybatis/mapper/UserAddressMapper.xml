@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.takeaway.modular.dao.mapper.UserAddressMapper">
+	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.UserAddress">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="INTEGER" />
+		<result column="phone" property="phone" jdbcType="INTEGER" />
+		<result column="address" property="address" jdbcType="INTEGER" />
+		<result column="created_at" property="createdAt" jdbcType="DATE" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id,name,phone, address,created_at
+	</sql>
+
+	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_user_address
+		where id = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.UserAddressDto"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_user_address ua,tb_users u
+		where ua.user_id=u.id
+		order by u.id desc
+	</select>
+	
+	<select id="getAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_user_address order by id asc
+	</select>
+
+	<select id="getByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_user_address
+		where user_id = #{userId,jdbcType=VARCHAR}
+	</select>
+
+	<update id="delete" parameterType="java.lang.String">
+		delete from tb_user_address where id = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="save" parameterType="com.takeaway.modular.dao.model.UserAddress">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into tb_user_address (
+		user_id,name,phone, address,created_at
+		)
+		values
+		(#{userId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+		#{phone,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},
+		#{createdAt,jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.takeaway.modular.dao.model.UserAddress">
+		update tb_user_address
+		set
+		user_id= #{userId,jdbcType=INTEGER}, 
+		name= #{name,jdbcType=VARCHAR},
+		phone= #{phone,jdbcType=VARCHAR},
+		address= #{address,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

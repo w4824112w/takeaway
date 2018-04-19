@@ -15,10 +15,12 @@ public class Users {
 	private String address;
 	private String inviteCode;
 	private String avatar;
-	private Date birthday;
-	private Integer sex;
+	private String birthday;
+	private String sex;
 	private Integer status;
 	private String ori;
+	private Integer grade;
+	private Integer point;
 
 	public Integer getId() {
 		return id;
@@ -108,19 +110,19 @@ public class Users {
 		this.avatar = avatar;
 	}
 
-	public Date getBirthday() {
+	public String getBirthday() {
 		return birthday;
 	}
 
-	public void setBirthday(Date birthday) {
+	public void setBirthday(String birthday) {
 		this.birthday = birthday;
 	}
 
-	public Integer getSex() {
+	public String getSex() {
 		return sex;
 	}
 
-	public void setSex(Integer sex) {
+	public void setSex(String sex) {
 		this.sex = sex;
 	}
 
@@ -146,6 +148,22 @@ public class Users {
 
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public Integer getGrade() {
+		return grade;
+	}
+
+	public void setGrade(Integer grade) {
+		this.grade = grade;
+	}
+
+	public Integer getPoint() {
+		return point;
+	}
+
+	public void setPoint(Integer point) {
+		this.point = point;
 	}
 
 }

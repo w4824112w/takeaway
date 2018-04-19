@@ -9,6 +9,7 @@ public class Menus {
 	private String level;
 	private String url;
 	private Integer pid;
+	private Integer menuOrder;
 	private String pidName;
 	private Integer status;
 	private Date createdAt;
@@ -94,6 +95,14 @@ public class Menus {
 
 	public void setSubMenus(List<Menus> subMenus) {
 		this.subMenus = subMenus;
+	}
+
+	public Integer getMenuOrder() {
+		return menuOrder;
+	}
+
+	public void setMenuOrder(Integer menuOrder) {
+		this.menuOrder = menuOrder;
 	}
 
 }

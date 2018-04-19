@@ -1,6 +1,11 @@
 package com.takeaway.modular.dao.model;
 
 import java.util.Date;
+import java.util.List;
+
+import com.takeaway.modular.dao.dto.ItemMerchantsDto;
+import com.takeaway.modular.dao.dto.ItemPicturesDto;
+import com.takeaway.modular.dao.dto.ItemPropertysDto;
 
 public class Items {
 	private Integer id;
@@ -8,12 +13,6 @@ public class Items {
 	private String name;
 	private String code;
 	private String label;
-	private Date putonDate;
-	private Date putoffDate;
-	private Date startDate;
-	private Date endDate;
-	private Date deliveryStartTime;
-	private Date deliveryEndTime;
 	private Double originPrice;
 	private Double costPrice;
 	private Double price;
@@ -26,9 +25,13 @@ public class Items {
 	private String description;
 	private Integer status;
 	private Date createdAt;
+	private Date updatedAt;
 	private Integer cityId;
-	private Integer isPuton;
 	private String origin;
+
+	private List<ItemMerchants> merchants;
+	private List<ItemPropertys> propertys;
+	private List<ItemPictures> pictures;
 
 	public Integer getId() {
 		return id;
@@ -68,54 +71,6 @@ public class Items {
 
 	public void setLabel(String label) {
 		this.label = label;
-	}
-
-	public Date getPutonDate() {
-		return putonDate;
-	}
-
-	public void setPutonDate(Date putonDate) {
-		this.putonDate = putonDate;
-	}
-
-	public Date getPutoffDate() {
-		return putoffDate;
-	}
-
-	public void setPutoffDate(Date putoffDate) {
-		this.putoffDate = putoffDate;
-	}
-
-	public Date getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
-	public Date getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-
-	public Date getDeliveryStartTime() {
-		return deliveryStartTime;
-	}
-
-	public void setDeliveryStartTime(Date deliveryStartTime) {
-		this.deliveryStartTime = deliveryStartTime;
-	}
-
-	public Date getDeliveryEndTime() {
-		return deliveryEndTime;
-	}
-
-	public void setDeliveryEndTime(Date deliveryEndTime) {
-		this.deliveryEndTime = deliveryEndTime;
 	}
 
 	public Double getOriginPrice() {
@@ -214,6 +169,14 @@ public class Items {
 		this.createdAt = createdAt;
 	}
 
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
 	public Integer getCityId() {
 		return cityId;
 	}
@@ -222,20 +185,36 @@ public class Items {
 		this.cityId = cityId;
 	}
 
-	public Integer getIsPuton() {
-		return isPuton;
-	}
-
-	public void setIsPuton(Integer isPuton) {
-		this.isPuton = isPuton;
-	}
-
 	public String getOrigin() {
 		return origin;
 	}
 
 	public void setOrigin(String origin) {
 		this.origin = origin;
+	}
+
+	public List<ItemPictures> getPictures() {
+		return pictures;
+	}
+
+	public void setPictures(List<ItemPictures> pictures) {
+		this.pictures = pictures;
+	}
+
+	public List<ItemMerchants> getMerchants() {
+		return merchants;
+	}
+
+	public void setMerchants(List<ItemMerchants> merchants) {
+		this.merchants = merchants;
+	}
+
+	public List<ItemPropertys> getPropertys() {
+		return propertys;
+	}
+
+	public void setPropertys(List<ItemPropertys> propertys) {
+		this.propertys = propertys;
 	}
 
 }

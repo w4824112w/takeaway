@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.takeaway.modular.dao.mapper.CouponExchangesMapper">
+	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.CouponExchanges">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="coupon_id" property="couponId" jdbcType="INTEGER" />
+		<result column="start_date" property="startDate" jdbcType="DATE" />
+		<result column="end_date" property="endDate" jdbcType="DATE" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,code,coupon_id,start_date,end_date,status,created_at,updated_at
+	</sql>
+
+	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_coupon_exchanges
+		where id = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_coupon_exchanges where status=1 order by id desc
+	</select>
+
+	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.CouponExchangesDto"
+		resultType="com.takeaway.modular.dao.dto.CouponExchangesDto">
+		select
+		ce.id,c.activity_type as activityType,ce.`code`,c.`name`,ce.start_date as startDate,ce.end_date as endDate,
+    	(select count(0) from tb_coupon_exchange_records cer where cer.exchange_id=ce.id ) as exchangeCount,
+		c.money,c.sendNum,c.receiveNum,(c.sendNum-c.receiveNum) as surplus,
+	   (select count(0) from tb_user_coupons uc,tb_coupon_exchange_records cer 
+		where uc.coupon_id=ce.coupon_id and uc.user_id=cer.user_id  and uc.`status`=0) as activityCount,
+	   (select sum(tc.money) from tb_user_coupons uc,tb_coupon_exchange_records cer,tb_coupons tc
+		where uc.coupon_id=ce.coupon_id and uc.user_id=cer.user_id and uc.coupon_id=tc.id  and uc.`status`=0) as activityMoney
+		from tb_coupon_exchanges ce,tb_coupons c where ce.coupon_id=c.id and ce.status=1 
+		<if test="name != null and name != ''">
+			and c.name like "%"#{name,jdbcType=VARCHAR}"%"
+		</if>
+		order by ce.id desc
+	</select>
+
+	<delete id="delete" parameterType="java.lang.String">
+		update tb_coupon_exchanges
+		set status
+		= -1
+		where id = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.takeaway.modular.dao.model.CouponExchanges">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into tb_coupon_exchanges (
+		code,coupon_id,start_date,end_date,status,created_at
+		)
+		values
+		(
+		#{code,jdbcType=VARCHAR},
+		#{couponId,jdbcType=INTEGER},
+		#{startDate,jdbcType=TIMESTAMP},
+		#{endDate,jdbcType=TIMESTAMP},
+		#{status,jdbcType=INTEGER},
+		#{createdAt,jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.takeaway.modular.dao.model.CouponExchanges">
+		update tb_coupon_exchanges
+		set
+		code= #{code,jdbcType=VARCHAR},
+		coupon_id= #{couponId,jdbcType=INTEGER},
+		start_date= #{startDate,jdbcType=TIMESTAMP},
+		end_date= #{endDate,jdbcType=TIMESTAMP},
+		status =
+		#{status,jdbcType=VARCHAR},
+		updated_at =
+		#{updatedAt,jdbcType=TIMESTAMP}
+		where id =
+		#{id,jdbcType=INTEGER}
+	</update>
+</mapper>

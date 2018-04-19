@@ -4,6 +4,7 @@ public class ItemMerchantsDto {
 	private String id;
 	private String itemId;
 	private String merchantId;
+	private String isPuton;
 
 	public String getId() {
 		return id;
@@ -27,6 +28,14 @@ public class ItemMerchantsDto {
 
 	public void setMerchantId(String merchantId) {
 		this.merchantId = merchantId;
+	}
+
+	public String getIsPuton() {
+		return isPuton;
+	}
+
+	public void setIsPuton(String isPuton) {
+		this.isPuton = isPuton;
 	}
 
 }

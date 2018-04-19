@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.takeaway.modular.dao.mapper.ManagersMapper">
+	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.Managers">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="password_hash" property="passwordHash"
+			jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="role_id" property="roleId" jdbcType="INTEGER" />
+		<result column="merchant_id" property="merchantId" jdbcType="INTEGER" />
+		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, name,password_hash,
+		role_id,merchant_id,type,status,created_at,updated_at
+	</sql>
+
+	<select id="login" parameterType="com.takeaway.modular.dao.dto.ManagersDto"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_managers
+		where status=1 and name = #{name,jdbcType=VARCHAR}
+		and password_hash
+		= #{passwordHash,jdbcType=VARCHAR}
+	</select>
+
+	<select id="checkLoginName" parameterType="java.lang.String"
+		resultType="java.lang.Integer">
+		select
+		count(0)
+		from tb_managers
+		where
+		status=1 and name =
+		#{name,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_managers
+		where id = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.ManagersDto"
+		resultType="com.takeaway.modular.dao.dto.ManagersDto">
+		select
+		u.id,u.name,u.password_hash as passwordHash,u.merchant_id as merchantId,u.role_id as roleId,u.status,u.created_at as createdAt,r.name as roleName
+		from tb_managers u LEFT JOIN
+		tb_roles r on u.role_id=r.id
+		where u.status=1
+		<if test="name != null and name != ''">
+			and u.name like "%"#{name,jdbcType=VARCHAR}"%"
+		</if>
+		order by u.id desc
+	</select>
+
+	<update id="delete" parameterType="java.lang.String">
+		update tb_managers
+		set
+		status=-1
+		where id = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="save" parameterType="com.takeaway.modular.dao.model.Managers">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into tb_managers (
+		name,
+		password_hash,
+		role_id,
+		merchant_id,
+		type,
+		status,
+		created_at
+		)
+		values (#{name,jdbcType=VARCHAR},#{passwordHash,jdbcType=VARCHAR},
+		#{roleId,jdbcType=INTEGER},#{merchantId,jdbcType=INTEGER},#{type,jdbcType=INTEGER},
+		#{status,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.takeaway.modular.dao.model.Managers">
+		update tb_managers
+		set
+		name =
+		#{name,jdbcType=VARCHAR},
+		password_hash =
+		#{passwordHash,jdbcType=VARCHAR},
+		role_id = #{roleId,jdbcType=INTEGER},
+		merchant_id = #{merchantId,jdbcType=INTEGER},
+		status = #{status,jdbcType=VARCHAR},
+		updated_at =
+		#{updatedAt,jdbcType=TIMESTAMP}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

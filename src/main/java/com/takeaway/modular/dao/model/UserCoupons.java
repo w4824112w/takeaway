@@ -10,6 +10,7 @@ public class UserCoupons {
 	private Integer userId;
 	private String userName;
 	private Integer status;
+	private Integer isFlag;
 	private Integer type;
 	private Date startDate;
 	private Date endDate;
@@ -110,6 +111,14 @@ public class UserCoupons {
 
 	public void setCouponName(String couponName) {
 		this.couponName = couponName;
+	}
+
+	public Integer getIsFlag() {
+		return isFlag;
+	}
+
+	public void setIsFlag(Integer isFlag) {
+		this.isFlag = isFlag;
 	}
 
 }

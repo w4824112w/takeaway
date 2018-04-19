@@ -10,6 +10,7 @@ public class CouponExchanges {
 	private Date endDate;
 	private Integer status;
 	private Date createdAt;
+	private Date updatedAt;
 
 	public Integer getId() {
 		return id;
@@ -65,6 +66,14 @@ public class CouponExchanges {
 
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 }

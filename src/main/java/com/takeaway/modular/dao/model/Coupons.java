@@ -5,19 +5,18 @@ import java.util.Date;
 public class Coupons {
 	private Integer id;
 	private String name;
-	private Integer amount;
-	private Double money;
+	private Double couponMoney;
+	private Double spendMoney;
 	private String description;
-	private String activityDescription;
-	private Double exceed;
-	private Double discount;
+	private Integer sendNum;
+	private Integer receiveNum;
+	private Date sendStartTime;
+	private Date sendEndTime;
+	private Integer couponSendType;
+	private Date createdAt;
 	private Date startDate;
 	private Date endDate;
-	private Integer effectiveTime;
-	private String unit;
-	private Double limitUsed;
-	private Integer type;
-	private Date createdAt;
+	private Date updatedAt;
 	private Integer status;
 
 	public Integer getId() {
@@ -36,20 +35,20 @@ public class Coupons {
 		this.name = name;
 	}
 
-	public Integer getAmount() {
-		return amount;
+	public Double getCouponMoney() {
+		return couponMoney;
 	}
 
-	public void setAmount(Integer amount) {
-		this.amount = amount;
+	public void setCouponMoney(Double couponMoney) {
+		this.couponMoney = couponMoney;
 	}
 
-	public Double getMoney() {
-		return money;
+	public Double getSpendMoney() {
+		return spendMoney;
 	}
 
-	public void setMoney(Double money) {
-		this.money = money;
+	public void setSpendMoney(Double spendMoney) {
+		this.spendMoney = spendMoney;
 	}
 
 	public String getDescription() {
@@ -60,28 +59,52 @@ public class Coupons {
 		this.description = description;
 	}
 
-	public String getActivityDescription() {
-		return activityDescription;
+	public Integer getSendNum() {
+		return sendNum;
 	}
 
-	public void setActivityDescription(String activityDescription) {
-		this.activityDescription = activityDescription;
+	public void setSendNum(Integer sendNum) {
+		this.sendNum = sendNum;
 	}
 
-	public Double getExceed() {
-		return exceed;
+	public Integer getReceiveNum() {
+		return receiveNum;
 	}
 
-	public void setExceed(Double exceed) {
-		this.exceed = exceed;
+	public void setReceiveNum(Integer receiveNum) {
+		this.receiveNum = receiveNum;
 	}
 
-	public Double getDiscount() {
-		return discount;
+	public Date getSendStartTime() {
+		return sendStartTime;
 	}
 
-	public void setDiscount(Double discount) {
-		this.discount = discount;
+	public void setSendStartTime(Date sendStartTime) {
+		this.sendStartTime = sendStartTime;
+	}
+
+	public Date getSendEndTime() {
+		return sendEndTime;
+	}
+
+	public void setSendEndTime(Date sendEndTime) {
+		this.sendEndTime = sendEndTime;
+	}
+
+	public Integer getCouponSendType() {
+		return couponSendType;
+	}
+
+	public void setCouponSendType(Integer couponSendType) {
+		this.couponSendType = couponSendType;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
 	}
 
 	public Date getStartDate() {
@@ -100,44 +123,12 @@ public class Coupons {
 		this.endDate = endDate;
 	}
 
-	public Integer getEffectiveTime() {
-		return effectiveTime;
+	public Date getUpdatedAt() {
+		return updatedAt;
 	}
 
-	public void setEffectiveTime(Integer effectiveTime) {
-		this.effectiveTime = effectiveTime;
-	}
-
-	public String getUnit() {
-		return unit;
-	}
-
-	public void setUnit(String unit) {
-		this.unit = unit;
-	}
-
-	public Double getLimitUsed() {
-		return limitUsed;
-	}
-
-	public void setLimitUsed(Double limitUsed) {
-		this.limitUsed = limitUsed;
-	}
-
-	public Integer getType() {
-		return type;
-	}
-
-	public void setType(Integer type) {
-		this.type = type;
-	}
-
-	public Date getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 	public Integer getStatus() {

@@ -4,16 +4,14 @@
 
 ###################  项目启动端口  ###################
 server:
-  port: 8080
+  port: 8081
 
 ###################  spring配置  ###################
 spring:
   profiles:
-    active: local
+    active: dev
 
 ###################  mybatis配置  ###################
 mybatis:
   mapper-locations: classpath:mybatis/mapper/*.xml
   config-location: classpath:mybatis/mybatis-config.xml
-
-      

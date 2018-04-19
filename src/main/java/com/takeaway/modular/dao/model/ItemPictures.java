@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class ItemPictures {
 	private Integer id;
-	private String fileName;
+	private String url;
 	private Integer itemId;
 	private Date createdAt;
 
@@ -16,12 +16,12 @@ public class ItemPictures {
 		this.id = id;
 	}
 
-	public String getFileName() {
-		return fileName;
+	public String getUrl() {
+		return url;
 	}
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	public Integer getItemId() {

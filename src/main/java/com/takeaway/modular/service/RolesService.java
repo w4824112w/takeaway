@@ -1,6 +1,5 @@
 package com.takeaway.modular.service;
 
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -10,13 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSONObject;
 import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageList;
 import com.takeaway.commons.page.PageResult;
+import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.RolesDto;
 import com.takeaway.modular.dao.mapper.RolesMapper;
 import com.takeaway.modular.dao.model.Roles;
-
 
 /**
  * 本地的
@@ -27,91 +27,84 @@ import com.takeaway.modular.dao.model.Roles;
 @Service
 public class RolesService {
 	@Autowired
-	private RolesMapper sysroleMapper;
+	private RolesMapper rolesMapper;
 
-	public PageResult<Roles> findPage(PageBounds bounds,RolesDto dto) {
-	    PageList<Roles> roles=sysroleMapper.findPage(bounds,dto);
+	public PageResult<Roles> findPage(PageBounds bounds, RolesDto dto) {
+		PageList<Roles> roles = rolesMapper.findPage(bounds, dto);
 		return new PageResult<Roles>(roles);
 	}
 
 	@Transactional
-	public Map<String,Object> saveOrUpdate(Roles role) {
+	public JSONObject save(Roles role) {
 		int result;
-		Map<String,Object> retData=new HashMap<String,Object>();
-		
-		if(role.getId()!=null){
-			role.setUpdatedAt(new Date());
-			result = sysroleMapper.update(role);
-			
-			if(result>0){
-				retData.put("code", "0");
-				retData.put("msg", "修改角色成功");
-			}else{
-				retData.put("code", "1");
-				retData.put("msg", "修改角色失败");
-			}
-		}else{
-			role.setCreatedAt(new Date());
-			result = sysroleMapper.save(role);
-			
-			if(result>0){
-				retData.put("code", "0");
-				retData.put("msg", "新增角色成功");
-			}else{
-				retData.put("code", "1");
-				retData.put("msg", "新增角色失败");
-			}
+		role.setCreatedAt(new Date());
+		result = rolesMapper.save(role);
+
+		if (result > 0) {
+			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "新增角色", null);
+		} else {
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增角色", null);
 		}
-		
-		return retData;
+	}
+
+	@Transactional
+	public JSONObject update(Roles role) {
+		int result;
+		role.setUpdatedAt(new Date());
+		result = rolesMapper.update(role);
+
+		if (result > 0) {
+			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "更新角色", null);
+		} else {
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "更新角色", null);
+		}
 	}
 
 	public Roles getById(String id) {
-		return sysroleMapper.getById(id);
+		return rolesMapper.getById(id);
 	}
 
 	@Transactional
 	public int delete(String id) {
-		sysroleMapper.deleteRoleMenu(id);
-		return sysroleMapper.delete(id);
+		rolesMapper.deleteRoleMenu(id);
+		return rolesMapper.delete(id);
 	}
 
 	public List<Roles> getAll() {
-		return sysroleMapper.getAll();
+		return rolesMapper.getAll();
 	}
 
 	@Transactional
 	public boolean saveRoleMenu(String[] menuIds, String roleId) {
-		sysroleMapper.deleteRoleMenu(roleId);
-		int ret=0;
-		for(String menuId:menuIds){
-			Map<String,Object> obj=new HashMap<String,Object>();
+		rolesMapper.deleteRoleMenu(roleId);
+		int ret = 0;
+		for (String menuId : menuIds) {
+			Map<String, Object> obj = new HashMap<String, Object>();
 			obj.put("menuId", menuId);
 			obj.put("roleId", roleId);
-			int count=sysroleMapper.addRoleMenu(obj);
-			ret=ret+count;
+			int count = rolesMapper.addRoleMenu(obj);
+			ret = ret + count;
 		}
-		if(ret==menuIds.length){
+		if (ret == menuIds.length) {
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
 
 	@Transactional
 	public boolean delBatch(String[] ids) {
-		int ret=0;
-		for(String id:ids){
-			sysroleMapper.deleteRoleMenu(id);
-			int count=sysroleMapper.delete(id);
-			ret=ret+count;
+		int ret = 0;
+		for (String id : ids) {
+			rolesMapper.deleteRoleMenu(id);
+			int count = rolesMapper.delete(id);
+			ret = ret + count;
 		}
-		if(ret==ids.length){
+		if (ret == ids.length) {
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
-
 
 }

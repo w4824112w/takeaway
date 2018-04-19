@@ -5,9 +5,9 @@
     <typeAliases>
     </typeAliases>
     <plugins>
-		<plugin interceptor="com.gkyt.ywgk.commons.page.OffsetLimitInterceptor">
+		<plugin interceptor="com.takeaway.commons.page.OffsetLimitInterceptor">
 			<property name="dialectClass"
-				value="com.gkyt.ywgk.commons.page.MySQLDialect" />
+				value="com.takeaway.commons.page.MySQLDialect" />
 		</plugin>
 	</plugins>
 </configuration>

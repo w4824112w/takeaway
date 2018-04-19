@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.takeaway.modular.dao.mapper.CitiesMapper">
+	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.Cities">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="province_id" property="provicesId" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="created_at" property="createdAt" jdbcType="DATE" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,name,province_id,status,created_at
+	</sql>
+
+	<select id="getAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_cities where status=1 order by id asc
+	</select>
+	
+	<select id="getByProvinceId" parameterType="java.lang.String" resultType="com.takeaway.modular.dao.dto.CitiesDto">
+		select
+		id,name,province_id as provinceId
+		from tb_cities
+		where status=1 province_id = #{provinceId,jdbcType=VARCHAR}
+	</select>
+
+</mapper>

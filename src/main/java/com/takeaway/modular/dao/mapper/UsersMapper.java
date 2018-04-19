@@ -14,7 +14,7 @@ public interface UsersMapper {
 	
 	Users getById(String id);
 	
-	PageList<Users> findPage(PageBounds bounds,UsersDto dto);
+	PageList<UsersDto> findPage(PageBounds bounds,UsersDto dto);
 	
 	int save(Users user);
 	

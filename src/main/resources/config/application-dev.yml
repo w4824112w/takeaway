@@ -5,11 +5,19 @@ spring:
   profiles: dev
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://10.10.10.2:3306/takeaway?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    url: jdbc:mysql://47.106.143.22:3306/takeaway?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
     username: root
-    password: Nihaoccj123
+    password: 12345
 
 logging:
   level.root: info
   level.com.takeaway: debug
   file: logs.log
+  
+# server:
+#  ssl:
+#    key-password: mypassword
+#    key-alias: mytomcat
+#    key-store-type: PKCS12
+#    key-store: classpath:keystore.p12
+#  port: 8080 

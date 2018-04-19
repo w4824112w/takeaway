@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.takeaway.modular.dao.mapper.CouponsMapper">
+	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.Coupons">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="couponMoney" property="couponMoney" jdbcType="DOUBLE" />
+		<result column="spendMoney" property="spendMoney" jdbcType="DOUBLE" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="sendNum" property="sendNum" jdbcType="INTEGER" />
+		<result column="receiveNum" property="receiveNum" jdbcType="INTEGER" />
+		<result column="sendStartTime" property="sendStartTime" jdbcType="DATE" />
+		<result column="sendEndTime" property="sendEndTime" jdbcType="DATE" />
+		<result column="couponSendType" property="couponSendType" jdbcType="INTEGER" />
+		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="startDate" property="startDate" jdbcType="DATE" />
+		<result column="endDate" property="endDate" jdbcType="DATE" />
+		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,name,couponMoney,spendMoney,description,sendNum,receiveNum,sendStartTime,sendEndTime,
+		couponSendType,created_at,startDate,endDate,updated_at,status
+	</sql>
+
+	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_coupons
+		where id = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getByMerchantId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		c.*
+		from tb_coupons c,tb_coupon_merchants cm
+		where c.id=cm.coupon_id and cm.merchant_id = #{merchantId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_coupons where status=1 order by id desc
+	</select>
+
+	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.CouponsDto"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_coupons where status=1 
+		<if test="name != null and name != ''">
+			and name like "%"#{name,jdbcType=VARCHAR}"%"
+		</if>
+		order by id desc
+	</select>
+
+	<delete id="delete" parameterType="java.lang.String">
+		update tb_coupons
+		set status
+		= -1
+		where id = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.takeaway.modular.dao.model.Coupons">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into tb_coupons (
+		name,couponMoney,spendMoney,description,sendNum,receiveNum,sendStartTime,sendEndTime,
+		couponSendType,startDate,endDate,created_at,status
+		)
+		values
+		(
+		#{name,jdbcType=VARCHAR},
+		#{couponMoney,jdbcType=DOUBLE},
+		#{spendMoney,jdbcType=DOUBLE},
+		#{description,jdbcType=VARCHAR},
+		#{sendNum,jdbcType=INTEGER},
+		#{receiveNum,jdbcType=INTEGER},
+		#{sendStartTime,jdbcType=TIMESTAMP},
+		#{sendEndTime,jdbcType=TIMESTAMP},
+		#{couponSendType,jdbcType=INTEGER},
+		#{startDate,jdbcType=TIMESTAMP},
+		#{endDate,jdbcType=TIMESTAMP},
+		#{createdAt,jdbcType=TIMESTAMP},
+		#{status,jdbcType=INTEGER}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.takeaway.modular.dao.model.Coupons">
+		update tb_coupons
+		set
+		name= #{name,jdbcType=VARCHAR},
+		couponMoney= #{couponMoney,jdbcType=DOUBLE},
+		spendMoney= #{spendMoney,jdbcType=DOUBLE},
+		description= #{description,jdbcType=VARCHAR},
+		sendNum= #{sendNum,jdbcType=INTEGER},
+		receiveNum= #{receiveNum,jdbcType=INTEGER},
+		sendStartTime= #{sendStartTime,jdbcType=TIMESTAMP},
+		sendEndTime= #{sendEndTime,jdbcType=TIMESTAMP},
+		couponSendType= #{couponSendType,jdbcType=INTEGER},
+		startDate= #{startDate,jdbcType=TIMESTAMP},
+		endDate= #{endDate,jdbcType=TIMESTAMP},
+		updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+		status = #{status,jdbcType=VARCHAR}
+		where id =
+		#{id,jdbcType=INTEGER}
+	</update>
+</mapper>

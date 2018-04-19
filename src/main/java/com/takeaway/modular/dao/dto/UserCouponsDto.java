@@ -8,11 +8,21 @@ public class UserCouponsDto {
 	private String userId;
 	private String userName;
 	private String status;
+	private String isFlag;
 	private String type;
 	private String startDate;
 	private String endDate;
 	private String gainTime;
+
 	private String couponName;
+	private String money;
+	private String activityType;
+	private String activityDescription;
+	private String exceed;
+	private String discount;
+	private String effectiveTime;
+	private String unit;
+	private String limitUsed;
 
 	public String getId() {
 		return id;
@@ -108,6 +118,78 @@ public class UserCouponsDto {
 
 	public void setCouponName(String couponName) {
 		this.couponName = couponName;
+	}
+
+	public String getIsFlag() {
+		return isFlag;
+	}
+
+	public void setIsFlag(String isFlag) {
+		this.isFlag = isFlag;
+	}
+
+	public String getMoney() {
+		return money;
+	}
+
+	public void setMoney(String money) {
+		this.money = money;
+	}
+
+	public String getLimitUsed() {
+		return limitUsed;
+	}
+
+	public void setLimitUsed(String limitUsed) {
+		this.limitUsed = limitUsed;
+	}
+
+	public String getActivityType() {
+		return activityType;
+	}
+
+	public void setActivityType(String activityType) {
+		this.activityType = activityType;
+	}
+
+	public String getActivityDescription() {
+		return activityDescription;
+	}
+
+	public void setActivityDescription(String activityDescription) {
+		this.activityDescription = activityDescription;
+	}
+
+	public String getExceed() {
+		return exceed;
+	}
+
+	public void setExceed(String exceed) {
+		this.exceed = exceed;
+	}
+
+	public String getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(String discount) {
+		this.discount = discount;
+	}
+
+	public String getEffectiveTime() {
+		return effectiveTime;
+	}
+
+	public void setEffectiveTime(String effectiveTime) {
+		this.effectiveTime = effectiveTime;
+	}
+
+	public String getUnit() {
+		return unit;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
 	}
 
 }

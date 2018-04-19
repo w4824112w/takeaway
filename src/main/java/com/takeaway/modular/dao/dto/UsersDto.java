@@ -17,6 +17,11 @@ public class UsersDto {
 	private String sex;
 	private String status;
 	private String ori;
+	private String grade;
+	private String point;
+
+	private String orderCount;
+	private String totalPrice;
 
 	public String getId() {
 		return id;
@@ -144,6 +149,38 @@ public class UsersDto {
 
 	public void setUpdatedAt(String updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public String getGrade() {
+		return grade;
+	}
+
+	public void setGrade(String grade) {
+		this.grade = grade;
+	}
+
+	public String getPoint() {
+		return point;
+	}
+
+	public void setPoint(String point) {
+		this.point = point;
+	}
+
+	public String getOrderCount() {
+		return orderCount;
+	}
+
+	public void setOrderCount(String orderCount) {
+		this.orderCount = orderCount;
+	}
+
+	public String getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(String totalPrice) {
+		this.totalPrice = totalPrice;
 	}
 
 }

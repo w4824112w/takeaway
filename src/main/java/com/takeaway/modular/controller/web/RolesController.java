@@ -1,5 +1,9 @@
 package com.takeaway.modular.controller.web;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,12 +19,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONObject;
 import com.takeaway.commons.page.Order;
 import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageResult;
+import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.RolesDto;
 import com.takeaway.modular.dao.model.Managers;
 import com.takeaway.modular.dao.model.Menus;
@@ -36,6 +43,7 @@ import com.takeaway.modular.service.RolesService;
  */
 @RestController
 @RequestMapping("/roles")
+@Api(value = "角色管理", description = "RolesController")
 public class RolesController {
 	private static final Logger log = Logger.getLogger(RolesController.class);
 
@@ -55,42 +63,37 @@ public class RolesController {
 	 * @param dto
 	 * @return
 	 */
-	@RequestMapping(value = "/page", method = { RequestMethod.POST,
-			RequestMethod.GET })
-	public Map<String, Object> page(HttpServletRequest request,
-			HttpServletResponse response, Integer page, Integer rows,
-			RolesDto dto) {
-		Map<String, Object> retData = new HashMap<String, Object>();
-
+	@ApiOperation(value = "查询", httpMethod = "GET", notes = "分页查询角色信息")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer", paramType = "query"),
+			@ApiImplicitParam(name = "rows", value = "页数", required = true, dataType = "Integer", paramType = "query"),
+			@ApiImplicitParam(name = "name", value = "菜单名称", required = false, dataType = "String", paramType = "query") })
+	@RequestMapping(value = "/page", method = RequestMethod.GET)
+	public JSONObject page(HttpServletRequest request,
+			HttpServletResponse response,
+			@RequestParam(value = "page", defaultValue = "1") int page,
+			@RequestParam(value = "rows", defaultValue = "10") int rows,
+			String name) {
 		HttpSession session = request.getSession();
-		Managers u = (Managers)session.getAttribute("s_user");
+		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
-			retData.put("code", "2");
-			retData.put("msg", "用户已超时，请退出登录");
-			retData.put("data", "");
-			return retData;
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
 		}
 
-		if (page == null) {
-			page = 1;
-		}
-		if (rows == null) {
-			rows = 10;
-		}
+		RolesDto dto = new RolesDto();
+		dto.setName(name);
 
 		PageBounds bounds = new PageBounds(page, rows);
 
-		PageResult<Roles> result = rolesService.findPage(bounds, dto);
+		PageResult<Roles> roles = rolesService.findPage(bounds, dto);
 
-		retData.put("code", "0");
-		retData.put("msg", "查询成功");
-		retData.put("page", result.getPaginator().getPage());
-		retData.put("rows", result.getPaginator().getLimit());
-		retData.put("totalCount", result.getPaginator().getTotalCount());
-		retData.put("dto", dto);
-		retData.put("data", result.getPageList());
-
-		return retData;
+		JSONObject result = new JSONObject();
+		result.put("name", name);
+		result.put("page", roles.getPaginator().getPage());
+		result.put("rows", roles.getPaginator().getLimit());
+		result.put("totalCount", roles.getPaginator().getTotalCount());
+		result.put("roles", roles.getPageList());
+		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "查询", result);
 	}
 
 	/**
@@ -103,29 +106,21 @@ public class RolesController {
 	 * @param dto
 	 * @return
 	 */
-	@RequestMapping(value = "/list", method = { RequestMethod.POST,
-			RequestMethod.GET })
-	public Map<String, Object> list(HttpServletRequest request,
-			HttpServletResponse response, Integer page, Integer rows,
-			RolesDto dto) {
-		Map<String, Object> retData = new HashMap<String, Object>();
-
+	@ApiOperation(value = "查询角色列表", httpMethod = "GET", notes = "查询所有角色列表信息")
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public JSONObject list(HttpServletRequest request,
+			HttpServletResponse response) {
 		HttpSession session = request.getSession();
-		Managers u = (Managers)session.getAttribute("s_user");
+		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
-			retData.put("code", "2");
-			retData.put("msg", "用户已超时，请退出登录");
-			retData.put("data", "");
-			return retData;
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
 		}
 
-		List<Roles> result = rolesService.getAll();
+		List<Roles> roles = rolesService.getAll();
 
-		retData.put("code", "0");
-		retData.put("msg", "查询成功");
-		retData.put("data", result);
-
-		return retData;
+		JSONObject result = new JSONObject();
+		result.put("roles", roles);
+		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "查询", result);
 	}
 
 	/**
@@ -136,27 +131,22 @@ public class RolesController {
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping(value = "/edit", method = { RequestMethod.POST,
-			RequestMethod.GET })
-	public Map<String, Object> edit(HttpServletRequest request,
+	@ApiOperation(value = "编辑", httpMethod = "GET", notes = "编辑角色信息")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "角色id", required = true, dataType = "String", paramType = "query") })
+	@RequestMapping(value = "/edit", method = RequestMethod.GET)
+	public JSONObject edit(HttpServletRequest request,
 			HttpServletResponse response, String id) {
-		Map<String, Object> retData = new HashMap<String, Object>();
-
 		HttpSession session = request.getSession();
-		Managers u = (Managers)session.getAttribute("s_user");
+		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
-			retData.put("code", "2");
-			retData.put("msg", "用户已超时，请退出登录");
-			retData.put("data", "");
-			return retData;
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
 		}
 
-		Roles role = rolesService.getById(id);
-		retData.put("code", "0");
-		retData.put("msg", "获取编辑对象成功");
-		retData.put("data", role);
+		Roles roles = rolesService.getById(id);
 
-		return retData;
+		JSONObject result = new JSONObject();
+		result.put("roles", roles);
+		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "编辑角色", result);
 	}
 
 	/**
@@ -167,19 +157,15 @@ public class RolesController {
 	 * @param roleId
 	 * @return
 	 */
-	@RequestMapping(value = "/menuSetup", method = { RequestMethod.POST,
-			RequestMethod.GET })
-	public Map<String, Object> menuSetup(HttpServletRequest request,
+	@ApiOperation(value = "编辑", httpMethod = "GET", notes = "角色权限编辑")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "roleId", value = "角色id", required = true, dataType = "String", paramType = "query") })
+	@RequestMapping(value = "/menuSetup", method = RequestMethod.GET)
+	public JSONObject menuSetup(HttpServletRequest request,
 			HttpServletResponse response, String roleId) {
-		Map<String, Object> retData = new HashMap<String, Object>();
-
 		HttpSession session = request.getSession();
-		Managers u = (Managers)session.getAttribute("s_user");
+		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
-			retData.put("code", "2");
-			retData.put("msg", "用户已超时，请退出登录");
-			retData.put("data", "");
-			return retData;
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
 		}
 
 		// 获取系统所有菜单权限
@@ -187,13 +173,11 @@ public class RolesController {
 		// 获取用户已分配的菜单权限
 		List<Menus> ownList = menusService.getByRoleId(roleId);
 
-		retData.put("code", "0");
-		retData.put("msg", "获取菜单信息列表成功");
-		retData.put("allList", allList);
-		retData.put("ownList", ownList);
-		retData.put("roleId", roleId);
-
-		return retData;
+		JSONObject result = new JSONObject();
+		result.put("allList", allList);
+		result.put("ownList", ownList);
+		result.put("roleId", roleId);
+		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "角色权限编辑", result);
 	}
 
 	/**
@@ -205,65 +189,77 @@ public class RolesController {
 	 * @param response
 	 * @return
 	 */
-	@RequestMapping(value="/saveRoleMenuSetup",method = { RequestMethod.POST,RequestMethod.GET})
-	public Map<String,Object> saveRoleMenuSetup(String[] menuIds,String roleId,HttpServletRequest request,HttpServletResponse response){		
-	   	Map<String,Object> retData=new HashMap<String,Object>();
-	   	
+	@ApiOperation(value = "保存", httpMethod = "POST", notes = "保存角色权限")
+	@RequestMapping(value = "/saveRoleMenuSetup", method = RequestMethod.POST)
+	public JSONObject saveRoleMenuSetup(String[] menuIds, String roleId,
+			HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
-		Managers u = (Managers)session.getAttribute("s_user");
-		if(u==null){
-			retData.put("code", "2");
-			retData.put("msg", "用户已超时，请退出登录");
-			return retData;
-		}
-		
-		if(menuIds==null || menuIds.length<1){
-			retData.put("code", "1");
-			retData.put("msg", "未选择添加的菜单项");
-			return retData;
-		}
-		
-		if(rolesService.saveRoleMenu(menuIds, roleId)){
-			retData.put("code", "0");
-			retData.put("msg", "保存角色权限成功");
-			return retData;
-		}else{
-			retData.put("code", "1");
-			retData.put("msg", "保存角色权限失败");
-			return retData;
+		Managers u = (Managers) session.getAttribute("s_user");
+		if (u == null) {
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
 		}
 
-		
+		if (menuIds == null || menuIds.length < 1) {
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "未选择添加的菜单项", null);
+		}
+
+		if (rolesService.saveRoleMenu(menuIds, roleId)) {
+			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "保存角色权限", null);
+		} else {
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "保存角色权限", null);
+		}
+
 	}
 
 	/**
-	 * 保存角色
+	 * 新增角色
 	 * 
 	 * @param o
 	 * @param r
 	 * @return
 	 */
-	@RequestMapping(value = "/save", method = { RequestMethod.POST,
-			RequestMethod.GET })
-	public Map<String, Object> save(HttpServletRequest request,
-			HttpServletResponse response, Roles role) {
-		Map<String, Object> retData = new HashMap<String, Object>();
-
+	@ApiOperation(value = "新增", httpMethod = "POST", notes = "新增角色信息")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "name", value = "角色名称", required = true, dataType = "String", paramType = "form") })
+	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	public JSONObject save(HttpServletRequest request,
+			HttpServletResponse response, String name) {
 		HttpSession session = request.getSession();
-		Managers u = (Managers)session.getAttribute("s_user");
+		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
-			retData.put("code", "2");
-			retData.put("msg", "用户已超时，请退出登录");
-			return retData;
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
 		}
+
 		try {
-			retData = rolesService.saveOrUpdate(role);
-			return retData;
+			Roles role = new Roles();
+			role.setName(name);
+			role.setStatus(1);
+			return rolesService.save(role);
 		} catch (Exception e) {
 			e.printStackTrace();
-			retData.put("code", "1");
-			retData.put("msg", "系统出现异常");
-			return retData;
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增", null);
+		}
+
+	}
+
+	@ApiOperation(value = "更新", httpMethod = "POST", notes = "更新角色信息")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "id", value = "角色id", required = true, dataType = "String", paramType = "form"),
+			@ApiImplicitParam(name = "name", value = "角色名称", required = true, dataType = "String", paramType = "form") })
+	@RequestMapping(value = "/update", method = RequestMethod.POST)
+	public JSONObject update(HttpServletRequest request,
+			HttpServletResponse response, String id, String name) {
+		HttpSession session = request.getSession();
+		Managers u = (Managers) session.getAttribute("s_user");
+		if (u == null) {
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
+		}
+		try {
+			Roles role = rolesService.getById(id);
+			role.setName(name);
+			return rolesService.update(role);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "更新", null);
 		}
 
 	}
@@ -276,75 +272,29 @@ public class RolesController {
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping(value = "/delete", method = { RequestMethod.POST,
-			RequestMethod.GET })
-	public Map<String, Object> delete(HttpServletRequest request,
+	@ApiOperation(value = "删除", httpMethod = "POST", notes = "删除角色信息")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "角色id", required = true, dataType = "String", paramType = "form") })
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	public JSONObject delete(HttpServletRequest request,
 			HttpServletResponse response, String id) {
-		Map<String, Object> retData = new HashMap<String, Object>();
-
 		HttpSession session = request.getSession();
-		Managers u = (Managers)session.getAttribute("s_user");
+		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
-			retData.put("code", "2");
-			retData.put("msg", "用户已超时，请退出登录");
-			return retData;
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
 		}
 
 		try {
 			int result = rolesService.delete(id);
 			if (result > 0) {
-				retData.put("code", "0");
-				retData.put("msg", "删除角色成功");
+				return ErrorEnums.getResult(ErrorEnums.SUCCESS, "删除角色", null);
 			} else {
-				retData.put("code", "1");
-				retData.put("msg", "删除角色失败");
+				return ErrorEnums.getResult(ErrorEnums.ERROR, "删除角色", null);
 			}
-			return retData;
 		} catch (Exception e) {
 			e.printStackTrace();
-			retData.put("code", "1");
-			retData.put("msg", "系统出现异常");
-			return retData;
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "删除角色", null);
 		}
 
 	}
-	
-	/**
-	 * 批量删除角色
-	 * @param request
-	 * @param response
-	 * @param id
-	 * @return
-	 */
-	@RequestMapping(value ="/batchDelete",method = { RequestMethod.POST,RequestMethod.GET})
-	public Map<String,Object> batchDelete(String[] ids,HttpServletRequest request,HttpServletResponse response){
-		Map<String,Object> retData=new HashMap<String,Object>();
-		
-		HttpSession session = request.getSession();
-		Managers u = (Managers)session.getAttribute("s_user");
-		if(u==null){
-			retData.put("code", "2");
-			retData.put("msg", "用户已超时，请退出登录");
-			return retData;
-		}
-		
-		try {
-			if(rolesService.delBatch(ids)){
-				retData.put("code", "0");
-				retData.put("msg", "批量删除角色成功");
-				return retData;
-			}else{
-				retData.put("code", "1");
-				retData.put("msg", "批量删除角色失败");
-				return retData;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			retData.put("code", "1");
-			retData.put("msg", "系统出现异常");
-			return retData;
-		}
-		
-	}
-	
+
 }

@@ -1,6 +1,7 @@
 package com.takeaway.modular.dao.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class Merchants {
 	private Integer id;
@@ -28,9 +29,13 @@ public class Merchants {
 	private Double fullFreeDistribution;
 	private Double distributionFee;
 	private String distributionScope;
+	private Integer isOnline;
 	private Date createdAt;
+	private Date updatedAt;
 	private Integer status;
-	private Integer isDeleted;
+	
+
+	private List<MerchantPictures> pictures;
 
 	public Integer getId() {
 		return id;
@@ -248,12 +253,28 @@ public class Merchants {
 		this.status = status;
 	}
 
-	public Integer getIsDeleted() {
-		return isDeleted;
+	public Date getUpdatedAt() {
+		return updatedAt;
 	}
 
-	public void setIsDeleted(Integer isDeleted) {
-		this.isDeleted = isDeleted;
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public List<MerchantPictures> getPictures() {
+		return pictures;
+	}
+
+	public void setPictures(List<MerchantPictures> pictures) {
+		this.pictures = pictures;
+	}
+
+	public Integer getIsOnline() {
+		return isOnline;
+	}
+
+	public void setIsOnline(Integer isOnline) {
+		this.isOnline = isOnline;
 	}
 
 }

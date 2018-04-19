@@ -1,17 +1,13 @@
 package com.takeaway.modular.dao.dto;
 
+import java.util.List;
+
 public class ItemsDto {
 	private String id;
 	private String itemType;
 	private String name;
 	private String code;
 	private String label;
-	private String putonDate;
-	private String putoffDate;
-	private String startDate;
-	private String endDate;
-	private String deliveryStartTime;
-	private String deliveryEndTime;
 	private String originPrice;
 	private String costPrice;
 	private String price;
@@ -24,9 +20,18 @@ public class ItemsDto {
 	private String description;
 	private String status;
 	private String createdAt;
+	private String updatedAt;
 	private String cityId;
-	private String isPuton;
 	private String origin;
+
+	private String itemTypeName;
+	private String isPuton;
+	private String merchantId;
+	private String merchantName;
+
+	private List<ItemMerchantsDto> merchants;
+	private List<ItemPropertysDto> propertys;
+	private List<ItemPicturesDto> pictures;
 
 	public String getId() {
 		return id;
@@ -66,54 +71,6 @@ public class ItemsDto {
 
 	public void setLabel(String label) {
 		this.label = label;
-	}
-
-	public String getPutonDate() {
-		return putonDate;
-	}
-
-	public void setPutonDate(String putonDate) {
-		this.putonDate = putonDate;
-	}
-
-	public String getPutoffDate() {
-		return putoffDate;
-	}
-
-	public void setPutoffDate(String putoffDate) {
-		this.putoffDate = putoffDate;
-	}
-
-	public String getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(String startDate) {
-		this.startDate = startDate;
-	}
-
-	public String getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(String endDate) {
-		this.endDate = endDate;
-	}
-
-	public String getDeliveryStartTime() {
-		return deliveryStartTime;
-	}
-
-	public void setDeliveryStartTime(String deliveryStartTime) {
-		this.deliveryStartTime = deliveryStartTime;
-	}
-
-	public String getDeliveryEndTime() {
-		return deliveryEndTime;
-	}
-
-	public void setDeliveryEndTime(String deliveryEndTime) {
-		this.deliveryEndTime = deliveryEndTime;
 	}
 
 	public String getOriginPrice() {
@@ -212,6 +169,14 @@ public class ItemsDto {
 		this.createdAt = createdAt;
 	}
 
+	public String getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(String updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
 	public String getCityId() {
 		return cityId;
 	}
@@ -234,6 +199,54 @@ public class ItemsDto {
 
 	public void setOrigin(String origin) {
 		this.origin = origin;
+	}
+
+	public String getItemTypeName() {
+		return itemTypeName;
+	}
+
+	public void setItemTypeName(String itemTypeName) {
+		this.itemTypeName = itemTypeName;
+	}
+
+	public String getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
+	}
+
+	public String getMerchantName() {
+		return merchantName;
+	}
+
+	public void setMerchantName(String merchantName) {
+		this.merchantName = merchantName;
+	}
+
+	public List<ItemMerchantsDto> getMerchants() {
+		return merchants;
+	}
+
+	public void setMerchants(List<ItemMerchantsDto> merchants) {
+		this.merchants = merchants;
+	}
+
+	public List<ItemPropertysDto> getPropertys() {
+		return propertys;
+	}
+
+	public void setPropertys(List<ItemPropertysDto> propertys) {
+		this.propertys = propertys;
+	}
+
+	public List<ItemPicturesDto> getPictures() {
+		return pictures;
+	}
+
+	public void setPictures(List<ItemPicturesDto> pictures) {
+		this.pictures = pictures;
 	}
 
 }

@@ -1,9 +1,12 @@
 package com.takeaway.modular.dao.model;
 
+import java.util.Date;
+
 public class ItemMerchants {
 	private Integer id;
 	private Integer itemId;
 	private Integer merchantId;
+	private Integer isPuton;
 
 	public Integer getId() {
 		return id;
@@ -27,6 +30,14 @@ public class ItemMerchants {
 
 	public void setMerchantId(Integer merchantId) {
 		this.merchantId = merchantId;
+	}
+
+	public Integer getIsPuton() {
+		return isPuton;
+	}
+
+	public void setIsPuton(Integer isPuton) {
+		this.isPuton = isPuton;
 	}
 
 }

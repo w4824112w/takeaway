@@ -3,19 +3,18 @@ package com.takeaway.modular.dao.dto;
 public class CouponsDto {
 	private String id;
 	private String name;
-	private String amount;
-	private String money;
+	private String couponMoney;
+	private String spendMoney;
 	private String description;
-	private String activityDescription;
-	private String exceed;
-	private String discount;
+	private String sendNum;
+	private String receiveNum;
+	private String sendStartTime;
+	private String sendEndTime;
+	private String couponSendType;
+	private String createdAt;
 	private String startDate;
 	private String endDate;
-	private String effectiveTime;
-	private String unit;
-	private String limitUsed;
-	private String type;
-	private String createdAt;
+	private String updatedAt;
 	private String status;
 
 	public String getId() {
@@ -34,20 +33,20 @@ public class CouponsDto {
 		this.name = name;
 	}
 
-	public String getAmount() {
-		return amount;
+	public String getCouponMoney() {
+		return couponMoney;
 	}
 
-	public void setAmount(String amount) {
-		this.amount = amount;
+	public void setCouponMoney(String couponMoney) {
+		this.couponMoney = couponMoney;
 	}
 
-	public String getMoney() {
-		return money;
+	public String getSpendMoney() {
+		return spendMoney;
 	}
 
-	public void setMoney(String money) {
-		this.money = money;
+	public void setSpendMoney(String spendMoney) {
+		this.spendMoney = spendMoney;
 	}
 
 	public String getDescription() {
@@ -58,28 +57,52 @@ public class CouponsDto {
 		this.description = description;
 	}
 
-	public String getActivityDescription() {
-		return activityDescription;
+	public String getSendNum() {
+		return sendNum;
 	}
 
-	public void setActivityDescription(String activityDescription) {
-		this.activityDescription = activityDescription;
+	public void setSendNum(String sendNum) {
+		this.sendNum = sendNum;
 	}
 
-	public String getExceed() {
-		return exceed;
+	public String getReceiveNum() {
+		return receiveNum;
 	}
 
-	public void setExceed(String exceed) {
-		this.exceed = exceed;
+	public void setReceiveNum(String receiveNum) {
+		this.receiveNum = receiveNum;
 	}
 
-	public String getDiscount() {
-		return discount;
+	public String getSendStartTime() {
+		return sendStartTime;
 	}
 
-	public void setDiscount(String discount) {
-		this.discount = discount;
+	public void setSendStartTime(String sendStartTime) {
+		this.sendStartTime = sendStartTime;
+	}
+
+	public String getSendEndTime() {
+		return sendEndTime;
+	}
+
+	public void setSendEndTime(String sendEndTime) {
+		this.sendEndTime = sendEndTime;
+	}
+
+	public String getCouponSendType() {
+		return couponSendType;
+	}
+
+	public void setCouponSendType(String couponSendType) {
+		this.couponSendType = couponSendType;
+	}
+
+	public String getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(String createdAt) {
+		this.createdAt = createdAt;
 	}
 
 	public String getStartDate() {
@@ -98,44 +121,12 @@ public class CouponsDto {
 		this.endDate = endDate;
 	}
 
-	public String getEffectiveTime() {
-		return effectiveTime;
+	public String getUpdatedAt() {
+		return updatedAt;
 	}
 
-	public void setEffectiveTime(String effectiveTime) {
-		this.effectiveTime = effectiveTime;
-	}
-
-	public String getUnit() {
-		return unit;
-	}
-
-	public void setUnit(String unit) {
-		this.unit = unit;
-	}
-
-	public String getLimitUsed() {
-		return limitUsed;
-	}
-
-	public void setLimitUsed(String limitUsed) {
-		this.limitUsed = limitUsed;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(String createdAt) {
-		this.createdAt = createdAt;
+	public void setUpdatedAt(String updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 	public String getStatus() {

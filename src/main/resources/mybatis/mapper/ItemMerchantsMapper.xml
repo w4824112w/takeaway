@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.takeaway.modular.dao.mapper.ItemMerchantsMapper">
+	<resultMap id="BaseResultMap"
+		type="com.takeaway.modular.dao.model.ItemMerchants">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="item_id" property="itemId" jdbcType="INTEGER" />
+		<result column="merchant_id" property="merchantId" jdbcType="INTEGER" />
+		<result column="is_puton" property="isPuton" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,item_id,merchant_id,is_puton
+	</sql>
+
+	<select id="getByItemId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_item_merchants
+		where item_id =
+		#{itemId,jdbcType=VARCHAR}
+	</select>
+
+	<delete id="delByItemId" parameterType="java.lang.String">
+		delete from
+		tb_item_merchants where item_id =
+		#{itemId,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.takeaway.modular.dao.model.ItemMerchants">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into tb_item_merchants (
+		item_id,merchant_id,is_puton
+		)
+		values (
+		#{itemId,jdbcType=INTEGER},
+		#{merchantId,jdbcType=INTEGER},
+		#{isPuton,jdbcType=INTEGER}
+		)
+	</insert>
+	
+	<update id="update" parameterType="com.takeaway.modular.dao.dto.ItemMerchantsDto">
+		update tb_item_merchants
+		set
+		is_puton= #{isPuton,jdbcType=INTEGER}
+		where 1=1 
+		<if test="itemId != null">
+			and item_id = #{itemId,jdbcType=INTEGER}
+		</if>
+		<if test="merchantId != null">
+			and merchant_id = #{merchantId,jdbcType=INTEGER}
+		</if>
+	</update>
+	
+	<update id="superUpdate" parameterType="com.takeaway.modular.dao.dto.ItemMerchantsDto">
+		update tb_item_merchants
+		set
+		is_puton = #{isPuton,jdbcType=INTEGER}
+		where item_id =
+		#{itemId,jdbcType=INTEGER}
+	</update>
+</mapper>

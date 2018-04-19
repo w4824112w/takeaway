@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.takeaway.modular.dao.mapper.MerchantsMapper">
+	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.Merchants">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="type_id" property="typeId" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="short_name" property="shortName" jdbcType="VARCHAR" />
+		<result column="province_id" property="provinceId" jdbcType="INTEGER" />
+		<result column="city_id" property="cityId" jdbcType="INTEGER" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="star" property="star" jdbcType="INTEGER" />
+		<result column="manager_name" property="managerName" jdbcType="VARCHAR" />
+		<result column="manager_phone" property="managerPhone"
+			jdbcType="VARCHAR" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="platform_commission" property="platformCommission"
+			jdbcType="DOUBLE" />
+		<result column="tel" property="tel" jdbcType="VARCHAR" />
+		<result column="lat" property="lat" jdbcType="VARCHAR" />
+		<result column="lng" property="lng" jdbcType="VARCHAR" />
+		<result column="logo" property="logo" jdbcType="VARCHAR" />
+		<result column="notice" property="notice" jdbcType="VARCHAR" />
+		<result column="start_date" property="startDate" jdbcType="DATE" />
+		<result column="end_date" property="endDate" jdbcType="DATE" />
+		<result column="distribution_info" property="distributionInfo"
+			jdbcType="VARCHAR" />
+		<result column="starting_price" property="startingPrice"
+			jdbcType="DOUBLE" />
+		<result column="full_free_distribution" property="fullFreeDistribution"
+			jdbcType="DOUBLE" />
+		<result column="distribution_fee" property="distributionFee"
+			jdbcType="DOUBLE" />
+		<result column="distribution_scope" property="distributionScope"
+			jdbcType="VARCHAR" />
+		<result column="is_online" property="isOnline" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id,type_id,name,code,short_name,province_id,city_id,address,star,manager_name,manager_phone,
+		description,platform_commission,tel,lat,lng,logo,notice,start_date,end_date,distribution_info,
+		starting_price,full_free_distribution,distribution_fee,distribution_scope,is_online,
+		status,created_at,updated_at
+	</sql>
+
+	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_merchants
+		where id = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_merchants where status=1 order by id desc
+	</select>
+	
+	<select id="getByItemId" parameterType="java.lang.String" resultType="com.takeaway.modular.dao.model.Merchants">
+		select m.id from tb_merchants m,tb_item_merchants im where m.id=im.merchant_id 
+		where im.item_id = #{itemId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="appIndex" resultType="com.takeaway.modular.dao.dto.MerchantsDto">
+		select
+		<include refid="Base_Column_List" />
+		from tb_merchants where status=1 order by id desc
+	</select>
+	
+	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.MerchantsDto"
+		resultType="com.takeaway.modular.dao.dto.MerchantsDto">
+		select
+		m.id,m.`name`,m.type_id as typeId,m.`code`,mt.`name` as typeName,m.tel,m.address,
+		(select sum(o.total_price) from tb_orders o where  month(created_at) = month(now()) and o.merchant_id=m.id ) as monthPrice,
+		(select count(0) from tb_orders o where  month(o.created_at) = month(now()) and o.merchant_id=m.id ) as monthOrder,
+		(select count(0) from tb_item_merchants where merchant_id=m.id) as itemCount,
+ 		(select count(0) from tb_item_merchants im,tb_items i 
+ 		where im.item_id=i.id and im.merchant_id=m.id group by i.item_type ) as itemTypeCount,
+ 	 	(select count(0) from tb_coupon_merchants cm 
+ 	 	where cm.merchant_id=m.id) as activityCount
+		from tb_merchants m,tb_merchant_types mt  
+		where m.type_id=mt.id and m.status=1 
+		<if test="name != null and name != ''">
+			and m.name like "%"#{name,jdbcType=VARCHAR}"%"
+		</if>
+		order by m.id desc
+	</select>
+
+	<delete id="delete" parameterType="java.lang.String">
+		update tb_merchants
+		set status = -1
+		where id = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.takeaway.modular.dao.model.Merchants">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into tb_merchants (
+		type_id,name,code,province_id,city_id,address,star,manager_name,manager_phone,
+		description,platform_commission,tel,lat,lng,logo,notice,start_date,end_date,distribution_info,
+		starting_price,full_free_distribution,distribution_fee,distribution_scope,is_online,
+		status,created_at
+		)
+		values (#{typeId,jdbcType=INTEGER},
+		#{name,jdbcType=VARCHAR},#{code,jdbcType=VARCHAR},
+		#{provinceId,jdbcType=INTEGER},#{cityId,jdbcType=INTEGER},#{address,jdbcType=VARCHAR},
+		#{star,jdbcType=INTEGER},#{managerName,jdbcType=VARCHAR},#{managerPhone,jdbcType=VARCHAR},
+		#{description,jdbcType=VARCHAR},#{platformCommission,jdbcType=DOUBLE},#{tel,jdbcType=VARCHAR},
+		#{lat,jdbcType=VARCHAR},#{lng,jdbcType=VARCHAR},#{logo,jdbcType=VARCHAR},
+		#{notice,jdbcType=VARCHAR},#{startDate,jdbcType=TIMESTAMP},#{endDate,jdbcType=TIMESTAMP},
+		#{distributionInfo,jdbcType=VARCHAR},#{startingPrice,jdbcType=DOUBLE},#{fullFreeDistribution,jdbcType=DOUBLE},
+		#{distributionFee,jdbcType=DOUBLE},#{distributionScope,jdbcType=VARCHAR},
+		#{isOnline,jdbcType=INTEGER},#{status,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.takeaway.modular.dao.model.Merchants">
+		update tb_merchants
+		set
+		type_id
+		= #{typeId,jdbcType=INTEGER},
+		name = #{name,jdbcType=VARCHAR},
+		code =
+		#{code,jdbcType=VARCHAR},
+		province_id = #{provinceId,jdbcType=INTEGER},
+		city_id = #{cityId,jdbcType=INTEGER},
+		address =
+		#{address,jdbcType=VARCHAR},
+		star = #{star,jdbcType=INTEGER},
+		manager_name = #{managerName,jdbcType=VARCHAR},
+		manager_phone =
+		#{managerPhone,jdbcType=VARCHAR},
+		description =
+		#{description,jdbcType=VARCHAR},
+		platform_commission =
+		#{platformCommission,jdbcType=DOUBLE},
+		tel =
+		#{tel,jdbcType=VARCHAR},
+		lat = #{lat,jdbcType=VARCHAR},
+		lng =
+		#{lng,jdbcType=VARCHAR},
+		logo =
+		#{logo,jdbcType=VARCHAR},
+		notice =
+		#{notice,jdbcType=VARCHAR},
+		start_date =
+		#{startDate,jdbcType=TIMESTAMP},
+		end_date =
+		#{endDate,jdbcType=TIMESTAMP},
+		distribution_info =
+		#{distributionInfo,jdbcType=VARCHAR},
+		starting_price =
+		#{startingPrice,jdbcType=DOUBLE},
+		full_free_distribution =
+		#{fullFreeDistribution,jdbcType=DOUBLE},
+		distribution_fee =
+		#{distributionFee,jdbcType=DOUBLE},
+		distribution_scope =
+		#{distributionScope,jdbcType=VARCHAR},
+		is_online =
+		#{isOnline,jdbcType=INTEGER},
+		status =
+		#{status,jdbcType=INTEGER},
+		updated_at =
+		#{updatedAt,jdbcType=TIMESTAMP}
+		where id =
+		#{id,jdbcType=INTEGER}
+	</update>
+</mapper>

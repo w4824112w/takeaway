@@ -13,6 +13,8 @@ public class OrderReservesDto {
 	private String createdAt;
 	private String operAt;
 	private String operMan;
+	
+	private String orderNo;
 
 	public String getId() {
 		return id;
@@ -108,6 +110,14 @@ public class OrderReservesDto {
 
 	public void setOperMan(String operMan) {
 		this.operMan = operMan;
+	}
+
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
 	}
 
 }

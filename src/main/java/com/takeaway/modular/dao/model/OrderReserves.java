@@ -1,6 +1,7 @@
 package com.takeaway.modular.dao.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class OrderReserves {
 	private Integer id;
@@ -15,6 +16,8 @@ public class OrderReserves {
 	private Date createdAt;
 	private Date operAt;
 	private Integer operMan;
+	
+	private List<OrderItems> orderItems;
 
 	public Integer getId() {
 		return id;
@@ -110,6 +113,14 @@ public class OrderReserves {
 
 	public void setOperMan(Integer operMan) {
 		this.operMan = operMan;
+	}
+
+	public List<OrderItems> getOrderItems() {
+		return orderItems;
+	}
+
+	public void setOrderItems(List<OrderItems> orderItems) {
+		this.orderItems = orderItems;
 	}
 
 }

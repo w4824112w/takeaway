@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.takeaway.modular.dao.mapper.ItemsMapper">
+	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.Items">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="item_type" property="itemType" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="label" property="label" jdbcType="VARCHAR" />
+		<result column="origin_price" property="originPrice" jdbcType="DOUBLE" />
+		<result column="cost_price" property="costPrice" jdbcType="DOUBLE" />
+		<result column="price" property="price" jdbcType="DOUBLE" />
+		<result column="unit" property="unit" jdbcType="VARCHAR" />
+		<result column="sales_volume" property="salesVolume" jdbcType="INTEGER" />
+		<result column="tips" property="tips" jdbcType="VARCHAR" />
+		<result column="remain" property="remain" jdbcType="VARCHAR" />
+		<result column="stock" property="stock" jdbcType="INTEGER" />
+		<result column="stock_status" property="stockStatus" jdbcType="INTEGER" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
+		<result column="city_id" property="cityId" jdbcType="INTEGER" />
+		<result column="origin" property="origin" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,item_type,name,code,label,origin_price,cost_price,price,
+		unit,sales_volume,tips,remain,stock,stock_status,
+		description,status,created_at,updated_at,city_id,origin
+	</sql>
+
+	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_items
+		where id = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_items where status=1 order by id desc
+	</select>
+
+	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.ItemsDto"
+		resultType="com.takeaway.modular.dao.dto.ItemsDto">
+		select 
+ 		i.id,i.`name`,i.`code`,i.unit,i.price,it.`name` as itemTypeName,
+ 		i.label,i.sales_volume as salesVolume,i.stock_status as stockStatus,
+ 		i.stock,i.`status`,im.is_puton as isPuton,m.`name` as merchantName,m.id as  merchantId
+		from tb_items i,tb_item_types it,tb_merchants m,tb_item_merchants im
+		where i.item_type=it.id and i.id=im.item_id and im.merchant_id=m.id
+		<if test="merchantId != null and merchantId != ''">
+			and im.merchant_id = #{merchantId,jdbcType=VARCHAR}
+		</if>
+		<if test="name != null and name != ''">
+			and i.name like "%"#{name,jdbcType=VARCHAR}"%"
+		</if>
+		order by i.id desc
+	</select>
+
+	<delete id="delete" parameterType="java.lang.String">
+		update tb_items
+		set status
+		= -1
+		where id = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.takeaway.modular.dao.model.Items">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into tb_items (
+		item_type,name,code,label,origin_price,cost_price,price,
+		unit,sales_volume,tips,remain,stock,stock_status,
+		description,city_id,is_puton,origin,status,created_at
+		)
+		values
+		(#{itemType,jdbcType=INTEGER},#{name,jdbcType=VARCHAR},#{code,jdbcType=VARCHAR},
+		#{label,jdbcType=VARCHAR},#{originPrice,jdbcType=DOUBLE},#{costPrice,jdbcType=DOUBLE},
+		#{price,jdbcType=DOUBLE},#{unit,jdbcType=VARCHAR},#{salesVolume,jdbcType=INTEGER},
+		#{tips,jdbcType=VARCHAR},#{remain,jdbcType=VARCHAR},#{stock,jdbcType=INTEGER},
+		#{stockStatus,jdbcType=INTEGER},#{description,jdbcType=VARCHAR},#{cityId,jdbcType=INTEGER},
+		#{origin,jdbcType=VARCHAR},#{status,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.takeaway.modular.dao.model.Items">
+		update tb_items
+		set
+		item_type=#{itemType,jdbcType=INTEGER},
+		name = #{name,jdbcType=VARCHAR},
+		code=#{code,jdbcType=VARCHAR},
+		label = #{label,jdbcType=VARCHAR},
+		origin_price=#{originPrice,jdbcType=DOUBLE},
+		cost_price=#{costPrice,jdbcType=DOUBLE},
+		price=#{price,jdbcType=DOUBLE},
+		unit=#{unit,jdbcType=VARCHAR},
+		sales_volume=#{salesVolume,jdbcType=INTEGER},
+		tips=#{tips,jdbcType=VARCHAR},
+		remain=#{remain,jdbcType=VARCHAR},
+		stock=#{stock,jdbcType=INTEGER},
+		stockStatus=#{stockStatus,jdbcType=INTEGER},
+		description=#{description,jdbcType=VARCHAR},
+		city_id=#{cityId,jdbcType=INTEGER},
+		origin=#{origin,jdbcType=VARCHAR},
+		status =
+		#{status,jdbcType=VARCHAR},
+		updated_at =
+		#{updatedAt,jdbcType=TIMESTAMP}
+		where id =
+		#{id,jdbcType=INTEGER}
+	</update>
+</mapper>

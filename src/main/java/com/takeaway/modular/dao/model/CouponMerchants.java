@@ -2,7 +2,8 @@ package com.takeaway.modular.dao.model;
 
 public class CouponMerchants {
 	private Integer id;
-	private Integer couponId;
+	private Integer type;
+	private Integer targetId;
 	private Integer merchantId;
 
 	public Integer getId() {
@@ -13,12 +14,20 @@ public class CouponMerchants {
 		this.id = id;
 	}
 
-	public Integer getCouponId() {
-		return couponId;
+	public Integer getType() {
+		return type;
 	}
 
-	public void setCouponId(Integer couponId) {
-		this.couponId = couponId;
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	public Integer getTargetId() {
+		return targetId;
+	}
+
+	public void setTargetId(Integer targetId) {
+		this.targetId = targetId;
 	}
 
 	public Integer getMerchantId() {

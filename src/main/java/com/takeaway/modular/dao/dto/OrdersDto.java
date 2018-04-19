@@ -6,20 +6,25 @@ public class OrdersDto {
 	private String merchantId;
 	private String userId;
 	private String orderType;
-	private String size;
 	private String totalPrice;
-	private String itemId;
-	private String itemName;
-	private String itemPrice;
+	private String deliverMoney;
 	private String status;
 	private String createdAt;
+	private String updatedAt;
 	private String isPay;
 	private String payDate;
 	private String paySno;
+	private String realTotalMoney;
+	private String isShip;
+	private String shipDate;
+	private String isReceipt;
+	private String receiptDate;
 	private String isReceived;
 	private String receivedDate;
 	private String isRefund;
 	private String refundDate;
+	private String refundMoney;
+	private String refundSrcStatus;
 	private String isReservation;
 	private String reservationDate;
 	private String isReminder;
@@ -29,6 +34,20 @@ public class OrdersDto {
 	private String remark;
 	private String payType;
 	private String isInvoice;
+	private String invoiceClient;
+	private String isAppraises;
+	private String userName;
+	private String userPhone;
+	private String userAddress;
+	private String platformCommission;
+	private String orderScore;
+	private String couponMoney;
+	private String activityMoney;
+
+	private String processing; // 未处理订单数
+	private String refunding; // 退款中的外卖订单数
+	private String todayOrders; // 今日订单数
+	private String todayTurnover; // 今日营业额
 
 	public String getId() {
 		return id;
@@ -70,14 +89,6 @@ public class OrdersDto {
 		this.orderType = orderType;
 	}
 
-	public String getSize() {
-		return size;
-	}
-
-	public void setSize(String size) {
-		this.size = size;
-	}
-
 	public String getTotalPrice() {
 		return totalPrice;
 	}
@@ -86,28 +97,12 @@ public class OrdersDto {
 		this.totalPrice = totalPrice;
 	}
 
-	public String getItemId() {
-		return itemId;
+	public String getDeliverMoney() {
+		return deliverMoney;
 	}
 
-	public void setItemId(String itemId) {
-		this.itemId = itemId;
-	}
-
-	public String getItemName() {
-		return itemName;
-	}
-
-	public void setItemName(String itemName) {
-		this.itemName = itemName;
-	}
-
-	public String getItemPrice() {
-		return itemPrice;
-	}
-
-	public void setItemPrice(String itemPrice) {
-		this.itemPrice = itemPrice;
+	public void setDeliverMoney(String deliverMoney) {
+		this.deliverMoney = deliverMoney;
 	}
 
 	public String getStatus() {
@@ -124,6 +119,14 @@ public class OrdersDto {
 
 	public void setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public String getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(String updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 	public String getIsPay() {
@@ -148,6 +151,46 @@ public class OrdersDto {
 
 	public void setPaySno(String paySno) {
 		this.paySno = paySno;
+	}
+
+	public String getRealTotalMoney() {
+		return realTotalMoney;
+	}
+
+	public void setRealTotalMoney(String realTotalMoney) {
+		this.realTotalMoney = realTotalMoney;
+	}
+
+	public String getIsShip() {
+		return isShip;
+	}
+
+	public void setIsShip(String isShip) {
+		this.isShip = isShip;
+	}
+
+	public String getShipDate() {
+		return shipDate;
+	}
+
+	public void setShipDate(String shipDate) {
+		this.shipDate = shipDate;
+	}
+
+	public String getIsReceipt() {
+		return isReceipt;
+	}
+
+	public void setIsReceipt(String isReceipt) {
+		this.isReceipt = isReceipt;
+	}
+
+	public String getReceiptDate() {
+		return receiptDate;
+	}
+
+	public void setReceiptDate(String receiptDate) {
+		this.receiptDate = receiptDate;
 	}
 
 	public String getIsReceived() {
@@ -180,6 +223,22 @@ public class OrdersDto {
 
 	public void setRefundDate(String refundDate) {
 		this.refundDate = refundDate;
+	}
+
+	public String getRefundMoney() {
+		return refundMoney;
+	}
+
+	public void setRefundMoney(String refundMoney) {
+		this.refundMoney = refundMoney;
+	}
+
+	public String getRefundSrcStatus() {
+		return refundSrcStatus;
+	}
+
+	public void setRefundSrcStatus(String refundSrcStatus) {
+		this.refundSrcStatus = refundSrcStatus;
 	}
 
 	public String getIsReservation() {
@@ -252,6 +311,110 @@ public class OrdersDto {
 
 	public void setIsInvoice(String isInvoice) {
 		this.isInvoice = isInvoice;
+	}
+
+	public String getInvoiceClient() {
+		return invoiceClient;
+	}
+
+	public void setInvoiceClient(String invoiceClient) {
+		this.invoiceClient = invoiceClient;
+	}
+
+	public String getIsAppraises() {
+		return isAppraises;
+	}
+
+	public void setIsAppraises(String isAppraises) {
+		this.isAppraises = isAppraises;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserPhone() {
+		return userPhone;
+	}
+
+	public void setUserPhone(String userPhone) {
+		this.userPhone = userPhone;
+	}
+
+	public String getUserAddress() {
+		return userAddress;
+	}
+
+	public void setUserAddress(String userAddress) {
+		this.userAddress = userAddress;
+	}
+
+	public String getPlatformCommission() {
+		return platformCommission;
+	}
+
+	public void setPlatformCommission(String platformCommission) {
+		this.platformCommission = platformCommission;
+	}
+
+	public String getOrderScore() {
+		return orderScore;
+	}
+
+	public void setOrderScore(String orderScore) {
+		this.orderScore = orderScore;
+	}
+
+	public String getCouponMoney() {
+		return couponMoney;
+	}
+
+	public void setCouponMoney(String couponMoney) {
+		this.couponMoney = couponMoney;
+	}
+
+	public String getProcessing() {
+		return processing;
+	}
+
+	public void setProcessing(String processing) {
+		this.processing = processing;
+	}
+
+	public String getRefunding() {
+		return refunding;
+	}
+
+	public void setRefunding(String refunding) {
+		this.refunding = refunding;
+	}
+
+	public String getTodayOrders() {
+		return todayOrders;
+	}
+
+	public void setTodayOrders(String todayOrders) {
+		this.todayOrders = todayOrders;
+	}
+
+	public String getTodayTurnover() {
+		return todayTurnover;
+	}
+
+	public void setTodayTurnover(String todayTurnover) {
+		this.todayTurnover = todayTurnover;
+	}
+
+	public String getActivityMoney() {
+		return activityMoney;
+	}
+
+	public void setActivityMoney(String activityMoney) {
+		this.activityMoney = activityMoney;
 	}
 
 }

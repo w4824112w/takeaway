@@ -4,11 +4,13 @@ package com.takeaway.core.enums;
 import com.alibaba.fastjson.JSONObject;
 
 /**
- * @author Administrator
+ * @author hk
  * @Description: 错误代码枚举
  */
 public enum ErrorEnums {
     SUCCESS(200, "成功"),
+    ERROR(400, "失败"),
+    OVERTIME(999, "登录超时"),
     SERVER_ERROR(-1, "服务器异常"),
     PARAM_ERROR(99999, "参数错误"),
     ILLEGAL_REQUEST(99998, "非法请求"),

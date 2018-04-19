@@ -8,8 +8,9 @@ public class CouponGrantRules {
 	private Integer sendType;
 	private Integer status;
 	private Date createdAt;
+	private Date updatedAt;
 	private String content;
-	private String title;
+	private String name;
 
 	public Integer getId() {
 		return id;
@@ -51,6 +52,14 @@ public class CouponGrantRules {
 		this.createdAt = createdAt;
 	}
 
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
 	public String getContent() {
 		return content;
 	}
@@ -59,12 +68,12 @@ public class CouponGrantRules {
 		this.content = content;
 	}
 
-	public String getTitle() {
-		return title;
+	public String getName() {
+		return name;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

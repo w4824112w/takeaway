@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.takeaway.modular.dao.mapper.ActivitysMapper">
+	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.Activitys">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="fullMoney" property="fullMoney" jdbcType="DOUBLE" />
+		<result column="reduceMoney" property="reduceMoney" jdbcType="DOUBLE" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="startDate" property="startDate" jdbcType="DATE" />
+		<result column="endDate" property="endDate" jdbcType="DATE" />
+		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,name,fullMoney,reduceMoney,description,
+		startDate,endDate,created_at,updated_at,status
+	</sql>
+
+	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_activitys
+		where id = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getByMerchantId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		c.*
+		from tb_activitys c,tb_coupon_merchants cm
+		where c.id=cm.coupon_id and cm.merchant_id = #{merchantId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_activitys where status=1 order by id desc
+	</select>
+
+	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.ActivitysDto"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_activitys where status=1 
+		<if test="name != null and name != ''">
+			and name like "%"#{name,jdbcType=VARCHAR}"%"
+		</if>
+		order by id desc
+	</select>
+
+	<delete id="delete" parameterType="java.lang.String">
+		update tb_activitys
+		set status
+		= -1
+		where id = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.takeaway.modular.dao.model.Activitys">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into tb_activitys (
+		name,fullMoney,reduceMoney,description,
+		startDate,endDate,created_at,status
+		)
+		values
+		(
+		#{name,jdbcType=VARCHAR},
+		#{fullMoney,jdbcType=DOUBLE},
+		#{reduceMoney,jdbcType=DOUBLE},
+		#{description,jdbcType=VARCHAR},
+		#{startDate,jdbcType=TIMESTAMP},
+		#{endDate,jdbcType=TIMESTAMP},
+		#{createdAt,jdbcType=TIMESTAMP},
+		#{status,jdbcType=INTEGER}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.takeaway.modular.dao.model.Activitys">
+		update tb_activitys
+		set
+		name= #{name,jdbcType=VARCHAR},
+		fullMoney= #{fullMoney,jdbcType=DOUBLE},
+		reduceMoney= #{reduceMoney,jdbcType=DOUBLE},
+		description= #{description,jdbcType=VARCHAR},
+		startDate= #{startDate,jdbcType=TIMESTAMP},
+		endDate= #{endDate,jdbcType=TIMESTAMP},
+		updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+		status = #{status,jdbcType=VARCHAR}
+		where id =
+		#{id,jdbcType=INTEGER}
+	</update>
+</mapper>

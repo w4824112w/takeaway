@@ -4,25 +4,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-
-
-
-
-
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSONObject;
 import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageList;
 import com.takeaway.commons.page.PageResult;
 import com.takeaway.commons.utils.MD5Util;
+import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.UsersDto;
 import com.takeaway.modular.dao.mapper.UsersMapper;
 import com.takeaway.modular.dao.model.Users;
-
 
 /**
  * 本地的
@@ -41,55 +35,38 @@ public class UsersService {
 		return u;
 	}
 
-	public PageResult<Users> findPage(PageBounds bounds,UsersDto dto) {
-	    PageList<Users> users=usersMapper.findPage(bounds,dto);
-		return new PageResult<Users>(users);
+	public PageResult<UsersDto> findPage(PageBounds bounds, UsersDto dto) {
+		PageList<UsersDto> users = usersMapper.findPage(bounds, dto);
+		return new PageResult<UsersDto>(users);
 	}
 
 	@Transactional
-	public Map<String,Object> saveOrUpdate(Users user) {
+	public JSONObject save(Users user) {
 		int result;
-		Map<String,Object> retData=new HashMap<String,Object>();
-		
-		//默认密码，md5加密
-		user.setPasswordHash(MD5Util.MD5(user.getPasswordHash()));
-		
-		if(user.getId()!=null){
-			user.setUpdatedAt(new Date());
-			result = usersMapper.update(user);
-			
-			if(result>0){
-				retData.put("code", "0");
-				retData.put("msg", "修改用户成功");
-				return retData;
-			}else{
-				retData.put("code", "1");
-				retData.put("msg", "修改用户失败");
-				return retData;
-			}
-		}else{
-			int count=usersMapper.checkLoginName(user.getName());
-			if(count>0){
-				retData.put("code", "1");
-				retData.put("msg", "账户名称已经存在");
-				return retData;
-			}
-			
-			user.setCreatedAt(new Date());
-			result = usersMapper.save(user);
-			
-			if(result>0){
-				retData.put("code", "0");
-				retData.put("msg", "新增用户成功");
-				return retData;
-			}else{
-				retData.put("code", "1");
-				retData.put("msg", "新增用户失败");
-				return retData;
-			}
+		int count = usersMapper.checkLoginName(user.getName());
+		if (count > 0) {
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "账户名称已经存在", null);
 		}
-		
-		
+
+		user.setCreatedAt(new Date());
+		result = usersMapper.save(user);
+		if (result > 0) {
+			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "新增会员", result);
+		} else {
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增会员", null);
+		}
+	}
+
+	@Transactional
+	public JSONObject update(Users user) {
+		int result;
+		user.setUpdatedAt(new Date());
+		result = usersMapper.update(user);
+		if (result > 0) {
+			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "更新会员", result);
+		} else {
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "更新会员", null);
+		}
 	}
 
 	public Users getById(String id) {
@@ -103,17 +80,16 @@ public class UsersService {
 
 	@Transactional
 	public boolean delBatch(String[] ids) {
-		int ret=0;
-		for(String id:ids){
-			int count=usersMapper.delete(id);
-			ret=ret+count;
+		int ret = 0;
+		for (String id : ids) {
+			int count = usersMapper.delete(id);
+			ret = ret + count;
 		}
-		if(ret==ids.length){
+		if (ret == ids.length) {
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
-
 
 }

@@ -6,8 +6,9 @@ public class CouponGrantRulesDto {
 	private String sendType;
 	private String status;
 	private String createdAt;
+	private String updatedAt;
 	private String content;
-	private String title;
+	private String name;
 
 	public String getId() {
 		return id;
@@ -49,6 +50,14 @@ public class CouponGrantRulesDto {
 		this.createdAt = createdAt;
 	}
 
+	public String getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(String updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
 	public String getContent() {
 		return content;
 	}
@@ -57,12 +66,12 @@ public class CouponGrantRulesDto {
 		this.content = content;
 	}
 
-	public String getTitle() {
-		return title;
+	public String getName() {
+		return name;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

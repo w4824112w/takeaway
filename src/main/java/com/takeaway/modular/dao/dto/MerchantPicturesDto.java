@@ -1,10 +1,10 @@
 package com.takeaway.modular.dao.dto;
 
+
 public class MerchantPicturesDto {
 	private String id;
-	private String fileName;
+	private String url;
 	private String merchantId;
-	private String description;
 	private String createdAt;
 
 	public String getId() {
@@ -15,12 +15,12 @@ public class MerchantPicturesDto {
 		this.id = id;
 	}
 
-	public String getFileName() {
-		return fileName;
+	public String getUrl() {
+		return url;
 	}
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	public String getMerchantId() {
@@ -29,14 +29,6 @@ public class MerchantPicturesDto {
 
 	public void setMerchantId(String merchantId) {
 		this.merchantId = merchantId;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public String getCreatedAt() {

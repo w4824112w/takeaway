@@ -2,7 +2,7 @@ package com.takeaway.modular.dao.dto;
 
 public class ItemPicturesDto {
 	private String id;
-	private String fileName;
+	private String url;
 	private String itemId;
 	private String createdAt;
 
@@ -14,12 +14,12 @@ public class ItemPicturesDto {
 		this.id = id;
 	}
 
-	public String getFileName() {
-		return fileName;
+	public String getUrl() {
+		return url;
 	}
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	public String getItemId() {
