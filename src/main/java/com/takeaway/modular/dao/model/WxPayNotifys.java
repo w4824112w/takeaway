@@ -1,10 +1,25 @@
 package com.takeaway.modular.dao.model;
 
+import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
-public class WxPayNotifys {
+import com.takeaway.core.netpay.wxpay.bean.WxPayNotify;
+import com.takeaway.modular.dao.dto.WxPayNotifysDto;
+
+/**
+ * 微信支付回调通知
+ * 
+ * @author hk
+ *
+ */
+public class WxPayNotifys implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	private Integer id;
-	private Date timeEnd;
+	private String timeEnd;
 	private String outTradeNo;
 	private String transactionId;
 	private Double totalFee;
@@ -19,6 +34,24 @@ public class WxPayNotifys {
 	private Integer isVerify;
 	private Date verifyDate;
 	private String tradeState;
+	
+	public static WxPayNotifys setWxPayNotify(Map<String, Object> map) {
+		WxPayNotifys wxPayNotify = new WxPayNotifys();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		wxPayNotify.setTimeEnd(map.get("time_end").toString());
+		wxPayNotify.setOutTradeNo(map.get("out_trade_no").toString());
+		wxPayNotify.setTransactionId(map.get("transaction_id").toString());
+		wxPayNotify.setTotalFee(Double.valueOf(map.get("total_fee").toString()));
+		wxPayNotify.setCashFee(Double.valueOf(map.get("cash_fee").toString()));
+		wxPayNotify.setBankType(map.get("bank_type").toString());
+		wxPayNotify.setResultCode(map.get("result_code").toString());
+		wxPayNotify.setSign(map.get("sign").toString());
+		wxPayNotify.setNonceStr(map.get("nonce_str").toString());
+		wxPayNotify.setOpenid(map.get("openid").toString());
+		wxPayNotify.setIsVerify(0);
+
+		return wxPayNotify;
+	}
 
 	public Integer getId() {
 		return id;
@@ -28,11 +61,11 @@ public class WxPayNotifys {
 		this.id = id;
 	}
 
-	public Date getTimeEnd() {
+	public String getTimeEnd() {
 		return timeEnd;
 	}
 
-	public void setTimeEnd(Date timeEnd) {
+	public void setTimeEnd(String timeEnd) {
 		this.timeEnd = timeEnd;
 	}
 

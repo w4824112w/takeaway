@@ -6,6 +6,7 @@ import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageList;
 import com.takeaway.modular.dao.dto.ItemTypesDto;
 import com.takeaway.modular.dao.model.ItemTypes;
+import com.takeaway.modular.dao.model.Orders;
 
 
 public interface ItemTypesMapper {
@@ -22,5 +23,5 @@ public interface ItemTypesMapper {
 	
 	int delete(String id);
 	
-	
+	List<ItemTypes> getByMerchantId(String merchantId);
 }

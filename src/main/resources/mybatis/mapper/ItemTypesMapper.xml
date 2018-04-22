@@ -36,6 +36,13 @@
 		from tb_item_types order by id asc
 	</select>
 	
+	<select id="getByMerchantId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select distinct it.*
+		from tb_item_types it,tb_items i,tb_item_merchants im 
+		where it.id=i.item_type and i.id=im.item_id 
+		and im.merchant_id = #{merchantId,jdbcType=VARCHAR}
+	</select>
+	
 	<delete id="delete" parameterType="java.lang.String">
 		delete from tb_item_types where id = #{id,jdbcType=VARCHAR}
 	</delete>

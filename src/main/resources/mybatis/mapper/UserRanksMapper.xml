@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.takeaway.modular.dao.mapper.UserRanksMapper">
+	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.UserRanks">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="startScore" property="startScore" jdbcType="INTEGER" />
+		<result column="endScore" property="endScore" jdbcType="INTEGER" />
+		<result column="rebate" property="rebate" jdbcType="INTEGER" />
+		<result column="created_at" property="createdAt" jdbcType="DATE" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, name,startScore,endScore,rebate,created_at
+	</sql>
+
+	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_user_ranks
+		where id = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.UserRanksDto"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_user_ranks ur,tb_users u
+		where ur.user_id=u.id
+		order by u.id desc
+	</select>
+	
+	<select id="getAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_user_ranks order by id asc
+	</select>
+
+	<select id="getByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_user_ranks
+		where user_id = #{userId,jdbcType=VARCHAR}
+	</select>
+
+	<update id="delete" parameterType="java.lang.String">
+		delete from tb_user_ranks where id = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="save" parameterType="com.takeaway.modular.dao.model.UserRanks">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into tb_user_ranks (
+		name,startScore,endScore,rebate,created_at
+		)
+		values
+		(#{name,jdbcType=VARCHAR},
+		#{startScore,jdbcType=INTEGER}, 
+		#{endScore,jdbcType=INTEGER}, 
+		#{rebate,jdbcType=INTEGER}, 
+		#{createdAt,jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.takeaway.modular.dao.model.UserRanks">
+		update tb_user_ranks
+		set
+		name= #{name,jdbcType=VARCHAR},
+		startScore= #{startScore,jdbcType=INTEGER}, 
+		endScore= #{endScore,jdbcType=INTEGER}, 
+		rebate= #{rebate,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

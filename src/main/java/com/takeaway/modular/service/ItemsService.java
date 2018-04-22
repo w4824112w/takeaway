@@ -23,6 +23,7 @@ import com.takeaway.modular.dao.mapper.ItemsMapper;
 import com.takeaway.modular.dao.model.ItemMerchants;
 import com.takeaway.modular.dao.model.ItemPictures;
 import com.takeaway.modular.dao.model.ItemPropertys;
+import com.takeaway.modular.dao.model.ItemTypes;
 import com.takeaway.modular.dao.model.Items;
 
 /**
@@ -175,6 +176,10 @@ public class ItemsService {
 	public List<Items> getAll() {
 		List<Items> items = itemsMapper.getAll();
 		return items;
+	}
+	
+	public List<Items> getAllByMerchantId(String merchantId) {
+		return itemsMapper.getByMerchantId(merchantId);
 	}
 
 }

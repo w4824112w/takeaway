@@ -2,6 +2,7 @@ package com.takeaway.modular.dao.dto;
 
 import java.util.List;
 
+import com.takeaway.modular.dao.model.Activitys;
 import com.takeaway.modular.dao.model.Coupons;
 
 public class MerchantsDto {
@@ -43,7 +44,8 @@ public class MerchantsDto {
 	private String activityCount;
 
 	private Boolean isFavorite; // 是否收藏
-	private List<Coupons> coupons; // 优惠活动
+	private List<Coupons> coupons; // 优惠卷
+	private List<Activitys> activitys; // 满减活动
 
 	public String getId() {
 		return id;
@@ -339,6 +341,14 @@ public class MerchantsDto {
 
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
+	}
+
+	public List<Activitys> getActivitys() {
+		return activitys;
+	}
+
+	public void setActivitys(List<Activitys> activitys) {
+		this.activitys = activitys;
 	}
 
 }

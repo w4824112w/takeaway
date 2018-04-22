@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,8 +29,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageResult;
+import com.takeaway.commons.utils.DateUtil;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.ActivitysDto;
+import com.takeaway.modular.dao.model.Coupons;
 import com.takeaway.modular.dao.model.Managers;
 import com.takeaway.modular.dao.model.MerchantTypes;
 import com.takeaway.modular.dao.model.Activitys;
@@ -157,20 +161,10 @@ public class ActivitysController {
 	 * @return
 	 */
 	@ApiOperation(value = "新增", httpMethod = "POST", notes = "新增优惠活动信息")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "name", value = "优惠活动名称", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "fullMoney", value = "满", required = true, dataType = "Double", paramType = "form"),
-			@ApiImplicitParam(name = "reduceMoney", value = "减", required = true, dataType = "Double", paramType = "form"),
-			@ApiImplicitParam(name = "description", value = "描述", required = false, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "startDate", value = "活动开始时间", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "endDate", value = "活动结束时间", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "merchants", value = "店铺id数组", required = false, dataType = "String", paramType = "form")
-			})
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
-			HttpServletResponse response, String name, Double fullMoney,
-			Double reduceMoney, String description, String startDate,
-			String endDate, Integer[] merchants) {
+			HttpServletResponse response,
+			@ApiParam @RequestBody Activitys activitys) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -178,15 +172,7 @@ public class ActivitysController {
 					null);
 		}
 		try {
-			Activitys activitys = new Activitys();
-			activitys.setName(name);
-			activitys.setFullMoney(fullMoney);
-			activitys.setReduceMoney(reduceMoney);
-			activitys.setDescription(description);
-			activitys.setStartDate(new Date(startDate));
-			activitys.setEndDate(new Date(endDate));
-			activitys.setStatus(1);
-			return activitysService.save(activitys,merchants);
+			return activitysService.save(activitys);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增", null);
@@ -202,21 +188,10 @@ public class ActivitysController {
 	 * @return
 	 */
 	@ApiOperation(value = "更新", httpMethod = "POST", notes = "更新优惠活动信息")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "id", value = "优惠活动id", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "name", value = "优惠活动名称", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "fullMoney", value = "满", required = true, dataType = "Double", paramType = "form"),
-			@ApiImplicitParam(name = "reduceMoney", value = "减", required = true, dataType = "Double", paramType = "form"),
-			@ApiImplicitParam(name = "description", value = "描述", required = false, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "startDate", value = "活动开始时间", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "endDate", value = "活动结束时间", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "merchants", value = "店铺id数组", required = false, dataType = "String", paramType = "form")
-			})
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public JSONObject update(HttpServletRequest request,
-			HttpServletResponse response, String id, String name,
-			Double fullMoney, Double reduceMoney, String description,
-			String startDate, String endDate,Integer[] merchants) {
+			HttpServletResponse response, 
+			@ApiParam @RequestBody Activitys activitys) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -224,15 +199,8 @@ public class ActivitysController {
 					null);
 		}
 		try {
-			Activitys activitys = activitysService.getById(id);
-			activitys.setName(name);
-			activitys.setFullMoney(fullMoney);
-			activitys.setReduceMoney(reduceMoney);
-			activitys.setDescription(description);
-			activitys.setStartDate(new Date(startDate));
-			activitys.setEndDate(new Date(endDate));
-			activitys.setStatus(1);
-			return activitysService.update(activitys,merchants);
+			
+			return activitysService.update(activitys);
 
 		} catch (Exception e) {
 			e.printStackTrace();

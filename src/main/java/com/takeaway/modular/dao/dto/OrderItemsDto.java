@@ -4,6 +4,8 @@ public class OrderItemsDto {
 	private String id;
 	private String orderId;
 	private String itemId;
+	private String targetId;
+	private String targetName;
 	private String itemNums;
 	private String itemPrice;
 	private String itemType;
@@ -32,6 +34,22 @@ public class OrderItemsDto {
 
 	public void setItemId(String itemId) {
 		this.itemId = itemId;
+	}
+
+	public String getTargetId() {
+		return targetId;
+	}
+
+	public void setTargetId(String targetId) {
+		this.targetId = targetId;
+	}
+
+	public String getTargetName() {
+		return targetName;
+	}
+
+	public void setTargetName(String targetName) {
+		this.targetName = targetName;
 	}
 
 	public String getItemNums() {

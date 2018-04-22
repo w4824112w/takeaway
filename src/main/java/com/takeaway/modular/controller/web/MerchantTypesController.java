@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +26,7 @@ import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageResult;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.MerchantTypesDto;
+import com.takeaway.modular.dao.model.ItemTypes;
 import com.takeaway.modular.dao.model.Managers;
 import com.takeaway.modular.dao.model.MerchantTypes;
 import com.takeaway.modular.service.MerchantTypesService;
@@ -148,18 +151,15 @@ public class MerchantTypesController {
 	 * @return
 	 */
 	@ApiOperation(value = "新增", httpMethod = "POST", notes = "新增商户类型信息")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "name", value = "商户类型名称", required = true, dataType = "String", paramType = "form") })
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
-			HttpServletResponse response, String name) {
+			HttpServletResponse response, @ApiParam @RequestBody MerchantTypes merchantTypes) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
 			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
 		}
 		try {
-			MerchantTypes merchantTypes = new MerchantTypes();
-			merchantTypes.setName(name);
 			return merchantTypesService.save(merchantTypes);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -176,22 +176,16 @@ public class MerchantTypesController {
 	 * @return
 	 */
 	@ApiOperation(value = "更新", httpMethod = "POST", notes = "更新商户类型信息")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "id", value = "商户类型id", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "name", value = "商户类型名称", required = true, dataType = "String", paramType = "form")
-			})
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public JSONObject update(HttpServletRequest request,
-			HttpServletResponse response, String id, String name) {
+			HttpServletResponse response,@ApiParam @RequestBody MerchantTypes merchantTypes) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
 			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
 		}
 		try {
-			MerchantTypes merchants = merchantTypesService.getById(id);
-			merchants.setName(name);
-			return merchantTypesService.update(merchants);
+			return merchantTypesService.update(merchantTypes);
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -4,16 +4,13 @@
 	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.Propertys">
 		<id column="id" property="id" jdbcType="INTEGER" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
-		<result column="value" property="value" jdbcType="VARCHAR" />
-		<result column="price" property="price" jdbcType="DOUBLE" />
 		<result column="pid" property="pid" jdbcType="INTEGER" />
-		<result column="is_open" property="isOpen" jdbcType="INTEGER" />
 		<result column="created_at" property="createdAt" jdbcType="DATE" />
 		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		id,name,value,price,pid,is_open,created_at,updated_at
+		id,name,pid,created_at,updated_at
 	</sql>
 
 	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -45,7 +42,7 @@
 		resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from tb_propertys where 1=1
+		from tb_propertys where pid is null 
 		<if test="name != null and name != ''">
 			and name like "%"#{name,jdbcType=VARCHAR}"%"
 		</if>
@@ -56,6 +53,12 @@
 		delete from tb_propertys
 		where id = #{id,jdbcType=VARCHAR}
 	</delete>
+	
+	<delete id="delByPropertyId" parameterType="java.lang.String">
+		delete from
+		tb_propertys where pid =
+		#{propertyId,jdbcType=VARCHAR}
+	</delete>
 
 	<insert id="save" parameterType="com.takeaway.modular.dao.model.Propertys">
 		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -63,11 +66,10 @@
 			LAST_INSERT_ID()
 		</selectKey>
 		insert into tb_propertys (
-		name,value,price,pid,is_open,created_at
+		name,pid,created_at
 		)
 		values
-		(#{name,jdbcType=VARCHAR},#{value,jdbcType=VARCHAR},#{price,jdbcType=DOUBLE},
-		#{pid,jdbcType=INTEGER},#{isOpen,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP}
+		(#{name,jdbcType=VARCHAR},#{pid,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP}
 		)
 	</insert>
 
@@ -75,11 +77,7 @@
 		update tb_propertys
 		set
 		name = #{name,jdbcType=VARCHAR},
-		value = #{value,jdbcType=VARCHAR},
-		price = #{price,jdbcType=DOUBLE},
 		pid = #{pid,jdbcType=INTEGER},
-		is_open =
-		#{isOpen,jdbcType=INTEGER},
 		updated_at =
 		#{updatedAt,jdbcType=TIMESTAMP}
 		where id =

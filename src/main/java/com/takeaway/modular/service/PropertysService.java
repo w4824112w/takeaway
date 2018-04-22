@@ -28,6 +28,9 @@ public class PropertysService {
 
 	public PageResult<Propertys> findPage(PageBounds bounds, PropertysDto dto) {
 		PageList<Propertys> propertys = propertysMapper.findPage(bounds, dto);
+		for(Propertys property:propertys){
+			property.setSubPropertys(propertysMapper.getByPid(property.getId().toString()));
+		}
 		return new PageResult<Propertys>(propertys);
 	}
 
@@ -35,6 +38,44 @@ public class PropertysService {
 	public JSONObject save(Propertys propertys) {
 		int result;
 		result = propertysMapper.save(propertys);
+
+		if (result > 0) {
+			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "新增商品属性", result);
+		} else {
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增商品属性", result);
+		}
+	}
+
+	@Transactional
+	public JSONObject bathcSave(List<Propertys> propertys) {
+		int result = 0;
+		for (Propertys parent : propertys) {
+			result = propertysMapper.save(parent);
+			for (Propertys child : parent.getSubPropertys()) {
+				child.setPid(parent.getId());
+				propertysMapper.save(child);
+			}
+		}
+
+		if (result > 0) {
+			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "新增商品属性", result);
+		} else {
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增商品属性", result);
+		}
+	}
+
+	@Transactional
+	public JSONObject bathcUpdate(List<Propertys> propertys) {
+		int result = 0;
+
+		for (Propertys parent : propertys) {
+			result = propertysMapper.update(parent);
+			propertysMapper.delByPropertyId(parent.getId().toString());
+			for (Propertys child : parent.getSubPropertys()) {
+				child.setPid(parent.getId());
+				propertysMapper.update(child);
+			}
+		}
 
 		if (result > 0) {
 			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "新增商品属性", result);
@@ -57,6 +98,7 @@ public class PropertysService {
 
 	public Propertys getById(String id) {
 		Propertys propertys = propertysMapper.getById(id);
+		propertys.setSubPropertys(propertysMapper.getByPid(propertys.getId().toString()));
 		return propertys;
 	}
 
@@ -69,14 +111,14 @@ public class PropertysService {
 		List<Propertys> propertys = propertysMapper.getAll();
 		return propertys;
 	}
-	
+
 	public List<Propertys> getByItemId(String itemId) {
 		List<Propertys> propertys = propertysMapper.getByItemId(itemId);
 		return propertys;
 	}
-	
+
 	public List<Propertys> findByPid(String pid) {
-		return  propertysMapper.getByPid(pid);
+		return propertysMapper.getByPid(pid);
 	}
-	
+
 }

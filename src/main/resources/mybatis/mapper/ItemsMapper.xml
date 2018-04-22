@@ -43,6 +43,13 @@
 		from tb_items where status=1 order by id desc
 	</select>
 
+	<select id="getByMerchantId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select  i.*
+		from  tb_items i,tb_item_merchants im 
+		where i.id=im.item_id 
+		and im.merchant_id = #{merchantId,jdbcType=VARCHAR}
+	</select>
+
 	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.ItemsDto"
 		resultType="com.takeaway.modular.dao.dto.ItemsDto">
 		select 

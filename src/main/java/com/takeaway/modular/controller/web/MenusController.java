@@ -176,7 +176,7 @@ public class MenusController {
 	 * @param r
 	 * @return
 	 */
-	@ApiOperation(value = "新增", httpMethod = "POST", notes = "新增菜单信息")
+/*	@ApiOperation(value = "新增", httpMethod = "POST", notes = "新增菜单信息")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "name", value = "菜单名称", required = true, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "level", value = "菜单等级", required = true, dataType = "String", paramType = "form"),
@@ -184,7 +184,7 @@ public class MenusController {
 			@ApiImplicitParam(name = "pid", value = "父级菜单id", required = false, dataType = "Integer", paramType = "form"),
 			@ApiImplicitParam(name = "pidName", value = "父级菜单名称", required = false, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "menuOrder", value = "菜单排序", required = false, dataType = "Integer", paramType = "form")
-			})
+			})*/
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
 			HttpServletResponse response, String name, String level,
@@ -218,7 +218,7 @@ public class MenusController {
 	 * @param r
 	 * @return
 	 */
-	@ApiOperation(value = "更新", httpMethod = "POST", notes = "更新菜单信息")
+/*	@ApiOperation(value = "更新", httpMethod = "POST", notes = "更新菜单信息")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "id", value = "菜单id", required = true, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "name", value = "菜单名称", required = true, dataType = "String", paramType = "form"),
@@ -227,7 +227,7 @@ public class MenusController {
 			@ApiImplicitParam(name = "pid", value = "父级菜单id", required = false, dataType = "Integer", paramType = "form"),
 			@ApiImplicitParam(name = "pidName", value = "父级菜单名称", required = false, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "menuOrder", value = "菜单排序", required = false, dataType = "Integer", paramType = "form")
-	})
+	})*/
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public JSONObject update(HttpServletRequest request,
 			HttpServletResponse response, String id, String name, String level,
@@ -263,8 +263,8 @@ public class MenusController {
 	 * @param id
 	 * @return
 	 */
-	@ApiOperation(value = "删除", httpMethod = "POST", notes = "删除菜单信息")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "菜单id", required = true, dataType = "String", paramType = "form") })
+/*	@ApiOperation(value = "删除", httpMethod = "POST", notes = "删除菜单信息")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "菜单id", required = true, dataType = "String", paramType = "form") })*/
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public JSONObject delete(HttpServletRequest request,
 			HttpServletResponse response, String id) {

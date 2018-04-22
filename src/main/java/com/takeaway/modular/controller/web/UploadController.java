@@ -92,8 +92,11 @@ public class UploadController {
 		Map<String, String> map = new HashMap<String, String>();
 		JSONObject result = new JSONObject();
 
-		String upload_dir = resourcePath();// 上传路径
-
+	//	String upload_dir = resourcePath();// 上传路径
+		
+	//	String upload_dir=request.getSession().getServletContext().getRealPath("/tmpfile");
+		String upload_dir = request.getSession().getServletContext().getRealPath("/").substring(0, request.getSession().getServletContext().getRealPath("/").lastIndexOf(request.getContextPath().replace("/", "")));
+		upload_dir=upload_dir+"takeawayfile/";
 		try {
 			if (file != null) {
 
@@ -111,7 +114,9 @@ public class UploadController {
 						dest));
 
 				map.put("status", "0");// 状态
-				map.put("path", dest.getPath());// 文件绝对路径
+				
+				String resultpath="/takeawayfile"+path;
+				map.put("path", resultpath);// 文件相对路径
 			}
 		} catch (Exception e) {
 			map.put("status", "1");

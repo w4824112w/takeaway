@@ -6,10 +6,12 @@
 		<id column="id" property="id" jdbcType="INTEGER" />
 		<result column="item_id" property="itemId" jdbcType="INTEGER" />
 		<result column="property_id" property="propertyId" jdbcType="INTEGER" />
+		<result column="price" property="price" jdbcType="DOUBLE" />
+		<result column="is_open" property="isOpen" jdbcType="INTEGER" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		id,item_id,property_id
+		id,item_id,property_id,price,is_open
 	</sql>
 
 	<select id="getByItemId" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -32,11 +34,13 @@
 			LAST_INSERT_ID()
 		</selectKey>
 		insert into tb_item_propertys (
-		item_id,property_id
+		item_id,property_id,price,is_open
 		)
 		values (
 		#{itemId,jdbcType=INTEGER},
-		#{propertyId,jdbcType=INTEGER}
+		#{propertyId,jdbcType=INTEGER},
+		#{price,jdbcType=DOUBLE},
+		#{isOpen,jdbcType=INTEGER}
 		)
 	</insert>
 </mapper>

@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,6 +29,7 @@ import com.takeaway.commons.utils.MD5Util;
 import com.takeaway.commons.utils.RandomSequence;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.ManagersDto;
+import com.takeaway.modular.dao.model.Coupons;
 import com.takeaway.modular.dao.model.Managers;
 import com.takeaway.modular.service.ManagersService;
 import com.takeaway.modular.service.MenusService;
@@ -59,23 +62,17 @@ public class LoginController {
 	 * @return
 	 */
 	@ApiOperation(value = "登录", httpMethod = "POST", notes = "根据商户账户、密码登录系统")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "name", value = "商户账户", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "password", value = "商户密码", required = true, dataType = "String", paramType = "form") })
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public JSONObject login(HttpServletRequest request,
-			HttpServletResponse response, String name, String password) {
+			HttpServletResponse response, @ApiParam @RequestBody ManagersDto managers) {
 		log.info("调用登录接口开始......");
-		ManagersDto dto = new ManagersDto();
-		dto.setName(name);
-		dto.setPasswordHash(password);
 
-		if (StringUtils.isBlank(dto.getName())
-				|| StringUtils.isBlank(dto.getPasswordHash())) {
+		if (StringUtils.isBlank(managers.getName())
+				|| StringUtils.isBlank(managers.getPasswordHash())) {
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "请输入账号或密码", null);
 		}
 
-		Managers u = managersService.login(dto);
+		Managers u = managersService.login(managers);
 		
 		if (u == null) {
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "账号不存在，请确认", null);
@@ -91,8 +88,6 @@ public class LoginController {
 		session.setAttribute("s_user", u);
 
 		JSONObject result = new JSONObject();
-		result.put("name", name);
-		result.put("password", password);
 		result.put("users", u);
 		log.info("调用登录接口结束......");
 		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "登录", result);

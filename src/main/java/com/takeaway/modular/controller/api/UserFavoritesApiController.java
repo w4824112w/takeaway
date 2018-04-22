@@ -7,18 +7,21 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.takeaway.core.enums.ErrorEnums;
+import com.takeaway.modular.dao.model.ItemTypes;
 import com.takeaway.modular.dao.model.UserFavorites;
 import com.takeaway.modular.service.UserFavoritesService;
 
@@ -39,19 +42,10 @@ public class UserFavoritesApiController {
 	private UserFavoritesService userFavoritesService;
 
 	@ApiOperation(value = "新增会员收藏", httpMethod = "POST", notes = "新增会员收藏信息")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "userId", value = "会员id", required = false, dataType = "Integer", paramType = "form"),
-			@ApiImplicitParam(name = "favoriteType", value = "收藏类型", required = false, dataType = "Integer", paramType = "form"),
-			@ApiImplicitParam(name = "targetId", value = "对象id", required = false, dataType = "Integer", paramType = "form") })
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
-			HttpServletResponse response, Integer userId, Integer favoriteType,
-			Integer targetId) {
+			HttpServletResponse response, @ApiParam @RequestBody UserFavorites userFavorites) {
 		try {
-			UserFavorites userFavorites = new UserFavorites();
-			userFavorites.setUserId(userId);
-			userFavorites.setFavoriteType(favoriteType);
-			userFavorites.setTargetId(targetId);
 			return userFavoritesService.save(userFavorites);
 		} catch (Exception e) {
 			e.printStackTrace();

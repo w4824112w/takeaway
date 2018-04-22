@@ -14,6 +14,7 @@ import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.ItemTypesDto;
 import com.takeaway.modular.dao.mapper.ItemTypesMapper;
 import com.takeaway.modular.dao.model.ItemTypes;
+import com.takeaway.modular.dao.model.Orders;
 
 /**
  * 本地的
@@ -70,4 +71,8 @@ public class ItemTypesService {
 		return itemTypes;
 	}
 
+	public List<ItemTypes> getAllByMerchantId(String merchantId) {
+		return itemTypesMapper.getByMerchantId(merchantId);
+	}
+	
 }

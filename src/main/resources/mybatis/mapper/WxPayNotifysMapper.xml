@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gkyt.ywgk.modular.dao.mapper.WxPayNotifysMapper">
+	<resultMap id="BaseResultMap"
+		type="com.gkyt.ywgk.modular.dao.model.WxPayNotifys">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="time_end" property="timeEnd" jdbcType="VARCHAR" />
+		<result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR" />
+		<result column="transaction_id" property="transactionId" jdbcType="VARCHAR" />
+		<result column="total_fee" property="totalFee" jdbcType="DOUBLE" />
+		<result column="cash_fee" property="cashFee" jdbcType="DOUBLE" />
+		<result column="bank_type" property="bankType" jdbcType="VARCHAR" />
+		<result column="err_code_des" property="errCodeDes" jdbcType="VARCHAR" />
+		<result column="err_code" property="errCode" jdbcType="VARCHAR" />
+		<result column="result_code" property="resultCode" jdbcType="VARCHAR" />
+		<result column="sign" property="sign" jdbcType="VARCHAR" />
+		<result column="nonce_str" property="nonceStr" jdbcType="VARCHAR" />
+		<result column="openid" property="openid" jdbcType="VARCHAR" />
+		<result column="is_verify" property="isVerify" jdbcType="INTEGER" />
+		<result column="verify_date" property="verifyDate" jdbcType="DATE" />
+		<result column="trade_state" property="tradeState" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,time_end,out_trade_no,transaction_id,total_fee,cash_fee,bank_type,err_code_des,
+		err_code,result_code,sign,nonce_str,openid,is_verify,verify_date,trade_state
+	</sql>
+
+	<insert id="save" parameterType="com.gkyt.ywgk.modular.dao.model.WxPayNotifys">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into wx_pay_notifys (
+		time_end,out_trade_no,transaction_id,total_fee,cash_fee,bank_type,err_code_des,
+		err_code,result_code,sign,nonce_str,openid,is_verify,verify_date,trade_state
+		)
+		values
+		(
+		#{timeEnd,jdbcType=VARCHAR},
+		#{outTradeNo,jdbcType=VARCHAR},
+		#{transactionId,jdbcType=VARCHAR},
+		#{totalFee,jdbcType=DOUBLE},
+		#{cashFee,jdbcType=DOUBLE},
+		#{bankType,jdbcType=VARCHAR},
+		#{errCodeDes,jdbcType=VARCHAR},
+		#{errCode,jdbcType=VARCHAR},
+		#{resultCode,jdbcType=VARCHAR},
+		#{sign,jdbcType=VARCHAR},
+		#{nonceStr,jdbcType=VARCHAR},
+		#{openid,jdbcType=VARCHAR},
+		#{isVerify,jdbcType=INTEGER},
+		#{verifyDate,jdbcType=TIMESTAMP},
+		#{tradeState,jdbcType=VARCHAR}
+		)
+	</insert>
+
+</mapper>

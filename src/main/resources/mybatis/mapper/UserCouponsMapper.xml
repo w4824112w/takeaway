@@ -51,11 +51,11 @@
 	
 	<select id="getCoupons" parameterType="com.takeaway.modular.dao.dto.UserCouponsDto" resultType="com.takeaway.modular.dao.dto.UserCouponsDto">
 		select
-		uc.id,c.`name` as couponName,c.money,c.activity_type as activityType,
-		c.activity_description as activityDescription,c.exceed,c.discount,
-		c.effective_time as effectiveTime,c.unit,c.limit_used as limitUsed
+		uc.id,uc.start_date as startDate,uc.end_date as endDate,
+		c.`name` as couponName,c.couponMoney,c.spendMoney,
+		c.description,c.sendNum,c.receiveNum,c.sendStartTime,c.sendEndTime,c.couponSendType
 		from tb_user_coupons uc,tb_coupons c
-		where uc.coupon_id=c.id   
+		where uc.coupon_id=c.id 
 		<if test="userId != null and userId != ''">
 			and uc.user_id = #{userId,jdbcType=VARCHAR} 
 		</if>

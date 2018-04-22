@@ -62,15 +62,15 @@ public class UsersController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer", paramType = "query"),
 			@ApiImplicitParam(name = "rows", value = "页数", required = true, dataType = "Integer", paramType = "query"),
-			@ApiImplicitParam(name = "phone", value = "手机号码", required = false, dataType = "String", paramType = "query"),
-			@ApiImplicitParam(name = "name", value = "用户名称", required = false, dataType = "String", paramType = "query")
+			@ApiImplicitParam(name = "userPhone", value = "手机号码", required = false, dataType = "String", paramType = "query"),
+			@ApiImplicitParam(name = "userName", value = "用户名称", required = false, dataType = "String", paramType = "query")
 			})
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public JSONObject page(HttpServletRequest request,
 			HttpServletResponse response,
 			@RequestParam(value = "page", defaultValue = "1") int page,
 			@RequestParam(value = "rows", defaultValue = "10") int rows,
-			String phone,String name) {
+			String userPhone,String userName) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -78,14 +78,15 @@ public class UsersController {
 		}
 
 		UsersDto dto = new UsersDto();
-		dto.setPhone(phone);
-		dto.setName(name);
+		dto.setUserPhone(userPhone);
+		dto.setUserName(userName);
 		
 		PageBounds bounds = new PageBounds(page, rows);
 		PageResult<UsersDto> users = usersService.findPage(bounds, dto);
 
 		JSONObject result = new JSONObject();
-		result.put("name", name);
+		result.put("userPhone", userPhone);
+		result.put("userName", userName);
 		result.put("page", users.getPaginator().getPage());
 		result.put("rows", users.getPaginator().getLimit());
 		result.put("totalCount", users.getPaginator().getTotalCount());
@@ -120,7 +121,7 @@ public class UsersController {
 		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "获取编辑对象", result);
 	}
 
-	@ApiOperation(value = "新增", httpMethod = "POST", notes = "新增app用户信息")
+/*	@ApiOperation(value = "新增", httpMethod = "POST", notes = "新增app用户信息")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "name", value = "账户名称", required = false, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "wxToken", value = "token", required = false, dataType = "String", paramType = "form"),
@@ -162,9 +163,9 @@ public class UsersController {
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增", null);
 		}
 
-	}
+	}*/
 
-	@ApiOperation(value = "更新", httpMethod = "POST", notes = "更新app用户信息")
+/*	@ApiOperation(value = "更新", httpMethod = "POST", notes = "更新app用户信息")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "id", value = "app用户id", required = true, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "name", value = "账户名称", required = false, dataType = "String", paramType = "form"),
@@ -204,7 +205,7 @@ public class UsersController {
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "更新", null);
 		}
 
-	}
+	}*/
 
 	@ApiOperation(value = "删除", httpMethod = "POST", notes = "删除app用户信息")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "app用户id", required = true, dataType = "String", paramType = "form") })

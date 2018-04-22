@@ -1,6 +1,7 @@
 package com.takeaway.modular.dao.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class Coupons {
 	private Integer id;
@@ -18,6 +19,8 @@ public class Coupons {
 	private Date endDate;
 	private Date updatedAt;
 	private Integer status;
+
+	private List<CouponMerchants> merchants;
 
 	public Integer getId() {
 		return id;
@@ -137,6 +140,14 @@ public class Coupons {
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+
+	public List<CouponMerchants> getMerchants() {
+		return merchants;
+	}
+
+	public void setMerchants(List<CouponMerchants> merchants) {
+		this.merchants = merchants;
 	}
 
 }

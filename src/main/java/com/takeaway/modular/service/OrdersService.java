@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageList;
 import com.takeaway.commons.page.PageResult;
+import com.takeaway.commons.utils.RandomSequence;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.OrdersDto;
 import com.takeaway.modular.dao.mapper.OrderItemsMapper;
@@ -54,8 +55,29 @@ public class OrdersService {
 	public JSONObject save(Orders orders) {
 		int result;
 
+		String orderNo = RandomSequence.getSixteenRandomVal(); // 订单编号
+		orders.setOrderNo(orderNo);
+		orders.setStatus(0); // 待处理
+		orders.setIsPay(0); // 未支付
+		orders.setIsShip(0); // 未发货
+		orders.setIsReceipt(0); // 未收货
+		orders.setIsReceived(0); // 未接单
+		orders.setIsRefund(0); // 未退款
+		orders.setIsReservation(0); // 未预定
+		orders.setIsReminder(0); // 未催单
+		orders.setIsDistribution(0); // 配送中
+		orders.setIsInvoice(0); // 是否需要发票
+		orders.setIsAppraises(0); // 是否点评
 		orders.setCreatedAt(new Date());
 		result = ordersMapper.save(orders);
+		
+		Integer orderId = orders.getId();
+		
+		for(OrderItems orderItems:orders.getOrderItems()){
+			orderItems.setOrderId(orderId);
+			orderItemsMapper.save(orderItems);
+		}
+		
 		if (result > 0) {
 			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "新增订单", result);
 		} else {
@@ -76,15 +98,33 @@ public class OrdersService {
 	}
 
 	public Orders getById(String id) {
-		return ordersMapper.getById(id);
+		Orders orders= ordersMapper.getById(id);
+		orders.setOrderItems(orderItemsMapper.getByOrderId(id));
+		return orders;
 	}
 	
-	public Orders getByOrderNo(String id) {
-		return ordersMapper.getByOrderNo(id);
+	public Orders getByOrderNo(String orderNo) {
+		return ordersMapper.getByOrderNo(orderNo);
 	}
 	
 	public List<Orders> getAllByUserId(String userId) {
 		return ordersMapper.getByUserId(userId);
+	}
+	
+	public List<Orders> getAllByPay(String userId) {
+		return ordersMapper.getByPay(userId);
+	}
+	
+	public List<Orders> getAllByShip(String userId) {
+		return ordersMapper.getByShip(userId);
+	}
+	
+	public List<Orders> getAllByAppraises(String userId) {
+		return ordersMapper.getByAppraises(userId);
+	}
+	
+	public List<Orders> getAllByRefund(String userId) {
+		return ordersMapper.getByRefund(userId);
 	}
 	
 	public List<OrderItems> getByOrderId(String orderId) {

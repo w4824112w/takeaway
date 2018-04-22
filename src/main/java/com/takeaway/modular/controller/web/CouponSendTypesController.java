@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -147,18 +149,15 @@ public class CouponSendTypesController {
 	 * @return
 	 */
 	@ApiOperation(value = "新增", httpMethod = "POST", notes = "新增优惠券发放类型信息")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "name", value = "优惠券发放类型名称", required = true, dataType = "String", paramType = "form") })
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
-			HttpServletResponse response, String name) {
+			HttpServletResponse response, @ApiParam @RequestBody CouponSendTypes couponSendTypes) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
 			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
 		}
 		try {
-			CouponSendTypes couponSendTypes = new CouponSendTypes();
-			couponSendTypes.setName(name);
 			return couponSendTypesService.save(couponSendTypes);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -175,21 +174,15 @@ public class CouponSendTypesController {
 	 * @return
 	 */
 	@ApiOperation(value = "更新", httpMethod = "POST", notes = "更新优惠券发放类型信息")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "id", value = "优惠券发放类型id", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "name", value = "优惠券发放类型名称", required = true, dataType = "String", paramType = "form")
-			})
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public JSONObject update(HttpServletRequest request,
-			HttpServletResponse response, String id, String name) {
+			HttpServletResponse response, @ApiParam @RequestBody CouponSendTypes couponSendTypes) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
 			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
 		}
 		try {
-			CouponSendTypes couponSendTypes = couponSendTypesService.getById(id);
-			couponSendTypes.setName(name);
 			return couponSendTypesService.update(couponSendTypes);
 
 		} catch (Exception e) {

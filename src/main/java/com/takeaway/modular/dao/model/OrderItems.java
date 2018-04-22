@@ -4,6 +4,8 @@ public class OrderItems {
 	private Integer id;
 	private Integer orderId;
 	private Integer itemId;
+	private Integer targetId;
+	private String targetName;
 	private Integer itemNums;
 	private Double itemPrice;
 	private Integer itemType;
@@ -72,6 +74,22 @@ public class OrderItems {
 
 	public void setItemName(String itemName) {
 		this.itemName = itemName;
+	}
+
+	public Integer getTargetId() {
+		return targetId;
+	}
+
+	public void setTargetId(Integer targetId) {
+		this.targetId = targetId;
+	}
+
+	public String getTargetName() {
+		return targetName;
+	}
+
+	public void setTargetName(String targetName) {
+		this.targetName = targetName;
 	}
 
 }

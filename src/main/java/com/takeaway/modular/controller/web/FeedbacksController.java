@@ -7,6 +7,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,7 +43,7 @@ public class FeedbacksController {
 	private FeedbacksService feedbacksService;
 
 	@ApiOperation(value = "新增会员订单评价", httpMethod = "POST", notes = "新增会员订单评价信息")
-	@ApiImplicitParams({
+/*	@ApiImplicitParams({
 			@ApiImplicitParam(name = "userId", value = "会员id", required = false, dataType = "Integer", paramType = "form"),
 			@ApiImplicitParam(name = "orderId", value = "订单id", required = false, dataType = "Integer", paramType = "form"),
 			@ApiImplicitParam(name = "merchantId", value = "店铺商户id", required = false, dataType = "Integer", paramType = "form"),
@@ -49,12 +51,10 @@ public class FeedbacksController {
 			@ApiImplicitParam(name = "goodsScore", value = "商品评分(1~5)", required = false, dataType = "Integer", paramType = "form"),
 			@ApiImplicitParam(name = "foodScore", value = "食物评分(1~5)", required = false, dataType = "Integer", paramType = "form"),
 			@ApiImplicitParam(name = "distributionScore", value = "配送评分(1~5)", required = false, dataType = "Integer", paramType = "form"),
-			@ApiImplicitParam(name = "content", value = "收货人地址", required = false, dataType = "String", paramType = "form") })
+			@ApiImplicitParam(name = "content", value = "收货人地址", required = false, dataType = "String", paramType = "form") })*/
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
-			HttpServletResponse response, Integer userId, Integer orderId,
-			Integer merchantId, Integer itemId, Integer goodsScore,
-			Integer foodScore, Integer distributionScore, String content) {
+			HttpServletResponse response,@ApiParam @RequestBody Feedbacks feedbacks) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -62,14 +62,6 @@ public class FeedbacksController {
 		}
 		
 		try {
-			Feedbacks feedbacks = new Feedbacks();
-			feedbacks.setUserId(userId);
-			feedbacks.setOrderId(orderId);
-			feedbacks.setMerchantId(merchantId);
-			feedbacks.setItemId(itemId);
-			feedbacks.setGoodsScore(goodsScore);
-			feedbacks.setFoodScore(foodScore);
-			feedbacks.setDistributionScore(distributionScore);
 			return feedbacksService.save(feedbacks);
 		} catch (Exception e) {
 			e.printStackTrace();

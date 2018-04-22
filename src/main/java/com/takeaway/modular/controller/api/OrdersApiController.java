@@ -6,6 +6,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,11 +14,13 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
+import com.takeaway.commons.utils.RandomSequence;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.OrdersDto;
 import com.takeaway.modular.dao.model.Managers;
@@ -48,16 +51,24 @@ public class OrdersApiController {
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public JSONObject list(HttpServletRequest request,
 			HttpServletResponse response, String userId) {
-		List<Orders> orders = ordersService.getAllByUserId(userId);
+		List<Orders> orders = ordersService.getAllByUserId(userId);	// 所有订单
+		List<Orders> payOrders = ordersService.getAllByPay(userId);	// 待付款
+		List<Orders> shipOrders = ordersService.getAllByShip(userId);	// 待收货
+		List<Orders> appraisesOrders = ordersService.getAllByAppraises(userId);	// 待收货
+		List<Orders> refundOrders = ordersService.getAllByRefund(userId);	// 退款/售后
 		JSONObject result = new JSONObject();
-		result.put("orders", orders);
+		result.put("orders", orders);	
+		result.put("payOrders", payOrders);	
+		result.put("shipOrders", shipOrders);	
+		result.put("appraisesOrders", appraisesOrders);	
+		result.put("refundOrders", refundOrders);	
 
 		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "商户店铺信息查询", result);
 
 	}
 
 	@ApiOperation(value = "详情", httpMethod = "GET", notes = "订单信息")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "orderNo", value = "订单号", required = true, dataType = "String", paramType = "query") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "订单id", required = true, dataType = "String", paramType = "query") })
 	@RequestMapping(value = "/details", method = RequestMethod.GET)
 	public JSONObject details(HttpServletRequest request,
 			HttpServletResponse response, String id) {
@@ -69,4 +80,17 @@ public class OrdersApiController {
 		result.put("orders", orders);
 		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "获取编辑对象", result);
 	}
+	
+	@ApiOperation(value = "下单", httpMethod = "POST", notes = "新增会员订单信息")
+	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	public JSONObject save(HttpServletRequest request,
+			HttpServletResponse response, @ApiParam @RequestBody Orders orders) {
+		try {
+			return ordersService.save(orders);
+		} catch (Exception e) {
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增", null);
+		}
+
+	}
+	
 }

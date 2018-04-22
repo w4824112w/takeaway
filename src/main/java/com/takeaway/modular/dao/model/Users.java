@@ -4,23 +4,32 @@ import java.util.Date;
 
 public class Users {
 	private Integer id;
-	private String name;
-	private String wxToken;
+	private String loginName;
+	private Integer loginSecret;
+	private String loginPwd;
+	private Integer userSex;
+	private Integer userType;
+	private String userName;
+	private String userQQ;
+	private String userPhone;
+	private String userEmail;
+	private Integer userScore;
+	private String userPhoto;
+	private Integer userTotalScore;
 	private Date createdAt;
 	private Date updatedAt;
-	private String passwordHash;
-	private String phone;
-	private Integer type;
-	private String realName;
-	private String address;
-	private String inviteCode;
-	private String avatar;
-	private String birthday;
-	private String sex;
 	private Integer status;
-	private String ori;
-	private Integer grade;
-	private Integer point;
+	private Integer isFlag;
+	private String lastIP;
+	private Date lastTime;
+	private String userFrom;
+	private String openId;
+	private String wxOpenId;
+	private Double userMoney;
+	private Double lockMoney;
+	private Double distributMoney;
+	private Integer isBuyer;
+	private String payPwd;
 
 	public Integer getId() {
 		return id;
@@ -30,20 +39,100 @@ public class Users {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getLoginName() {
+		return loginName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setLoginName(String loginName) {
+		this.loginName = loginName;
 	}
 
-	public String getWxToken() {
-		return wxToken;
+	public Integer getLoginSecret() {
+		return loginSecret;
 	}
 
-	public void setWxToken(String wxToken) {
-		this.wxToken = wxToken;
+	public void setLoginSecret(Integer loginSecret) {
+		this.loginSecret = loginSecret;
+	}
+
+	public String getLoginPwd() {
+		return loginPwd;
+	}
+
+	public void setLoginPwd(String loginPwd) {
+		this.loginPwd = loginPwd;
+	}
+
+	public Integer getUserSex() {
+		return userSex;
+	}
+
+	public void setUserSex(Integer userSex) {
+		this.userSex = userSex;
+	}
+
+	public Integer getUserType() {
+		return userType;
+	}
+
+	public void setUserType(Integer userType) {
+		this.userType = userType;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserQQ() {
+		return userQQ;
+	}
+
+	public void setUserQQ(String userQQ) {
+		this.userQQ = userQQ;
+	}
+
+	public String getUserPhone() {
+		return userPhone;
+	}
+
+	public void setUserPhone(String userPhone) {
+		this.userPhone = userPhone;
+	}
+
+	public String getUserEmail() {
+		return userEmail;
+	}
+
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
+	}
+
+	public Integer getUserScore() {
+		return userScore;
+	}
+
+	public void setUserScore(Integer userScore) {
+		this.userScore = userScore;
+	}
+
+	public String getUserPhoto() {
+		return userPhoto;
+	}
+
+	public void setUserPhoto(String userPhoto) {
+		this.userPhoto = userPhoto;
+	}
+
+	public Integer getUserTotalScore() {
+		return userTotalScore;
+	}
+
+	public void setUserTotalScore(Integer userTotalScore) {
+		this.userTotalScore = userTotalScore;
 	}
 
 	public Date getCreatedAt() {
@@ -54,76 +143,12 @@ public class Users {
 		this.createdAt = createdAt;
 	}
 
-	public String getPasswordHash() {
-		return passwordHash;
+	public Date getUpdatedAt() {
+		return updatedAt;
 	}
 
-	public void setPasswordHash(String passwordHash) {
-		this.passwordHash = passwordHash;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
-	public Integer getType() {
-		return type;
-	}
-
-	public void setType(Integer type) {
-		this.type = type;
-	}
-
-	public String getRealName() {
-		return realName;
-	}
-
-	public void setRealName(String realName) {
-		this.realName = realName;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getInviteCode() {
-		return inviteCode;
-	}
-
-	public void setInviteCode(String inviteCode) {
-		this.inviteCode = inviteCode;
-	}
-
-	public String getAvatar() {
-		return avatar;
-	}
-
-	public void setAvatar(String avatar) {
-		this.avatar = avatar;
-	}
-
-	public String getBirthday() {
-		return birthday;
-	}
-
-	public void setBirthday(String birthday) {
-		this.birthday = birthday;
-	}
-
-	public String getSex() {
-		return sex;
-	}
-
-	public void setSex(String sex) {
-		this.sex = sex;
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 	public Integer getStatus() {
@@ -134,36 +159,92 @@ public class Users {
 		this.status = status;
 	}
 
-	public String getOri() {
-		return ori;
+	public Integer getIsFlag() {
+		return isFlag;
 	}
 
-	public void setOri(String ori) {
-		this.ori = ori;
+	public void setIsFlag(Integer isFlag) {
+		this.isFlag = isFlag;
 	}
 
-	public Date getUpdatedAt() {
-		return updatedAt;
+	public String getLastIP() {
+		return lastIP;
 	}
 
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
+	public void setLastIP(String lastIP) {
+		this.lastIP = lastIP;
 	}
 
-	public Integer getGrade() {
-		return grade;
+	public Date getLastTime() {
+		return lastTime;
 	}
 
-	public void setGrade(Integer grade) {
-		this.grade = grade;
+	public void setLastTime(Date lastTime) {
+		this.lastTime = lastTime;
 	}
 
-	public Integer getPoint() {
-		return point;
+	public String getUserFrom() {
+		return userFrom;
 	}
 
-	public void setPoint(Integer point) {
-		this.point = point;
+	public void setUserFrom(String userFrom) {
+		this.userFrom = userFrom;
+	}
+
+	public String getOpenId() {
+		return openId;
+	}
+
+	public void setOpenId(String openId) {
+		this.openId = openId;
+	}
+
+	public String getWxOpenId() {
+		return wxOpenId;
+	}
+
+	public void setWxOpenId(String wxOpenId) {
+		this.wxOpenId = wxOpenId;
+	}
+
+	public Double getUserMoney() {
+		return userMoney;
+	}
+
+	public void setUserMoney(Double userMoney) {
+		this.userMoney = userMoney;
+	}
+
+	public Double getLockMoney() {
+		return lockMoney;
+	}
+
+	public void setLockMoney(Double lockMoney) {
+		this.lockMoney = lockMoney;
+	}
+
+	public Double getDistributMoney() {
+		return distributMoney;
+	}
+
+	public void setDistributMoney(Double distributMoney) {
+		this.distributMoney = distributMoney;
+	}
+
+	public Integer getIsBuyer() {
+		return isBuyer;
+	}
+
+	public void setIsBuyer(Integer isBuyer) {
+		this.isBuyer = isBuyer;
+	}
+
+	public String getPayPwd() {
+		return payPwd;
+	}
+
+	public void setPayPwd(String payPwd) {
+		this.payPwd = payPwd;
 	}
 
 }

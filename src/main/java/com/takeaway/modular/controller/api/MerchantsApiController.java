@@ -20,12 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.MerchantsDto;
+import com.takeaway.modular.dao.model.Activitys;
 import com.takeaway.modular.dao.model.Coupons;
 import com.takeaway.modular.dao.model.Feedbacks;
 import com.takeaway.modular.dao.model.Managers;
 import com.takeaway.modular.dao.model.Merchants;
 import com.takeaway.modular.dao.model.UserAddress;
 import com.takeaway.modular.dao.model.Users;
+import com.takeaway.modular.service.ActivitysService;
 import com.takeaway.modular.service.CouponsService;
 import com.takeaway.modular.service.FeedbacksService;
 import com.takeaway.modular.service.MerchantsService;
@@ -46,10 +48,13 @@ public class MerchantsApiController {
 
 	@Autowired
 	private MerchantsService merchantsService;
-	
+
 	@Autowired
 	private CouponsService couponsService;
-	
+
+	@Autowired
+	private ActivitysService activitysService;
+
 	@Autowired
 	private FeedbacksService feedbacksService;
 
@@ -65,21 +70,25 @@ public class MerchantsApiController {
 		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "商户店铺信息查询", result);
 
 	}
-	
+
 	@ApiOperation(value = "详情", httpMethod = "GET", notes = "商户信息")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "商户id", required = true, dataType = "String", paramType = "query") })
 	@RequestMapping(value = "/details", method = RequestMethod.GET)
 	public JSONObject details(HttpServletRequest request,
 			HttpServletResponse response, String id) {
 		Merchants merchants = merchantsService.getById(id);
-		String merchantId=merchants.getId().toString();
-		List<Feedbacks> feedbacks=feedbacksService.getByMerchantId(merchantId);
-		List<Coupons> coupons=couponsService.getByMerchantId(merchantId);
+		String merchantId = merchants.getId().toString();
+		/*List<Feedbacks> feedbacks = feedbacksService
+				.getByMerchantId(merchantId);*/
+		List<Coupons> coupons = couponsService.getByMerchantId(merchantId);
+		List<Activitys> activitys = activitysService
+				.getByMerchantId(merchantId);
 		JSONObject result = new JSONObject();
 		result.put("merchants", merchants);
-		result.put("feedbacks", feedbacks);
+	//	result.put("feedbacks", feedbacks);
 		result.put("coupons", coupons);
+		result.put("activitys", activitys);
 		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "编辑商户", result);
 	}
-	
+
 }

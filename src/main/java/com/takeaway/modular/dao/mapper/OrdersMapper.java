@@ -24,6 +24,14 @@ public interface OrdersMapper {
 
 	List<Orders> getByUserId(String userId);
 	
+	List<Orders> getByPay(String userId);
+	
+	List<Orders> getByShip(String userId);
+	
+	List<Orders> getByAppraises(String userId);
+	
+	List<Orders> getByRefund(String userId);
+	
 	PageList<Orders> findPage(PageBounds bounds, OrdersDto dto);
 	
 	PageList<Orders> findReminderPage(PageBounds bounds, OrdersDto dto);

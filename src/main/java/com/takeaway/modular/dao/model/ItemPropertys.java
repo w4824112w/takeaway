@@ -4,6 +4,8 @@ public class ItemPropertys {
 	private Integer id;
 	private Integer itemId;
 	private Integer propertyId;
+	private Double price;
+	private Integer isOpen;
 
 	public Integer getId() {
 		return id;
@@ -27,6 +29,22 @@ public class ItemPropertys {
 
 	public void setPropertyId(Integer propertyId) {
 		this.propertyId = propertyId;
+	}
+
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(Double price) {
+		this.price = price;
+	}
+
+	public Integer getIsOpen() {
+		return isOpen;
+	}
+
+	public void setIsOpen(Integer isOpen) {
+		this.isOpen = isOpen;
 	}
 
 }

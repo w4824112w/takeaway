@@ -160,79 +160,6 @@ public class ItemsController {
 	 * @param r
 	 * @return
 	 */
-	/*
-	 * @ApiOperation(value = "新增", httpMethod = "POST", notes = "新增商品信息")
-	 * 
-	 * @ApiImplicitParams({
-	 * 
-	 * @ApiImplicitParam(name = "itemType", value = "商品类型id", required = true,
-	 * dataType = "Integer", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "name", value = "商品名称", required = true,
-	 * dataType = "String", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "code", value = "商品编号", required = true,
-	 * dataType = "String", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "label", value = "商品标签", required = true,
-	 * dataType = "String", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "originPrice", value = "原价", required = true,
-	 * dataType = "Double", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "costPrice", value = "成本价", required = true,
-	 * dataType = "Double", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "price", value = "销售价", required = true,
-	 * dataType = "Double", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "unit", value = "商品单位", required = true,
-	 * dataType = "String", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "salesVolume", value = "销售量", required = true,
-	 * dataType = "Integer", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "tips", value = "提示", required = true, dataType
-	 * = "String", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "remain", value = "备注", required = true,
-	 * dataType = "String", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "stock", value = "库存", required = true, dataType
-	 * = "Integer", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "stockStatus", value = "库存状态", required = true,
-	 * dataType = "Integer", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "description", value = "描述", required = true,
-	 * dataType = "String", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "cityId", value = "城市id", required = true,
-	 * dataType = "Integer", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "isPuton", value = "是否上架", required = true,
-	 * dataType = "Integer", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "origin", value = "销售来源", required = false,
-	 * dataType = "String", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "merchants", value = "店铺id数组", required = false,
-	 * dataType = "String", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "propertys", value = "属性id数组", required = false,
-	 * dataType = "String", paramType = "form"),
-	 * 
-	 * @ApiImplicitParam(name = "pictures", value = "图片id数组", required = false,
-	 * dataType = "String", paramType = "form") })
-	 * 
-	 * @RequestMapping(value = "/save", method = RequestMethod.POST) public
-	 * JSONObject save(HttpServletRequest request, HttpServletResponse response,
-	 * Integer itemType, String name, String code, String label, Double
-	 * originPrice, Double costPrice, Double price, String unit, Integer
-	 * salesVolume, String tips, String remain, Integer stock, Integer
-	 * stockStatus, String description, Integer cityId, Integer isPuton, String
-	 * origin, Integer[] merchants, Integer[] propertys, String[] pictures) {
-	 */
 	@ApiOperation(value = "新增", httpMethod = "POST", notes = "新增商品信息")
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
@@ -244,23 +171,6 @@ public class ItemsController {
 					null);
 		}
 		try {
-			/*Items items = new Items();
-			items.setItemType(itemType);
-			items.setName(name);
-			items.setCode(code);
-			items.setLabel(label);
-			items.setOriginPrice(originPrice);
-			items.setCostPrice(costPrice);
-			items.setPrice(price);
-			items.setUnit(unit);
-			items.setSalesVolume(salesVolume);
-			items.setTips(tips);
-			items.setRemain(remain);
-			items.setStock(stock);
-			items.setStockStatus(stockStatus);
-			items.setDescription(description);
-			items.setCityId(cityId);
-			items.setOrigin(origin);*/
 			return itemsService.save(items);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -276,37 +186,6 @@ public class ItemsController {
 	 * @param r
 	 * @return
 	 */
-	/*	@ApiOperation(value = "更新", httpMethod = "POST", notes = "更新商品信息")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "id", value = "商品id", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "itemType", value = "商品类型id", required = true, dataType = "Integer", paramType = "form"),
-			@ApiImplicitParam(name = "name", value = "商品名称", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "code", value = "商品编号", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "label", value = "商品标签", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "originPrice", value = "原价", required = true, dataType = "Double", paramType = "form"),
-			@ApiImplicitParam(name = "costPrice", value = "成本价", required = true, dataType = "Double", paramType = "form"),
-			@ApiImplicitParam(name = "price", value = "销售价", required = true, dataType = "Double", paramType = "form"),
-			@ApiImplicitParam(name = "unit", value = "商品单位", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "salesVolume", value = "销售量", required = true, dataType = "Integer", paramType = "form"),
-			@ApiImplicitParam(name = "tips", value = "提示", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "remain", value = "备注", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "stock", value = "库存", required = true, dataType = "Integer", paramType = "form"),
-			@ApiImplicitParam(name = "stockStatus", value = "库存状态", required = true, dataType = "Integer", paramType = "form"),
-			@ApiImplicitParam(name = "description", value = "描述", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "cityId", value = "城市id", required = true, dataType = "Integer", paramType = "form"),
-			@ApiImplicitParam(name = "isPuton", value = "是否上架", required = true, dataType = "Integer", paramType = "form"),
-			@ApiImplicitParam(name = "origin", value = "销售来源", required = false, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "merchants", value = "店铺id数组", required = false, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "propertys", value = "属性id数组", required = false, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "pictures", value = "图片id数组", required = false, dataType = "String", paramType = "form") })
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public JSONObject update(HttpServletRequest request,
-			HttpServletResponse response, String id, Integer itemType,
-			String name, String code, String label, Double originPrice,
-			Double costPrice, Double price, String unit, Integer salesVolume,
-			String tips, String remain, Integer stock, Integer stockStatus,
-			String description, Integer cityId, Integer isPuton, String origin,
-			Integer[] merchants, Integer[] propertys, String[] pictures) {*/
 	@ApiOperation(value = "更新", httpMethod = "POST", notes = "更新商品信息")
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public JSONObject update(HttpServletRequest request,
@@ -318,23 +197,6 @@ public class ItemsController {
 					null);
 		}
 		try {
-		/*	Items items = itemsService.getById(id);
-			items.setItemType(itemType);
-			items.setName(name);
-			items.setCode(code);
-			items.setLabel(label);
-			items.setOriginPrice(originPrice);
-			items.setCostPrice(costPrice);
-			items.setPrice(price);
-			items.setUnit(unit);
-			items.setSalesVolume(salesVolume);
-			items.setTips(tips);
-			items.setRemain(remain);
-			items.setStock(stock);
-			items.setStockStatus(stockStatus);
-			items.setDescription(description);
-			items.setCityId(cityId);
-			items.setOrigin(origin);*/
 			
 			return itemsService.update(items);
 

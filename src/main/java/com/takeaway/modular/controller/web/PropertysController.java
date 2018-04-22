@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -210,13 +212,13 @@ public class PropertysController {
 	 * @param r
 	 * @return
 	 */
-	@ApiOperation(value = "新增", httpMethod = "POST", notes = "新增商品属性信息")
+/*	@ApiOperation(value = "新增", httpMethod = "POST", notes = "新增商品属性信息")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "name", value = "属性名称", required = true, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "value", value = "属性值", required = false, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "price", value = "价格", required = false, dataType = "Double", paramType = "form"),
 			@ApiImplicitParam(name = "pid", value = "父类商品属性id", required = false, dataType = "Integer", paramType = "form"),
-			@ApiImplicitParam(name = "isOpen", value = "是否开启", required = false, dataType = "String", paramType = "form") })
+			@ApiImplicitParam(name = "isOpen", value = "是否开启", required = false, dataType = "String", paramType = "form") })*/
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
 			HttpServletResponse response, String name, String value,Double price,
@@ -229,14 +231,54 @@ public class PropertysController {
 		try {
 			Propertys propertys = new Propertys();
 			propertys.setName(name);
-			propertys.setValue(value);
-			propertys.setPrice(price);
 			propertys.setPid(pid);
-			propertys.setIsOpen(isOpen);
 			return propertysService.save(propertys);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增", null);
+		}
+
+	}
+	
+	/**
+	 * 批量新增商品属性
+	 * 
+	 * @param o
+	 * @param r
+	 * @return
+	 */
+	@ApiOperation(value = "批量新增", httpMethod = "POST", notes = "新增商品属性信息")
+	@RequestMapping(value = "/bathcSave", method = RequestMethod.POST)
+	public JSONObject bathcSave(HttpServletRequest request,
+			HttpServletResponse response,@ApiParam @RequestBody List<Propertys> propertys) {
+		HttpSession session = request.getSession();
+		Managers u = (Managers) session.getAttribute("s_user");
+		if (u == null) {
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
+		}
+		try {
+			return propertysService.bathcSave(propertys);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "批量新增", null);
+		}
+
+	}
+	
+	@ApiOperation(value = "批量更新", httpMethod = "POST", notes = "更新商品属性信息")
+	@RequestMapping(value = "/bathcUpdate", method = RequestMethod.POST)
+	public JSONObject bathcUpdate(HttpServletRequest request,
+			HttpServletResponse response,@ApiParam @RequestBody List<Propertys> propertys) {
+		HttpSession session = request.getSession();
+		Managers u = (Managers) session.getAttribute("s_user");
+		if (u == null) {
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
+		}
+		try {
+			return propertysService.bathcUpdate(propertys);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "批量新增", null);
 		}
 
 	}
@@ -268,10 +310,7 @@ public class PropertysController {
 		try {
 			Propertys propertys = propertysService.getById(id);
 			propertys.setName(name);
-			propertys.setValue(value);
-			propertys.setPrice(price);
 			propertys.setPid(pid);
-			propertys.setIsOpen(isOpen);
 			return propertysService.update(propertys);
 
 		} catch (Exception e) {

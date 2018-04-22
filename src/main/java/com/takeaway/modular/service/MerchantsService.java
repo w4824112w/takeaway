@@ -17,6 +17,7 @@ import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.controller.web.UploadController;
 import com.takeaway.modular.dao.dto.MerchantsDto;
 import com.takeaway.modular.dao.dto.UserFavoritesDto;
+import com.takeaway.modular.dao.mapper.ActivitysMapper;
 import com.takeaway.modular.dao.mapper.CouponsMapper;
 import com.takeaway.modular.dao.mapper.ManagersMapper;
 import com.takeaway.modular.dao.mapper.MerchantPicturesMapper;
@@ -24,6 +25,7 @@ import com.takeaway.modular.dao.mapper.MerchantsMapper;
 import com.takeaway.modular.dao.mapper.OrdersMapper;
 import com.takeaway.modular.dao.mapper.UserFavoritesMapper;
 import com.takeaway.modular.dao.model.Coupons;
+import com.takeaway.modular.dao.model.ItemPictures;
 import com.takeaway.modular.dao.model.Managers;
 import com.takeaway.modular.dao.model.MerchantPictures;
 import com.takeaway.modular.dao.model.Merchants;
@@ -47,7 +49,10 @@ public class MerchantsService {
 
 	@Autowired
 	private CouponsMapper couponsMapper;
-
+	
+	@Autowired
+	private ActivitysMapper activitysMapper;
+	
 	@Autowired
 	private UserFavoritesMapper userFavoritesMapper;
 
@@ -61,31 +66,27 @@ public class MerchantsService {
 	}
 
 	@Transactional
-	public JSONObject save(Merchants merchants, String[] pictures,
-			String accountName, String accountPassword) {
-		int count = managersMapper.checkLoginName(accountName);
+	public JSONObject save(Merchants merchants) {
+		int count = managersMapper.checkLoginName(merchants.getAccountName());
 		if (count > 0) {
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "账户名称已经存在", null);
 		}
 
 		int result;
+		merchants.setStatus(1);
 		merchants.setCreatedAt(new Date());
 		result = merchantsMapper.save(merchants);
 		Integer merchantId = merchants.getId();
-		if (pictures != null) {
-			for (String url : pictures) {
-				MerchantPictures merchantPictures = new MerchantPictures();
-				merchantPictures.setMerchantId(merchantId);
-				merchantPictures.setUrl(url);
-				merchantPictures.setCreatedAt(new Date());
-				merchantPicturesMapper.save(merchantPictures);
-			}
+		
+		for (MerchantPictures merchantPictures : merchants.getPictures()) {
+			merchantPictures.setMerchantId(merchantId);
+			merchantPictures.setCreatedAt(new Date());
+			merchantPicturesMapper.save(merchantPictures);
 		}
 
-		Managers user = new Managers();
-		user.setName(accountName);
 		// 默认密码，md5加密
-		user.setPasswordHash(MD5Util.MD5(accountPassword));
+		Managers user=new Managers();
+		user.setPasswordHash(MD5Util.MD5(merchants.getAccountPassword()));
 		user.setRoleId(1);
 		user.setType(0); // (0：普通;1：超级;)
 		user.setStatus(1);
@@ -100,8 +101,9 @@ public class MerchantsService {
 	}
 
 	@Transactional
-	public JSONObject update(Merchants merchants, String[] pictures) {
+	public JSONObject update(Merchants merchants) {
 		int result;
+		merchants.setStatus(1);
 		merchants.setUpdatedAt(new Date());
 		Integer merchantId = merchants.getId();
 
@@ -109,16 +111,13 @@ public class MerchantsService {
 				.getByMerchantId(merchantId.toString());
 
 		result = merchantsMapper.update(merchants);
+		
 		merchantPicturesMapper.delByMerchantId(merchantId.toString());
 
-		if (pictures != null) {
-			for (String url : pictures) {
-				MerchantPictures merchantPictures = new MerchantPictures();
-				merchantPictures.setMerchantId(merchantId);
-				merchantPictures.setUrl(url);
-				merchantPictures.setCreatedAt(new Date());
-				merchantPicturesMapper.save(merchantPictures);
-			}
+		for (MerchantPictures merchantPictures : merchants.getPictures()) {
+			merchantPictures.setMerchantId(merchantId);
+			merchantPictures.setCreatedAt(new Date());
+			merchantPicturesMapper.save(merchantPictures);
 		}
 
 		// 更新背景图片
@@ -181,6 +180,7 @@ public class MerchantsService {
 				dto.setIsFavorite(false);
 			}
 			dto.setCoupons(couponsMapper.getByMerchantId(merchantId));
+			dto.setActivitys(activitysMapper.getByMerchantId(merchantId));
 		}
 		return merchants;
 	}

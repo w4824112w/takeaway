@@ -6,6 +6,8 @@
 		<id column="id" property="id" jdbcType="INTEGER" />
 		<result column="order_id" property="orderId" jdbcType="INTEGER" />
 		<result column="item_id" property="itemId" jdbcType="INTEGER" />
+		<result column="targetId" property="targetId" jdbcType="INTEGER" />
+		<result column="targetName" property="targetName" jdbcType="VARCHAR" />
 		<result column="item_nums" property="itemNums" jdbcType="INTEGER" />
 		<result column="item_price" property="itemPrice" jdbcType="DOUBLE" />
 		<result column="item_type" property="itemType" jdbcType="INTEGER" />
@@ -14,7 +16,7 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		id,order_id,item_id,item_nums,item_price,item_type,item_type_name,item_name
+		id,order_id,item_id,targetId,targetName,item_nums,item_price,item_type,item_type_name,item_name
 	</sql>
 
 	<select id="getByOrderId" parameterType="java.lang.String" resultMap="BaseResultMap">

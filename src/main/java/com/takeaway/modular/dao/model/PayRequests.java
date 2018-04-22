@@ -1,9 +1,19 @@
 package com.takeaway.modular.dao.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class PayRequests {
+/**
+ * 支付请求
+ * 
+ * @author hk
+ *
+ */
+public class PayRequests implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	private Integer id;
+	private Integer systemId;
 	private Integer payTypeId;
 	private String orderNo;
 	private String itemName;
@@ -12,9 +22,9 @@ public class PayRequests {
 	private String jumpUrl;
 	private Integer isPay;
 	private Integer isNotify;
-	private Date createdAt;
-	private Date successTime;
-	private Date notifyTime;
+	private Date createTime;
+	private String successTime;
+	private String notifyTime;
 	private Integer notifyTimes;
 
 	public Integer getId() {
@@ -23,6 +33,14 @@ public class PayRequests {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public Integer getSystemId() {
+		return systemId;
+	}
+
+	public void setSystemId(Integer systemId) {
+		this.systemId = systemId;
 	}
 
 	public Integer getPayTypeId() {
@@ -89,27 +107,27 @@ public class PayRequests {
 		this.isNotify = isNotify;
 	}
 
-	public Date getCreatedAt() {
-		return createdAt;
+	public Date getCreateTime() {
+		return createTime;
 	}
 
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 
-	public Date getSuccessTime() {
+	public String getSuccessTime() {
 		return successTime;
 	}
 
-	public void setSuccessTime(Date successTime) {
+	public void setSuccessTime(String successTime) {
 		this.successTime = successTime;
 	}
 
-	public Date getNotifyTime() {
+	public String  getNotifyTime() {
 		return notifyTime;
 	}
 
-	public void setNotifyTime(Date notifyTime) {
+	public void setNotifyTime(String notifyTime) {
 		this.notifyTime = notifyTime;
 	}
 

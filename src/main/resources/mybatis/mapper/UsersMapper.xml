@@ -3,29 +3,38 @@
 <mapper namespace="com.takeaway.modular.dao.mapper.UsersMapper">
 	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.Users">
 		<id column="id" property="id" jdbcType="INTEGER" />
-		<result column="name" property="name" jdbcType="VARCHAR" />
-		<result column="wx_token" property="wxToken" jdbcType="VARCHAR" />
-		<result column="password_hash" property="passwordHash"
-			jdbcType="VARCHAR" />
-		<result column="phone" property="phone" jdbcType="VARCHAR" />
-		<result column="type" property="type" jdbcType="INTEGER" />
-		<result column="real_name" property="realName" jdbcType="VARCHAR" />
-		<result column="address" property="address" jdbcType="VARCHAR" />
-		<result column="invite_code" property="inviteCode" jdbcType="VARCHAR" />
-		<result column="avatar" property="avatar" jdbcType="VARCHAR" />
-		<result column="birthday" property="birthday" jdbcType="VARCHAR" />
-		<result column="sex" property="sex" jdbcType="VARCHAR" />
-		<result column="status" property="status" jdbcType="INTEGER" />
-		<result column="ori" property="sex" jdbcType="VARCHAR" />
-		<result column="grade" property="point" jdbcType="INTEGER" />
-		<result column="point" property="point" jdbcType="INTEGER" />
-		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="loginName" property="loginName" jdbcType="VARCHAR" />
+		<result column="loginSecret" property="loginSecret" jdbcType="INTEGER" />
+		<result column="loginPwd" property="loginPwd" jdbcType="VARCHAR" />
+		<result column="userSex" property="userSex" jdbcType="INTEGER" />
+		<result column="userType" property="userType" jdbcType="INTEGER" />
+		<result column="userName" property="userName" jdbcType="VARCHAR" />
+		<result column="userQQ" property="userQQ" jdbcType="VARCHAR" />
+		<result column="userPhone" property="userPhone" jdbcType="VARCHAR" />
+		<result column="userEmail" property="userEmail" jdbcType="VARCHAR" />
+		<result column="userScore" property="userScore" jdbcType="INTEGER" />
+		<result column="userPhoto" property="userPhoto" jdbcType="VARCHAR" />
+		<result column="userTotalScore" property="userTotalScore" jdbcType="INTEGER" />
 		<result column="created_at" property="createdAt" jdbcType="DATE" />
 		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="is_flag" property="isFlag" jdbcType="INTEGER" />
+		<result column="lastIP" property="lastIP" jdbcType="VARCHAR" />
+		<result column="lastTime" property="lastTime" jdbcType="DATE" />
+		<result column="userFrom" property="userFrom" jdbcType="VARCHAR" />
+		<result column="openId" property="openId" jdbcType="VARCHAR" />
+		<result column="wxOpenId" property="wxOpenId" jdbcType="VARCHAR" />
+		<result column="userMoney" property="userMoney" jdbcType="DOUBLE" />
+		<result column="lockMoney" property="lockMoney" jdbcType="DOUBLE" />
+		<result column="distributMoney" property="distributMoney" jdbcType="DOUBLE" />
+		<result column="is_buyer" property="isFlag" jdbcType="INTEGER" />
+		<result column="payPwd" property="payPwd" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		id, name,wx_token, password_hash,phone,type,real_name,
-		address,invite_code,avatar,birthday,sex,status,ori,created_at,updated_at
+		id,loginName,loginSecret,loginPwd,userSex,userType,userName,userQQ,userPhone,
+		userEmail,userScore,userPhoto,userTotalScore,created_at,updated_at,status,
+		is_flag,lastIP,lastTime,userFrom,openId,wxOpenId,userMoney,lockMoney,
+		distributMoney,is_buyer,payPwd
 	</sql>
 
 	<select id="login" parameterType="com.takeaway.modular.dao.dto.UsersDto"
@@ -33,8 +42,8 @@
 		select
 		<include refid="Base_Column_List" />
 		from tb_users
-		where is_delete=0 and login_name =
-		#{loginName,jdbcType=VARCHAR} and login_pwd =
+		where is_flag=0 and loginName =
+		#{loginName,jdbcType=VARCHAR} and loginPwd =
 		#{loginPwd,jdbcType=VARCHAR}
 	</select>
 
@@ -44,7 +53,7 @@
 		count(0)
 		from tb_users
 		where
-		is_delete=0 and login_name
+		is_flag=0 and loginName
 		= #{loginName,jdbcType=VARCHAR}
 	</select>
 
@@ -57,15 +66,15 @@
 
 	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.UsersDto"
 		resultType="com.takeaway.modular.dao.dto.UsersDto">
-		select u.id,u.`name`,u.created_at as createdAt,u.sex,u.birthday,u.phone,u.address,u.point,u.grade,
+		select u.*,
 		(select count(0) from tb_orders o where o.user_id=u.id) as orderCount,
 		(select sum(o.total_price) from tb_orders o where o.user_id=u.id and o.is_pay=1) as totalPrice
 		from tb_users u where u.status=1 
-		<if test="phone != null and phone != ''">
-			and u.phone = #{phone,jdbcType=VARCHAR}
+		<if test="userPhone != null and userPhone != ''">
+			and u.userPhone = #{userPhone,jdbcType=VARCHAR}
 		</if>
-		<if test="name != null and name != ''">
-			and u.name = #{name,jdbcType=VARCHAR}
+		<if test="userName != null and userName != ''">
+			and u.userName = #{userName,jdbcType=VARCHAR}
 		</if>
 		order by u.id desc
 	</select>
@@ -82,50 +91,103 @@
 			LAST_INSERT_ID()
 		</selectKey>
 		insert into tb_users (
-		name,
-		wx_token, 
-		password_hash,
-		phone,
-		type,
-		real_name,
-		address,
-		invite_code,
-		avatar,
-		birthday,
-		sex,
-		status,
-		ori,
-		grade,
-		point,
-		created_at
+		loginName,loginSecret,loginPwd,userSex,userType,userName,userQQ,userPhone,
+		userEmail,userScore,userPhoto,userTotalScore,created_at,status,
+		is_flag,lastIP,lastTime,userFrom,openId,wxOpenId,userMoney,lockMoney,
+		distributMoney,is_buyer,payPwd
 		)
 		values
-		(#{name,jdbcType=VARCHAR}, #{wxToken,jdbcType=VARCHAR},
-		#{passwordHash,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR},
-		#{type,jdbcType=INTEGER},#{realName,jdbcType=VARCHAR},
-		#{address,jdbcType=VARCHAR},#{inviteCode,jdbcType=VARCHAR},
-		#{avatar,jdbcType=VARCHAR},#{birthday,jdbcType=VARCHAR},
-		#{sex,jdbcType=VARCHAR},#{status,jdbcType=INTEGER},
-		#{ori,jdbcType=VARCHAR},#{grade,jdbcType=INTEGER},
-		#{point,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP}
+		(#{loginName,jdbcType=VARCHAR},#{loginSecret,jdbcType=INTEGER},#{loginPwd,jdbcType=VARCHAR},
+		#{userSex,jdbcType=INTEGER},#{userType,jdbcType=INTEGER},#{userName,jdbcType=VARCHAR},
+		#{userQQ,jdbcType=VARCHAR},#{userPhone,jdbcType=VARCHAR},#{userEmail,jdbcType=VARCHAR},
+		#{userScore,jdbcType=INTEGER},#{userPhoto,jdbcType=VARCHAR},#{userTotalScore,jdbcType=INTEGER},
+		#{createdAt,jdbcType=TIMESTAMP},#{status,jdbcType=INTEGER},#{isFlag,jdbcType=INTEGER},
+		#{lastIP,jdbcType=VARCHAR},#{lastTime,jdbcType=TIMESTAMP},#{userFrom,jdbcType=VARCHAR},
+		#{openId,jdbcType=VARCHAR},#{wxOpenId,jdbcType=VARCHAR},#{userMoney,jdbcType=DOUBLE},
+		#{lockMoney,jdbcType=DOUBLE},#{distributMoney,jdbcType=DOUBLE},#{isBuyer,jdbcType=INTEGER},
+		#{payPwd,jdbcType=VARCHAR}
 		)
 	</insert>
 
 	<update id="update" parameterType="com.takeaway.modular.dao.model.Users">
-		update tb_users
-		set
-		real_name =
-		#{realName,jdbcType=VARCHAR},
-		login_name =
-		#{loginName,jdbcType=VARCHAR},
-		login_pwd =
-		#{loginPwd,jdbcType=VARCHAR},
-		email = #{email,jdbcType=VARCHAR},
-		jail_id = #{jailId,jdbcType=INTEGER},
-		role_id =
-		#{roleId,jdbcType=INTEGER},
-		updated_at =
-		#{updatedAt,jdbcType=TIMESTAMP}
-		where id = #{id,jdbcType=INTEGER}
+	update tb_users
+	<set>
+		<if test="loginName != null">
+			loginName= #{loginName,jdbcType=VARCHAR},
+		</if>
+		<if test="loginSecret != null">
+			loginSecret= #{loginSecret,jdbcType=INTEGER},
+		</if>
+		<if test="loginPwd != null">
+			loginPwd= #{loginPwd,jdbcType=VARCHAR},
+		</if>
+		<if test="userSex != null">
+			userSex= #{userSex,jdbcType=INTEGER},
+		</if>
+		<if test="userType != null">
+			userType= #{userType,jdbcType=INTEGER},
+		</if>
+		<if test="userName != null">
+			userName= #{userName,jdbcType=VARCHAR},
+		</if>
+		<if test="userQQ != null">
+			userQQ= #{userQQ,jdbcType=VARCHAR},
+		</if>
+		<if test="userPhone != null">
+			userPhone= #{userPhone,jdbcType=VARCHAR},
+		</if>
+		<if test="userEmail != null">
+			userEmail= #{userEmail,jdbcType=VARCHAR},
+		</if>
+		<if test="userScore != null">
+			userScore= #{userScore,jdbcType=INTEGER},
+		</if>
+		<if test="userPhoto != null">
+			userPhoto= #{userPhoto,jdbcType=VARCHAR},
+		</if>
+		<if test="userTotalScore != null">
+			userTotalScore= #{userTotalScore,jdbcType=INTEGER},
+		</if>
+		<if test="status != null">
+			status= #{status,jdbcType=INTEGER},
+		</if>
+		<if test="isFlag != null">
+			is_flag= #{isFlag,jdbcType=INTEGER},
+		</if>
+		<if test="lastIP != null">
+			lastIP= #{lastIP,jdbcType=VARCHAR},
+		</if>
+		<if test="lastTime != null">
+			lastTime= #{lastTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="userFrom != null">
+			userFrom= #{userFrom,jdbcType=VARCHAR},
+		</if>
+		<if test="openId != null">
+			openId= #{openId,jdbcType=VARCHAR},
+		</if>
+		<if test="wxOpenId != null">
+			wxOpenId= #{wxOpenId,jdbcType=VARCHAR},
+		</if>
+		<if test="userMoney != null">
+			userMoney= #{userMoney,jdbcType=DOUBLE},
+		</if>
+		<if test="lockMoney != null">
+			lockMoney= #{lockMoney,jdbcType=DOUBLE},
+		</if>
+		<if test="distributMoney != null">
+			distributMoney= #{distributMoney,jdbcType=DOUBLE},
+		</if>
+		<if test="isBuyer != null">
+			is_buyer= #{isBuyer,jdbcType=INTEGER},
+		</if>
+		<if test="payPwd != null">
+			payPwd= #{payPwd,jdbcType=VARCHAR},
+		</if>
+		<if test="updatedAt != null">
+			updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+		</if>
+	</set>
+	where id = #{id,jdbcType=INTEGER}
 	</update>
 </mapper>

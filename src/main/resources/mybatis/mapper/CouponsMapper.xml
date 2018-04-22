@@ -35,7 +35,7 @@
 		select
 		c.*
 		from tb_coupons c,tb_coupon_merchants cm
-		where c.id=cm.coupon_id and cm.merchant_id = #{merchantId,jdbcType=VARCHAR}
+		where c.id=cm.targetId  and cm.merchant_id = #{merchantId,jdbcType=VARCHAR}
 	</select>
 
 	<select id="getAll" resultMap="BaseResultMap">

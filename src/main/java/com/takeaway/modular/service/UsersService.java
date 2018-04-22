@@ -30,7 +30,7 @@ public class UsersService {
 	private UsersMapper usersMapper;
 
 	public Users login(UsersDto dto) {
-		dto.setPasswordHash(MD5Util.MD5(dto.getPasswordHash()));
+		dto.setLoginPwd(MD5Util.MD5(dto.getLoginPwd()));
 		Users u = usersMapper.login(dto);
 		return u;
 	}
@@ -43,11 +43,12 @@ public class UsersService {
 	@Transactional
 	public JSONObject save(Users user) {
 		int result;
-		int count = usersMapper.checkLoginName(user.getName());
+		int count = usersMapper.checkLoginName(user.getLoginName());
 		if (count > 0) {
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "账户名称已经存在", null);
 		}
 
+		user.setStatus(1);
 		user.setCreatedAt(new Date());
 		result = usersMapper.save(user);
 		if (result > 0) {

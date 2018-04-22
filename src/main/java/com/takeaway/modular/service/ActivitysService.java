@@ -38,21 +38,18 @@ public class ActivitysService {
 	}
 
 	@Transactional
-	public JSONObject save(Activitys activitys,Integer[] merchants) {
+	public JSONObject save(Activitys activitys) {
 		int result;
+		activitys.setStatus(1);
 		activitys.setCreatedAt(new Date());
 		result = activitysMapper.save(activitys);
 		
 		Integer  activitysId = activitys.getId();
 		couponMerchantsMapper.delByTargetId(activitysId.toString());
-		if(merchants.length>0){
-			for(Integer merchantId:merchants){
-				CouponMerchants couponMerchants=new CouponMerchants();
-				couponMerchants.setType(0);
-				couponMerchants.setTargetId(activitysId);
-				couponMerchants.setMerchantId(merchantId);
-				couponMerchantsMapper.save(couponMerchants);
-			}
+		
+		for (CouponMerchants couponMerchants : activitys.getMerchants()) {
+			couponMerchants.setTargetId(activitysId);
+			couponMerchantsMapper.save(couponMerchants);
 		}
 		
 		if (result > 0) {
@@ -63,21 +60,18 @@ public class ActivitysService {
 	}
 
 	@Transactional
-	public JSONObject update(Activitys activitys,Integer[] merchants) {
+	public JSONObject update(Activitys activitys) {
 		int result;
+		activitys.setStatus(1);
 		activitys.setUpdatedAt(new Date());
 		result = activitysMapper.update(activitys);
 		
 		Integer  activitysId = activitys.getId();
 		couponMerchantsMapper.delByTargetId(activitysId.toString());
-		if(merchants.length>0){
-			for(Integer merchantId:merchants){
-				CouponMerchants couponMerchants=new CouponMerchants();
-				couponMerchants.setType(0);
-				couponMerchants.setTargetId(activitysId);
-				couponMerchants.setMerchantId(merchantId);
-				couponMerchantsMapper.save(couponMerchants);
-			}
+		
+		for (CouponMerchants couponMerchants : activitys.getMerchants()) {
+			couponMerchants.setTargetId(activitysId);
+			couponMerchantsMapper.save(couponMerchants);
 		}
 		
 		if (result > 0) {

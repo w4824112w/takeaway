@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gkyt.ywgk.modular.dao.mapper.PayRequestsMapper">
+	<insert id="save" parameterType="com.gkyt.ywgk.modular.dao.dto.PayRequestsDto">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID() as id
+		</selectKey>
+		insert into pay_requests (
+		system_id,
+		pay_type_id,
+		order_no,
+		item_name,
+		amount,
+		notify_url,
+		jump_url,
+		is_pay,
+		is_notify,
+		create_time,
+		success_time,
+		notify_time,
+		notify_times
+		)
+		values
+		(#{systemId,jdbcType=VARCHAR},
+		#{payTypeId,jdbcType=INTEGER},
+		#{orderNo,jdbcType=VARCHAR},
+		#{itemName,jdbcType=VARCHAR},
+		#{amount,jdbcType=VARCHAR},
+		#{notifyUrl,jdbcType=INTEGER},
+		#{jumpUrl,jdbcType=VARCHAR},
+		#{isPay,jdbcType=VARCHAR},
+		#{isNotify,jdbcType=VARCHAR},
+		#{createTime,jdbcType=INTEGER},
+		#{successTime,jdbcType=VARCHAR},
+		#{notifyTime,jdbcType=VARCHAR},
+		#{notifyTimes,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<update id="update" parameterType="com.gkyt.ywgk.modular.dao.model.PayRequests" >
+	update pay_requests 
+	set is_pay=#{isPay,jdbcType=INTEGER},
+	is_notify=#{isNotify,jdbcType=INTEGER},
+	success_time=#{successTime,jdbcType=VARCHAR},
+	notify_time=#{notifyTime,jdbcType=VARCHAR},
+	notify_times=IFNULL(notify_times,0)+1
+	where order_no=#{orderNo,jdbcType=VARCHAR}
+	</update>
+</mapper>

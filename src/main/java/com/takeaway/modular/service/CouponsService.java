@@ -40,23 +40,23 @@ public class CouponsService {
 	}
 
 	@Transactional
-	public JSONObject save(Coupons coupons,Integer[] merchants) {
+	public JSONObject save(Coupons coupons) {
 		int result;
+		coupons.setSendNum(0);
+		coupons.setReceiveNum(0);
+		coupons.setSendStartTime(new Date());
+		coupons.setSendEndTime(new Date());
+		coupons.setStatus(1);
 		coupons.setCreatedAt(new Date());
 		result = couponsMapper.save(coupons);
 		
 		Integer  couponsId = coupons.getId();
-		couponMerchantsMapper.delByTargetId(couponsId.toString());
-		if(merchants.length>0){
-			for(Integer merchantId:merchants){
-				CouponMerchants couponMerchants=new CouponMerchants();
-				couponMerchants.setType(1);
-				couponMerchants.setTargetId(couponsId);
-				couponMerchants.setMerchantId(merchantId);
-				couponMerchantsMapper.save(couponMerchants);
-			}
+		
+		for (CouponMerchants couponMerchants : coupons.getMerchants()) {
+			couponMerchants.setTargetId(couponsId);
+			couponMerchantsMapper.save(couponMerchants);
 		}
-
+		
 		if (result > 0) {
 			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "新增优惠券", result);
 		} else {
@@ -65,21 +65,22 @@ public class CouponsService {
 	}
 
 	@Transactional
-	public JSONObject update(Coupons coupons,Integer[] merchants) {
+	public JSONObject update(Coupons coupons) {
 		int result;
+		coupons.setSendNum(0);
+		coupons.setReceiveNum(0);
+		coupons.setSendStartTime(new Date());
+		coupons.setSendEndTime(new Date());
+		coupons.setStatus(1);
 		coupons.setUpdatedAt(new Date());
 		result = couponsMapper.update(coupons);
 		
 		Integer  couponsId = coupons.getId();
 		couponMerchantsMapper.delByTargetId(couponsId.toString());
-		if(merchants.length>0){
-			for(Integer merchantId:merchants){
-				CouponMerchants couponMerchants=new CouponMerchants();
-				couponMerchants.setType(1);
-				couponMerchants.setTargetId(couponsId);
-				couponMerchants.setMerchantId(merchantId);
-				couponMerchantsMapper.save(couponMerchants);
-			}
+		
+		for (CouponMerchants couponMerchants : coupons.getMerchants()) {
+			couponMerchants.setTargetId(couponsId);
+			couponMerchantsMapper.save(couponMerchants);
 		}
 		
 		if (result > 0) {

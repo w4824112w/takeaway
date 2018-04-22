@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +31,7 @@ import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageResult;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.CouponsDto;
+import com.takeaway.modular.dao.model.Items;
 import com.takeaway.modular.dao.model.Managers;
 import com.takeaway.modular.dao.model.MerchantTypes;
 import com.takeaway.modular.dao.model.Coupons;
@@ -155,26 +158,9 @@ public class CouponsController {
 	 * @return
 	 */
 	@ApiOperation(value = "新增", httpMethod = "POST", notes = "新增优惠卷信息")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "name", value = "优惠卷名称", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "couponMoney", value = "优惠券面额", required = true, dataType = "Double", paramType = "form"),
-			@ApiImplicitParam(name = "spendMoney", value = "最低消费金额", required = true, dataType = "Double", paramType = "form"),
-			@ApiImplicitParam(name = "description", value = "描述", required = false, dataType = "String", paramType = "form"),
-		//	@ApiImplicitParam(name = "sendNum", value = "发放数量", required = true, dataType = "Integer", paramType = "form"),
-		//	@ApiImplicitParam(name = "receiveNum", value = "领取数量", required = true, dataType = "Integer", paramType = "form"),
-		//	@ApiImplicitParam(name = "sendStartTime", value = "发放开始时间", required = true, dataType = "String", paramType = "form"),
-		//	@ApiImplicitParam(name = "sendEndTime", value = "发放结束时间", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "couponSendType", value = "发放类型", required = true, dataType = "Integer", paramType = "form"),
-			@ApiImplicitParam(name = "startDate", value = "活动开始时间", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "endDate", value = "活动结束时间", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "merchants", value = "店铺id数组", required = false, dataType = "String", paramType = "form")
-			})
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
-			HttpServletResponse response, String name, Double couponMoney,
-			Double spendMoney, String description, Integer sendNum,
-			Integer receiveNum, String sendStartTime, String sendEndTime,
-			Integer couponSendType, String startDate, String endDate,Integer[] merchants) {
+			HttpServletResponse response, @ApiParam @RequestBody Coupons coupons) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -182,20 +168,7 @@ public class CouponsController {
 					null);
 		}
 		try {
-			Coupons coupons = new Coupons();
-			coupons.setName(name);
-			coupons.setCouponMoney(couponMoney);
-			coupons.setSpendMoney(spendMoney);
-			coupons.setDescription(description);
-			coupons.setSendNum(0);
-			coupons.setReceiveNum(0);
-			coupons.setSendStartTime(new Date());
-			coupons.setSendEndTime(new Date());
-			coupons.setCouponSendType(couponSendType);
-			coupons.setStartDate(new Date(startDate));
-			coupons.setEndDate(new Date(endDate));
-			coupons.setStatus(1);
-			return couponsService.save(coupons,merchants);
+			return couponsService.save(coupons);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增", null);
@@ -211,27 +184,9 @@ public class CouponsController {
 	 * @return
 	 */
 	@ApiOperation(value = "更新", httpMethod = "POST", notes = "更新优惠卷信息")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "id", value = "优惠卷id", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "name", value = "优惠卷名称", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "couponMoney", value = "优惠券面额", required = true, dataType = "Double", paramType = "form"),
-			@ApiImplicitParam(name = "spendMoney", value = "最低消费金额", required = true, dataType = "Double", paramType = "form"),
-			@ApiImplicitParam(name = "description", value = "描述", required = false, dataType = "String", paramType = "form"),
-		//	@ApiImplicitParam(name = "sendNum", value = "发放数量", required = true, dataType = "Integer", paramType = "form"),
-		//	@ApiImplicitParam(name = "receiveNum", value = "领取数量", required = true, dataType = "Integer", paramType = "form"),
-		//	@ApiImplicitParam(name = "sendStartTime", value = "发放开始时间", required = true, dataType = "String", paramType = "form"),
-		//	@ApiImplicitParam(name = "sendEndTime", value = "发放结束时间", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "couponSendType", value = "发放类型", required = true, dataType = "Integer", paramType = "form"),
-			@ApiImplicitParam(name = "startDate", value = "活动开始时间", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "endDate", value = "活动结束时间", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "merchants", value = "店铺id数组", required = false, dataType = "String", paramType = "form")
-			})
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public JSONObject update(HttpServletRequest request,
-			HttpServletResponse response, String id, String name, Double couponMoney,
-			Double spendMoney, String description, Integer sendNum,
-			Integer receiveNum, String sendStartTime, String sendEndTime,
-			Integer couponSendType, String startDate, String endDate,Integer[] merchants) {
+			HttpServletResponse response, @ApiParam @RequestBody Coupons coupons) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -239,20 +194,8 @@ public class CouponsController {
 					null);
 		}
 		try {
-			Coupons coupons = couponsService.getById(id);
-			coupons.setName(name);
-			coupons.setCouponMoney(couponMoney);
-			coupons.setSpendMoney(spendMoney);
-			coupons.setDescription(description);
-			coupons.setSendNum(0);
-			coupons.setReceiveNum(0);
-			coupons.setSendStartTime(new Date());
-			coupons.setSendEndTime(new Date());
-			coupons.setCouponSendType(couponSendType);
-			coupons.setStartDate(new Date(startDate));
-			coupons.setEndDate(new Date(endDate));
-			coupons.setStatus(1);
-			return couponsService.update(coupons,merchants);
+
+			return couponsService.update(coupons);
 
 		} catch (Exception e) {
 			e.printStackTrace();

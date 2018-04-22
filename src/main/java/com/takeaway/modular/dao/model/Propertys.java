@@ -1,16 +1,16 @@
 package com.takeaway.modular.dao.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class Propertys {
 	private Integer id;
 	private String name;
-	private String value;
-	private Double price;
 	private Integer pid;
-	private Integer isOpen;
 	private Date createdAt;
 	private Date updatedAt;
+
+	List<Propertys> subPropertys;
 
 	public Integer getId() {
 		return id;
@@ -28,36 +28,12 @@ public class Propertys {
 		this.name = name;
 	}
 
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	public Double getPrice() {
-		return price;
-	}
-
-	public void setPrice(Double price) {
-		this.price = price;
-	}
-
 	public Integer getPid() {
 		return pid;
 	}
 
 	public void setPid(Integer pid) {
 		this.pid = pid;
-	}
-
-	public Integer getIsOpen() {
-		return isOpen;
-	}
-
-	public void setIsOpen(Integer isOpen) {
-		this.isOpen = isOpen;
 	}
 
 	public Date getCreatedAt() {
@@ -75,5 +51,14 @@ public class Propertys {
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
+
+	public List<Propertys> getSubPropertys() {
+		return subPropertys;
+	}
+
+	public void setSubPropertys(List<Propertys> subPropertys) {
+		this.subPropertys = subPropertys;
+	}
+
 
 }

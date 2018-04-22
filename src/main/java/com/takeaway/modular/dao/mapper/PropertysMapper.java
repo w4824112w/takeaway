@@ -26,4 +26,5 @@ public interface PropertysMapper {
 	
 	int delete(String id);
 	
+	int delByPropertyId(String propertyId);
 }

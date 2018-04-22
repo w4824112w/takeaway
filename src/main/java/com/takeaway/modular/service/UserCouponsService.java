@@ -35,6 +35,9 @@ public class UserCouponsService {
 	@Transactional
 	public JSONObject save(UserCoupons userCoupons) {
 		int result;
+		
+		userCoupons.setStatus(1); // 使用状态(1:未用，0：已用 -1:删除)
+		userCoupons.setIsFlag(1); // 有效状态(1:有效 -1:删除)
 		result = userCouponsMapper.save(userCoupons);
 		if (result > 0) {
 			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "新增会员优惠券", result);

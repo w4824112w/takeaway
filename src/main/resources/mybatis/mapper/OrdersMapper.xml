@@ -64,7 +64,7 @@
 		select
 		<include refid="Base_Column_List" />
 		from tb_orders 
-		where id = #{id,jdbcType=VARCHAR}
+		where order_no = #{orderNo,jdbcType=VARCHAR}
 	</select>
 	
 	<select id="getByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -72,6 +72,34 @@
 		<include refid="Base_Column_List" />
 		from tb_orders 
 		where user_id = #{userId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getByPay" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_orders 
+		where is_pay=0 and user_id = #{userId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getByShip" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_orders 
+		where is_ship=1 and user_id = #{userId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getByAppraises" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_orders 
+		where is_appraises=0 and user_id = #{userId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getByRefund" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_orders 
+		where is_refund=1 and user_id = #{userId,jdbcType=VARCHAR}
 	</select>
 
 	<select id="getProcessing" resultType="java.lang.Integer" >
@@ -140,13 +168,12 @@
 		is_distribution,merchant_type,remark,
 		pay_type,is_invoice,invoiceClient,
 		is_appraises,userName,userPhone,
-		userAddress,platform_commission,orderScore,couponMoney,activityMoney
+		userAddress,platform_commission,orderScore,
+		couponMoney,activityMoney
 		)
 		values
-		(
-		#{orderNo,jdbcType=VARCHAR}, #{merchantId,jdbcType=INTEGER},#{userId,jdbcType=INTEGER},
-		#{orderType,jdbcType=INTEGER}, #{total_price,jdbcType=DOUBLE},#{deliverMoney,jdbcType=DOUBLE},
-		#{itemId,jdbcType=INTEGER}, #{itemName,jdbcType=VARCHAR},#{itemPrice,jdbcType=DOUBLE},
+		(#{orderNo,jdbcType=VARCHAR},#{merchantId,jdbcType=INTEGER},#{userId,jdbcType=INTEGER},
+		#{orderType,jdbcType=INTEGER},#{totalPrice,jdbcType=DOUBLE},#{deliverMoney,jdbcType=DOUBLE},
 		#{status,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP},#{isPay,jdbcType=INTEGER},
 		#{realTotalMoney,jdbcType=DOUBLE},#{isShip,jdbcType=INTEGER},#{isReceipt,jdbcType=INTEGER},
 		#{isReceived,jdbcType=INTEGER},#{isRefund,jdbcType=INTEGER},#{refundMoney,jdbcType=DOUBLE},
@@ -155,7 +182,7 @@
 		#{payType,jdbcType=INTEGER},#{isInvoice,jdbcType=INTEGER},#{invoiceClient,jdbcType=VARCHAR},
 		#{isAppraises,jdbcType=INTEGER},#{userName,jdbcType=VARCHAR},#{userPhone,jdbcType=VARCHAR},
 		#{userAddress,jdbcType=VARCHAR},#{platformCommission,jdbcType=DOUBLE},#{orderScore,jdbcType=INTEGER},
-		#{couponMoney,jdbcType=DOUBLE},#{activityMoney,jdbcType=INTEGER},
+		#{couponMoney,jdbcType=DOUBLE},#{activityMoney,jdbcType=DOUBLE}
 		)
 	</insert>
 

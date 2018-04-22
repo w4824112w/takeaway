@@ -22,8 +22,8 @@
 		<result column="lng" property="lng" jdbcType="VARCHAR" />
 		<result column="logo" property="logo" jdbcType="VARCHAR" />
 		<result column="notice" property="notice" jdbcType="VARCHAR" />
-		<result column="start_date" property="startDate" jdbcType="DATE" />
-		<result column="end_date" property="endDate" jdbcType="DATE" />
+		<result column="start_date" property="startDate" jdbcType="TIMESTAMP" />
+		<result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
 		<result column="distribution_info" property="distributionInfo"
 			jdbcType="VARCHAR" />
 		<result column="starting_price" property="startingPrice"

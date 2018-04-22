@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +26,7 @@ import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageResult;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.ItemTypesDto;
+import com.takeaway.modular.dao.model.Feedbacks;
 import com.takeaway.modular.dao.model.Managers;
 import com.takeaway.modular.dao.model.ItemTypes;
 import com.takeaway.modular.service.ItemTypesService;
@@ -69,7 +72,8 @@ public class ItemTypesController {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
-			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录",
+					null);
 		}
 
 		ItemTypesDto dto = new ItemTypesDto();
@@ -105,7 +109,8 @@ public class ItemTypesController {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
-			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录",
+					null);
 		}
 
 		List<ItemTypes> itemTypes = itemTypesService.getAll();
@@ -131,7 +136,8 @@ public class ItemTypesController {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
-			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录",
+					null);
 		}
 
 		ItemTypes itemTypes = itemTypesService.getById(id);
@@ -149,18 +155,17 @@ public class ItemTypesController {
 	 * @return
 	 */
 	@ApiOperation(value = "新增", httpMethod = "POST", notes = "新增商品类型信息")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "name", value = "商品类型名称", required = true, dataType = "String", paramType = "form") })
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
-			HttpServletResponse response, String name) {
+			HttpServletResponse response,
+			@ApiParam @RequestBody ItemTypes itemTypes) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
-			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录",
+					null);
 		}
 		try {
-			ItemTypes itemTypes = new ItemTypes();
-			itemTypes.setName(name);
 			return itemTypesService.save(itemTypes);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -177,23 +182,18 @@ public class ItemTypesController {
 	 * @return
 	 */
 	@ApiOperation(value = "更新", httpMethod = "POST", notes = "更新商品类型信息")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "id", value = "商品类型id", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "name", value = "商品类型名称", required = true, dataType = "String", paramType = "form")
-			})
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public JSONObject update(HttpServletRequest request,
-			HttpServletResponse response, String id, String name) {
+			HttpServletResponse response,
+			@ApiParam @RequestBody ItemTypes itemTypes) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
-			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录",
+					null);
 		}
 		try {
-			ItemTypes itemTypes = itemTypesService.getById(id);
-			itemTypes.setName(name);
 			return itemTypesService.update(itemTypes);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "更新", null);
@@ -217,7 +217,8 @@ public class ItemTypesController {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
-			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录",
+					null);
 		}
 
 		try {

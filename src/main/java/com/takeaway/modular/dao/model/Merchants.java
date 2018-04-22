@@ -33,7 +33,9 @@ public class Merchants {
 	private Date createdAt;
 	private Date updatedAt;
 	private Integer status;
-	
+
+	private String accountName;
+	private String accountPassword;
 
 	private List<MerchantPictures> pictures;
 
@@ -181,6 +183,7 @@ public class Merchants {
 		this.notice = notice;
 	}
 
+
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -275,6 +278,22 @@ public class Merchants {
 
 	public void setIsOnline(Integer isOnline) {
 		this.isOnline = isOnline;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+
+	public String getAccountPassword() {
+		return accountPassword;
+	}
+
+	public void setAccountPassword(String accountPassword) {
+		this.accountPassword = accountPassword;
 	}
 
 }
