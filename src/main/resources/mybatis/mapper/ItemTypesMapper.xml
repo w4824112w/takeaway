@@ -67,7 +67,7 @@
 		set
 		code = #{code,jdbcType=VARCHAR},
 		name = #{name,jdbcType=VARCHAR},
-		quantity = #{name,jdbcType=INTEGER}
+		quantity = #{quantity,jdbcType=INTEGER}
 		where id =
 		#{id,jdbcType=INTEGER}
 	</update>
