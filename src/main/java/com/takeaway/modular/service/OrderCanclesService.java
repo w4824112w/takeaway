@@ -16,6 +16,7 @@ import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.OrderCanclesDto;
 import com.takeaway.modular.dao.mapper.OrderCanclesMapper;
 import com.takeaway.modular.dao.mapper.OrderItemsMapper;
+import com.takeaway.modular.dao.mapper.OrdersMapper;
 import com.takeaway.modular.dao.model.OrderCancles;
 import com.takeaway.modular.dao.model.OrderReserves;
 
@@ -32,10 +33,14 @@ public class OrderCanclesService {
 	
 	@Autowired
 	private OrderItemsMapper orderItemsMapper;
+	
+	@Autowired
+	private OrdersMapper ordersMapper;
 
 	public PageResult<OrderCancles> findPage(PageBounds bounds, OrderCanclesDto dto) {
 		PageList<OrderCancles> orderCancles = OrderCanclesMapper.findPage(bounds, dto);
 		for(OrderCancles orderCancle:orderCancles){
+			orderCancle.setOrders(ordersMapper.getById(orderCancle.getOrderId().toString()));
 			orderCancle.setOrderItems(orderItemsMapper.getByOrderId(orderCancle.getOrderId().toString()));
 		}
 		return new PageResult<OrderCancles>(orderCancles);

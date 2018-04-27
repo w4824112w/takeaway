@@ -13,6 +13,8 @@ public class Configure {
 	private static final String sdkVersion = "1.0";
 
 	private static String appID = "";
+	
+	private static String secret = "";
 
 	private static String mchID = "";
 
@@ -70,6 +72,7 @@ public class Configure {
 		try {
 			prop.load(inputStream);
 			appID=prop.getProperty("appid");
+			secret=prop.getProperty("secret");
 			mchID=prop.getProperty("mch_id");
 			notifyCallbackUrl=prop.getProperty("notify_url");
 			key=prop.getProperty("apikey");
@@ -182,6 +185,14 @@ public class Configure {
 
 	public static void setNotifyCallbackUrl(String notifyCallbackUrl) {
 		Configure.notifyCallbackUrl = notifyCallbackUrl;
+	}
+
+	public static String getSecret() {
+		return secret;
+	}
+
+	public static void setSecret(String secret) {
+		Configure.secret = secret;
 	}
 
 }

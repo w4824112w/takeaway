@@ -1,5 +1,6 @@
 package com.takeaway.config;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -7,6 +8,8 @@ import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletCont
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -56,6 +59,16 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
+    
+    /**
+     * rest客户端工具
+     */
+	@Bean
+	public RestTemplate getRestTemplate(){
+		RestTemplate restTemplate = new RestTemplate();
+		restTemplate.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+		return restTemplate;
+	}
     
 /*    @Bean
     public EmbeddedServletContainerCustomizer containerCustomizer(){

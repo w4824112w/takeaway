@@ -16,6 +16,7 @@ public class Items {
 	private Double originPrice;
 	private Double costPrice;
 	private Double price;
+	private Double packingCharge;
 	private String unit;
 	private Integer salesVolume;
 	private String tips;
@@ -29,9 +30,12 @@ public class Items {
 	private Integer cityId;
 	private String origin;
 
-	private List<ItemMerchants> merchants;
-	private List<ItemPropertys> propertys;
+	private List<ItemMerchants> itemMerchants;
+	private List<ItemPropertys> itemPropertys;
 	private List<ItemPictures> pictures;
+	
+	private List<Merchants> merchants;
+	private List<Propertys> propertys;
 
 	public Integer getId() {
 		return id;
@@ -201,19 +205,44 @@ public class Items {
 		this.pictures = pictures;
 	}
 
-	public List<ItemMerchants> getMerchants() {
+
+	public Double getPackingCharge() {
+		return packingCharge;
+	}
+
+	public void setPackingCharge(Double packingCharge) {
+		this.packingCharge = packingCharge;
+	}
+
+	public List<ItemMerchants> getItemMerchants() {
+		return itemMerchants;
+	}
+
+	public void setItemMerchants(List<ItemMerchants> itemMerchants) {
+		this.itemMerchants = itemMerchants;
+	}
+
+	public List<ItemPropertys> getItemPropertys() {
+		return itemPropertys;
+	}
+
+	public void setItemPropertys(List<ItemPropertys> itemPropertys) {
+		this.itemPropertys = itemPropertys;
+	}
+
+	public List<Merchants> getMerchants() {
 		return merchants;
 	}
 
-	public void setMerchants(List<ItemMerchants> merchants) {
+	public void setMerchants(List<Merchants> merchants) {
 		this.merchants = merchants;
 	}
 
-	public List<ItemPropertys> getPropertys() {
+	public List<Propertys> getPropertys() {
 		return propertys;
 	}
 
-	public void setPropertys(List<ItemPropertys> propertys) {
+	public void setPropertys(List<Propertys> propertys) {
 		this.propertys = propertys;
 	}
 

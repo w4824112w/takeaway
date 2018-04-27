@@ -23,12 +23,13 @@
 	<select id="getAll" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from tb_propertys order by id desc
+		from tb_propertys where pid is null order by id desc
 	</select>
 	
 	<select id="getByItemId" parameterType="java.lang.String" resultType="com.takeaway.modular.dao.model.Propertys">
-		select p.id from tb_propertys p,tb_item_propertys ip where p.id=ip.item_id
-		where ip.item_id = #{itemId,jdbcType=VARCHAR}
+		select p.id,p.name,p.pid,p.created_at as createdAt from tb_propertys p,tb_item_propertys ip 
+		where p.id=ip.property_id 
+		and ip.item_id = #{itemId,jdbcType=VARCHAR}
 	</select>
 	
 	<select id="getByPid" parameterType="java.lang.String" resultMap="BaseResultMap">

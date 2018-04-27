@@ -23,11 +23,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.alibaba.fastjson.JSONObject;
 import com.takeaway.commons.utils.MD5Util;
 import com.takeaway.commons.utils.RandomSequence;
 import com.takeaway.core.enums.ErrorEnums;
+import com.takeaway.core.netpay.wxpay.utils.Configure;
 import com.takeaway.modular.dao.dto.ManagersDto;
 import com.takeaway.modular.dao.dto.UsersDto;
 import com.takeaway.modular.dao.model.Managers;
@@ -52,7 +54,8 @@ public class LoginApiController {
 	@Autowired
 	private UsersService usersService;
 	
-
+	@Autowired
+	private RestTemplate restTemplate;
 
 	/**
 	 * 登录
@@ -62,33 +65,31 @@ public class LoginApiController {
 	 * @return
 	 */
 	@ApiOperation(value = "app用户登录", httpMethod = "POST", notes = "根据app会员账户、密码登录系统")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "code", value = "小程序登录时获取的code", required = true, dataType = "String", paramType = "query") })
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public JSONObject login(HttpServletRequest request,
-			HttpServletResponse response, @ApiParam @RequestBody UsersDto dto) {
+			HttpServletResponse response,String code) {
 		log.info("调用登录接口开始......");
 
-		if (StringUtils.isBlank(dto.getLoginName())
-				|| StringUtils.isBlank(dto.getLoginPwd())) {
-			return ErrorEnums.getResult(ErrorEnums.ERROR, "请输入账号或密码", null);
-		}
+		String url = "https://api.weixin.qq.com/sns/jscode2session?appid={appid}&secret={secret}&js_code={js_code}&grant_type={grant_type}";
 
-		Users u = usersService.login(dto);
+		Map parms = new HashMap();
+		parms.put("appid", Configure.getAppid());
+		parms.put("secret", Configure.getSecret());
+		parms.put("js_code", code);
+		parms.put("grant_type", "authorization_code");
+		JSONObject json = restTemplate.getForObject(url, JSONObject.class,
+				parms);
+
+		String  openid =  json.get("openid").toString();
 		
-		if (u == null) {
-			return ErrorEnums.getResult(ErrorEnums.ERROR, "账号不存在，请确认", null);
-		}
-		if (u.getStatus() == 0) {
-			return ErrorEnums.getResult(ErrorEnums.ERROR, "账号已禁用", null);
-		}
-		if (u.getStatus() == -1) {
-			return ErrorEnums.getResult(ErrorEnums.ERROR, "账号已删除", null);
-		}
-
-		HttpSession session = request.getSession();
-		session.setAttribute("s_user", u);
-
+		Users user=new Users();
+		user.setOpenId(openid);
+		usersService.save(user);
+		
 		JSONObject result = new JSONObject();
-		result.put("users", u);
+		result.put("openid", openid);
+
 		log.info("调用登录接口结束......");
 		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "登录", result);
 	}
@@ -100,8 +101,8 @@ public class LoginApiController {
 	 * @param response
 	 * @return
 	 */
-	@ApiOperation(value = "退出登录", httpMethod = "GET", notes = "注销登出系统")
-	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+//	@ApiOperation(value = "退出登录", httpMethod = "GET", notes = "注销登出系统")
+//	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public JSONObject logout(HttpServletRequest request,
 			HttpServletResponse response) {
 		log.info("调用退出登录接口开始......");

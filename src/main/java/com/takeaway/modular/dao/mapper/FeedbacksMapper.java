@@ -12,7 +12,7 @@ public interface FeedbacksMapper {
 	
 	Feedbacks getById(String id);
 	
-	PageList<Feedbacks> findPage(PageBounds bounds,FeedbacksDto dto);
+	PageList<FeedbacksDto> findPage(PageBounds bounds,FeedbacksDto dto);
 	
 	List<Feedbacks> getAll();
 	

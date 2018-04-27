@@ -18,10 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
+import com.takeaway.commons.page.PageBounds;
+import com.takeaway.commons.page.PageResult;
 import com.takeaway.core.enums.ErrorEnums;
+import com.takeaway.modular.dao.dto.FeedbacksDto;
 import com.takeaway.modular.dao.model.Feedbacks;
 import com.takeaway.modular.dao.model.Managers;
 import com.takeaway.modular.service.FeedbacksService;
@@ -88,4 +92,36 @@ public class FeedbacksController {
 		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "会员订单评价信息查询", result);
 
 	}
+	
+	
+	@ApiOperation(value = "店铺查询", httpMethod = "GET", notes = "获取自己所在店铺订单评价")
+	@ApiImplicitParams({ 
+		@ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer", paramType = "query"),
+		@ApiImplicitParam(name = "rows", value = "页数", required = true, dataType = "Integer", paramType = "query"),
+		@ApiImplicitParam(name = "merchantId", value = "店铺id", required = false, dataType = "String", paramType = "query") })
+	@RequestMapping(value = "/page", method = RequestMethod.GET)
+	public JSONObject page(HttpServletRequest request,
+			HttpServletResponse response, 
+			@RequestParam(value = "page", defaultValue = "1") int page,
+			@RequestParam(value = "rows", defaultValue = "10") int rows,
+			String merchantId) {
+		HttpSession session = request.getSession();
+		Managers u = (Managers) session.getAttribute("s_user");
+		if (u == null) {
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
+		}
+		
+		
+		PageBounds bounds = new PageBounds(page, rows);
+		FeedbacksDto dto=new FeedbacksDto();
+		dto.setMerchantId(merchantId);
+		PageResult<FeedbacksDto> feedbacks = feedbacksService.findPage(bounds,dto);
+		JSONObject result = new JSONObject();
+		result.put("feedbacks", feedbacks);
+
+		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "会员订单评价信息查询", result);
+
+	}
+	
+	
 }

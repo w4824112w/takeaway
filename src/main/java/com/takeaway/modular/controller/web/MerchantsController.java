@@ -176,6 +176,25 @@ public class MerchantsController {
 		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "编辑商户", result);
 	}
 
+	@ApiOperation(value = "首页", httpMethod = "GET", notes = "查看店铺首页信息")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "merchantId", value = "商户id", required = false, dataType = "String", paramType = "query") })
+	@RequestMapping(value = "/homePage", method = RequestMethod.GET)
+	public JSONObject homePage(HttpServletRequest request,
+			HttpServletResponse response, String merchantId) {
+		HttpSession session = request.getSession();
+		Managers u = (Managers) session.getAttribute("s_user");
+		if (u == null) {
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录",
+					null);
+		}
+
+		MerchantsDto merchants = merchantsService.homePage(merchantId);
+
+		JSONObject result = new JSONObject();
+		result.put("merchants", merchants);
+		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "编辑商户", result);
+	}
+	
 	/**
 	 * 新增商户
 	 * 
@@ -349,10 +368,9 @@ public class MerchantsController {
 	 * @return
 	 */
 	@ApiOperation(value = "删除", httpMethod = "POST", notes = "删除商户信息")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "商户id", required = true, dataType = "String", paramType = "form") })
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public JSONObject delete(HttpServletRequest request,
-			HttpServletResponse response, String id) {
+			HttpServletResponse response, @ApiParam @RequestBody Merchants merchants) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -361,7 +379,7 @@ public class MerchantsController {
 		}
 
 		try {
-			int result = merchantsService.delete(id);
+			int result = merchantsService.delete(merchants.getId().toString());
 			if (result > 0) {
 				return ErrorEnums.getResult(ErrorEnums.SUCCESS, "删除商户", null);
 			} else {

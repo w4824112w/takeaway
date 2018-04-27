@@ -45,7 +45,7 @@ public class FeedbacksApiController {
 	@ApiOperation(value = "新增会员订单评价", httpMethod = "POST", notes = "新增会员订单评价信息")
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
-			HttpServletResponse response,@ApiParam @RequestBody Feedbacks feedbacks) {
+			HttpServletResponse response,@RequestBody Feedbacks feedbacks) {
 		try {
 			return feedbacksService.save(feedbacks);
 		} catch (Exception e) {

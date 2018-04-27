@@ -37,9 +37,13 @@ public class MerchantsDto {
 	private String updatedAt;
 	private String status;
 
-	private String monthPrice;
-	private String monthOrder;
-	private String itemCount;
+	private String dayPrice; // 每天营业额
+	private String dayOrder; // 每天订单数
+	private String pendingOrder; // 未处理订单数
+	private String refundingOrder; // 退款中的外卖订单
+	private String monthPrice; // 月营业额
+	private String monthOrder; // 月订单数
+	private String itemCount; // 商品数量
 	private String itemTypeCount;
 	private String activityCount;
 
@@ -349,6 +353,38 @@ public class MerchantsDto {
 
 	public void setActivitys(List<Activitys> activitys) {
 		this.activitys = activitys;
+	}
+
+	public String getDayPrice() {
+		return dayPrice;
+	}
+
+	public void setDayPrice(String dayPrice) {
+		this.dayPrice = dayPrice;
+	}
+
+	public String getDayOrder() {
+		return dayOrder;
+	}
+
+	public void setDayOrder(String dayOrder) {
+		this.dayOrder = dayOrder;
+	}
+
+	public String getPendingOrder() {
+		return pendingOrder;
+	}
+
+	public void setPendingOrder(String pendingOrder) {
+		this.pendingOrder = pendingOrder;
+	}
+
+	public String getRefundingOrder() {
+		return refundingOrder;
+	}
+
+	public void setRefundingOrder(String refundingOrder) {
+		this.refundingOrder = refundingOrder;
 	}
 
 }

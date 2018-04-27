@@ -15,6 +15,7 @@ import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.ActivitysDto;
 import com.takeaway.modular.dao.mapper.ActivitysMapper;
 import com.takeaway.modular.dao.mapper.CouponMerchantsMapper;
+import com.takeaway.modular.dao.mapper.MerchantsMapper;
 import com.takeaway.modular.dao.model.Activitys;
 import com.takeaway.modular.dao.model.CouponMerchants;
 
@@ -31,6 +32,9 @@ public class ActivitysService {
 
 	@Autowired
 	private CouponMerchantsMapper couponMerchantsMapper;
+	
+	@Autowired
+	private MerchantsMapper merchantsMapper;
 	
 	public PageResult<Activitys> findPage(PageBounds bounds, ActivitysDto dto) {
 		PageList<Activitys> activitys = activitysMapper.findPage(bounds, dto);
@@ -83,6 +87,11 @@ public class ActivitysService {
 
 	public Activitys getById(String id) {
 		Activitys activitys = activitysMapper.getById(id);
+		List<CouponMerchants> merchants=couponMerchantsMapper.getByTargetId(id);
+		for(CouponMerchants couponMerchants:merchants){
+			couponMerchants.setMerchant(merchantsMapper.getById(couponMerchants.getMerchantId().toString()));
+		}
+		activitys.setMerchants(merchants);
 		return activitys;
 	}
 

@@ -44,7 +44,7 @@ public class UserAddressApiController {
 	@ApiOperation(value = "新增会员收货地址收货地址", httpMethod = "POST", notes = "新增会员收货地址信息")
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
-			HttpServletResponse response, @ApiParam @RequestBody UserAddress userAddress) {
+			HttpServletResponse response, @RequestBody UserAddress userAddress) {
 		try {
 			return userAddressService.save(userAddress);
 		} catch (Exception e) {

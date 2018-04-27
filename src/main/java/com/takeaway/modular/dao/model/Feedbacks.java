@@ -1,17 +1,28 @@
 package com.takeaway.modular.dao.model;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Date;
 
 public class Feedbacks {
+	@ApiModelProperty(value = "ID(编辑时必填)", required = false)
 	private Integer id;
+	@ApiModelProperty(value = "角色ID(必填)", required = true)
 	private Integer userId;
+	@ApiModelProperty(value = "订单ID(必填)", required = true)
 	private Integer orderId;
+	@ApiModelProperty(value = "店铺ID(必填)", required = true)
 	private Integer merchantId;
+	@ApiModelProperty(value = "商品ID(必填)", required = true)
 	private Integer itemId;
+	@ApiModelProperty(value = "商品评分(1~5)", required = true)
 	private Integer goodsScore;
+	@ApiModelProperty(value = "食物评分(1~5)", required = true)
 	private Integer foodScore;
+	@ApiModelProperty(value = "配送评分(1~5)", required = true)
 	private Integer distributionScore;
 	private Date createdAt;
+	@ApiModelProperty(value = "评价内容", required = true)
 	private String content;
 
 	public Integer getId() {

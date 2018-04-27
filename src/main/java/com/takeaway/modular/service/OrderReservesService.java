@@ -16,6 +16,7 @@ import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.OrderReservesDto;
 import com.takeaway.modular.dao.mapper.OrderItemsMapper;
 import com.takeaway.modular.dao.mapper.OrderReservesMapper;
+import com.takeaway.modular.dao.mapper.OrdersMapper;
 import com.takeaway.modular.dao.model.OrderReserves;
 import com.takeaway.modular.dao.model.Orders;
 
@@ -32,10 +33,14 @@ public class OrderReservesService {
 	
 	@Autowired
 	private OrderItemsMapper orderItemsMapper;
+	
+	@Autowired
+	private OrdersMapper ordersMapper;
 
 	public PageResult<OrderReserves> findPage(PageBounds bounds, OrderReservesDto dto) {
 		PageList<OrderReserves> orderReserves = orderReservesMapper.findPage(bounds, dto);
 		for(OrderReserves orderReserve:orderReserves){
+			orderReserve.setOrders(ordersMapper.getById(orderReserve.getOrderId().toString()));
 			orderReserve.setOrderItems(orderItemsMapper.getByOrderId(orderReserve.getOrderId().toString()));
 		}
 		return new PageResult<OrderReserves>(orderReserves);

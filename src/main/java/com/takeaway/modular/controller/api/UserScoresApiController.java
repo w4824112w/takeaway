@@ -42,7 +42,7 @@ public class UserScoresApiController {
 	@ApiOperation(value = "新增会员积分明细积分明细", httpMethod = "POST", notes = "新增会员积分明细信息")
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
-			HttpServletResponse response, @ApiParam @RequestBody UserScores userScores) {
+			HttpServletResponse response, @RequestBody UserScores userScores) {
 		try {
 			return userScoresService.save(userScores);
 		} catch (Exception e) {

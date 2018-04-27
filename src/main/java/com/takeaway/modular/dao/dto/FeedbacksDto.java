@@ -1,5 +1,10 @@
 package com.takeaway.modular.dao.dto;
 
+import com.takeaway.modular.dao.model.Items;
+import com.takeaway.modular.dao.model.Merchants;
+import com.takeaway.modular.dao.model.Orders;
+import com.takeaway.modular.dao.model.Users;
+
 public class FeedbacksDto {
 	private String id;
 	private String userId;
@@ -11,6 +16,11 @@ public class FeedbacksDto {
 	private String distributionScore;
 	private String createdAt;
 	private String content;
+
+	private Users users;
+	private Orders orders;
+	private Merchants merchants;
+	private Items items;
 
 	public String getId() {
 		return id;
@@ -90,6 +100,38 @@ public class FeedbacksDto {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	public Users getUsers() {
+		return users;
+	}
+
+	public void setUsers(Users users) {
+		this.users = users;
+	}
+
+	public Orders getOrders() {
+		return orders;
+	}
+
+	public void setOrders(Orders orders) {
+		this.orders = orders;
+	}
+
+	public Merchants getMerchants() {
+		return merchants;
+	}
+
+	public void setMerchants(Merchants merchants) {
+		this.merchants = merchants;
+	}
+
+	public Items getItems() {
+		return items;
+	}
+
+	public void setItems(Items items) {
+		this.items = items;
 	}
 
 }

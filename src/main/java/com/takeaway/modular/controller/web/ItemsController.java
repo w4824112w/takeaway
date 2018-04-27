@@ -208,14 +208,9 @@ public class ItemsController {
 	}
 
 	@ApiOperation(value = "更新", httpMethod = "POST", notes = "商户店铺上架or下架商品信息")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "itemId", value = "商品id", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "merchantId", value = "商户id", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "isPuton", value = "是否上架(0：下架;1：上架;)", required = true, dataType = "Integer", paramType = "form") })
 	@RequestMapping(value = "/updateIsPuton", method = RequestMethod.POST)
 	public JSONObject updateIsPuton(HttpServletRequest request,
-			HttpServletResponse response, String itemId, String merchantId,
-			String isPuton) {
+			HttpServletResponse response, @ApiParam @RequestBody ItemMerchantsDto itemMerchants) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -223,11 +218,7 @@ public class ItemsController {
 					null);
 		}
 		try {
-			ItemMerchantsDto dto = new ItemMerchantsDto();
-			dto.setItemId(itemId);
-			dto.setMerchantId(merchantId);
-			dto.setIsPuton(isPuton);
-			return itemsService.updateIsPuton(dto);
+			return itemsService.updateIsPuton(itemMerchants);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "更新", null);
@@ -236,12 +227,9 @@ public class ItemsController {
 	}
 
 	@ApiOperation(value = "更新", httpMethod = "POST", notes = "超级管理员上架or下架商品信息")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "itemId", value = "商品id", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "isPuton", value = "是否上架(0：下架;1：上架;)", required = true, dataType = "Integer", paramType = "form") })
 	@RequestMapping(value = "/superUpdate", method = RequestMethod.POST)
 	public JSONObject superUpdate(HttpServletRequest request,
-			HttpServletResponse response, String itemId, String isPuton) {
+			HttpServletResponse response, @ApiParam @RequestBody ItemMerchantsDto itemMerchants) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -249,7 +237,7 @@ public class ItemsController {
 					null);
 		}
 		try {
-			return itemsService.superUpdate(itemId, isPuton);
+			return itemsService.superUpdate(itemMerchants);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "更新", null);
@@ -269,7 +257,7 @@ public class ItemsController {
 	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "商品id", required = true, dataType = "String", paramType = "form") })
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public JSONObject delete(HttpServletRequest request,
-			HttpServletResponse response, String id) {
+			HttpServletResponse response, @ApiParam @RequestBody Items items) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -278,7 +266,7 @@ public class ItemsController {
 		}
 
 		try {
-			int result = itemsService.delete(id);
+			int result = itemsService.delete(items.getId().toString());
 			if (result > 0) {
 				return ErrorEnums.getResult(ErrorEnums.SUCCESS, "删除商品", null);
 			} else {

@@ -10,6 +10,7 @@
 		<result column="origin_price" property="originPrice" jdbcType="DOUBLE" />
 		<result column="cost_price" property="costPrice" jdbcType="DOUBLE" />
 		<result column="price" property="price" jdbcType="DOUBLE" />
+		<result column="packingCharge" property="packingCharge" jdbcType="DOUBLE" />
 		<result column="unit" property="unit" jdbcType="VARCHAR" />
 		<result column="sales_volume" property="salesVolume" jdbcType="INTEGER" />
 		<result column="tips" property="tips" jdbcType="VARCHAR" />
@@ -25,7 +26,7 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		id,item_type,name,code,label,origin_price,cost_price,price,
+		id,item_type,name,code,label,origin_price,cost_price,price,packingCharge,
 		unit,sales_volume,tips,remain,stock,stock_status,
 		description,status,created_at,updated_at,city_id,origin
 	</sql>
@@ -52,8 +53,8 @@
 
 	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.ItemsDto"
 		resultType="com.takeaway.modular.dao.dto.ItemsDto">
-		select 
- 		i.id,i.`name`,i.`code`,i.unit,i.price,it.`name` as itemTypeName,
+		select  
+ 		i.id,i.`name`,i.`code`,i.unit,i.price,i.packingCharge,it.`name` as itemTypeName,
  		i.label,i.sales_volume as salesVolume,i.stock_status as stockStatus,
  		i.stock,i.`status`,im.is_puton as isPuton,m.`name` as merchantName,m.id as  merchantId
 		from tb_items i,tb_item_types it,tb_merchants m,tb_item_merchants im
@@ -80,14 +81,14 @@
 			LAST_INSERT_ID()
 		</selectKey>
 		insert into tb_items (
-		item_type,name,code,label,origin_price,cost_price,price,
+		item_type,name,code,label,origin_price,cost_price,price,packingCharge,
 		unit,sales_volume,tips,remain,stock,stock_status,
-		description,city_id,is_puton,origin,status,created_at
+		description,city_id,origin,status,created_at
 		)
 		values
 		(#{itemType,jdbcType=INTEGER},#{name,jdbcType=VARCHAR},#{code,jdbcType=VARCHAR},
 		#{label,jdbcType=VARCHAR},#{originPrice,jdbcType=DOUBLE},#{costPrice,jdbcType=DOUBLE},
-		#{price,jdbcType=DOUBLE},#{unit,jdbcType=VARCHAR},#{salesVolume,jdbcType=INTEGER},
+		#{price,jdbcType=DOUBLE},#{packingCharge,jdbcType=DOUBLE},#{unit,jdbcType=VARCHAR},#{salesVolume,jdbcType=INTEGER},
 		#{tips,jdbcType=VARCHAR},#{remain,jdbcType=VARCHAR},#{stock,jdbcType=INTEGER},
 		#{stockStatus,jdbcType=INTEGER},#{description,jdbcType=VARCHAR},#{cityId,jdbcType=INTEGER},
 		#{origin,jdbcType=VARCHAR},#{status,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP}
@@ -104,12 +105,13 @@
 		origin_price=#{originPrice,jdbcType=DOUBLE},
 		cost_price=#{costPrice,jdbcType=DOUBLE},
 		price=#{price,jdbcType=DOUBLE},
+		packingCharge=#{packingCharge,jdbcType=DOUBLE},
 		unit=#{unit,jdbcType=VARCHAR},
 		sales_volume=#{salesVolume,jdbcType=INTEGER},
 		tips=#{tips,jdbcType=VARCHAR},
 		remain=#{remain,jdbcType=VARCHAR},
 		stock=#{stock,jdbcType=INTEGER},
-		stockStatus=#{stockStatus,jdbcType=INTEGER},
+		stock_status=#{stockStatus,jdbcType=INTEGER},
 		description=#{description,jdbcType=VARCHAR},
 		city_id=#{cityId,jdbcType=INTEGER},
 		origin=#{origin,jdbcType=VARCHAR},

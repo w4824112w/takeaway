@@ -20,6 +20,8 @@ import com.takeaway.modular.dao.mapper.ItemMerchantsMapper;
 import com.takeaway.modular.dao.mapper.ItemPicturesMapper;
 import com.takeaway.modular.dao.mapper.ItemPropertysMapper;
 import com.takeaway.modular.dao.mapper.ItemsMapper;
+import com.takeaway.modular.dao.mapper.MerchantsMapper;
+import com.takeaway.modular.dao.mapper.PropertysMapper;
 import com.takeaway.modular.dao.model.ItemMerchants;
 import com.takeaway.modular.dao.model.ItemPictures;
 import com.takeaway.modular.dao.model.ItemPropertys;
@@ -45,6 +47,12 @@ public class ItemsService {
 
 	@Autowired
 	private ItemPropertysMapper itemPropertysMapper;
+	
+	@Autowired
+	private PropertysMapper propertysMapper;
+	
+	@Autowired
+	private MerchantsMapper merchantsMapper;
 
 	public PageResult<Items> findPage(PageBounds bounds, ItemsDto dto) {
 		PageList<Items> merchants = itemsMapper.findPage(bounds, dto);
@@ -59,12 +67,12 @@ public class ItemsService {
 		result = itemsMapper.save(items);
 		Integer itemId = items.getId();
 
-		for (ItemMerchants itemMerchants : items.getMerchants()) {
+		for (ItemMerchants itemMerchants : items.getItemMerchants()) {
 			itemMerchants.setItemId(itemId);
 			itemMerchantsMapper.save(itemMerchants);
 		}
 
-		for (ItemPropertys itemPropertys : items.getPropertys()) {
+		for (ItemPropertys itemPropertys : items.getItemPropertys()) {
 			itemPropertys.setItemId(itemId);
 			itemPropertysMapper.save(itemPropertys);
 		}
@@ -97,12 +105,12 @@ public class ItemsService {
 		itemPropertysMapper.delByItemId(itemId.toString());
 		itemPicturesMapper.delByItemId(itemId.toString());
 
-		for (ItemMerchants itemMerchants : items.getMerchants()) {
+		for (ItemMerchants itemMerchants : items.getItemMerchants()) {
 			itemMerchants.setItemId(itemId);
 			itemMerchantsMapper.save(itemMerchants);
 		}
 
-		for (ItemPropertys itemPropertys : items.getPropertys()) {
+		for (ItemPropertys itemPropertys : items.getItemPropertys()) {
 			itemPropertys.setItemId(itemId);
 			itemPropertysMapper.save(itemPropertys);
 		}
@@ -139,10 +147,7 @@ public class ItemsService {
 	}
 
 	@Transactional
-	public JSONObject superUpdate(String itemId, String isPuton) {
-		ItemMerchantsDto itemMerchants = new ItemMerchantsDto();
-		itemMerchants.setItemId(itemId);
-		itemMerchants.setIsPuton(isPuton);
+	public JSONObject superUpdate(ItemMerchantsDto itemMerchants) {
 		int result;
 		result = itemMerchantsMapper.superUpdate(itemMerchants);
 		if (result > 0) {
@@ -154,6 +159,8 @@ public class ItemsService {
 
 	public Items getById(String id) {
 		Items items = itemsMapper.getById(id);
+		items.setMerchants(merchantsMapper.getByItemId(id));
+		items.setPropertys(propertysMapper.getByItemId(id));
 		items.setPictures(itemPicturesMapper.getByItemId(id));
 		return items;
 	}

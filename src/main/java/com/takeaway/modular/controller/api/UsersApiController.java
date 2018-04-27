@@ -45,7 +45,7 @@ public class UsersApiController {
 	@ApiOperation(value = "新增会员", httpMethod = "POST", notes = "新增会员信息")
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
-			HttpServletResponse response, @ApiParam @RequestBody Users user) {
+			HttpServletResponse response, @RequestBody Users user) {
 		try {
 			return usersService.save(user);
 		} catch (Exception e) {

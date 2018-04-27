@@ -65,16 +65,14 @@ public class PropertysService {
 	}
 
 	@Transactional
-	public JSONObject bathcUpdate(List<Propertys> propertys) {
+	public JSONObject bathcUpdate(Propertys propertys) {
 		int result = 0;
 
-		for (Propertys parent : propertys) {
-			result = propertysMapper.update(parent);
-			propertysMapper.delByPropertyId(parent.getId().toString());
-			for (Propertys child : parent.getSubPropertys()) {
-				child.setPid(parent.getId());
-				propertysMapper.update(child);
-			}
+		result = propertysMapper.update(propertys);
+		propertysMapper.delByPropertyId(propertys.getId().toString());
+		for (Propertys child : propertys.getSubPropertys()) {
+			child.setPid(propertys.getId());
+			propertysMapper.save(child);
 		}
 
 		if (result > 0) {

@@ -5,6 +5,8 @@ public class CouponMerchants {
 	private Integer type;
 	private Integer targetId;
 	private Integer merchantId;
+	
+	private Merchants merchant;
 
 	public Integer getId() {
 		return id;
@@ -36,6 +38,14 @@ public class CouponMerchants {
 
 	public void setMerchantId(Integer merchantId) {
 		this.merchantId = merchantId;
+	}
+
+	public Merchants getMerchant() {
+		return merchant;
+	}
+
+	public void setMerchant(Merchants merchant) {
+		this.merchant = merchant;
 	}
 
 }

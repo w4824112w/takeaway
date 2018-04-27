@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.gkyt.ywgk.modular.dao.mapper.WxPayNotifysMapper">
+<mapper namespace="com.takeaway.modular.dao.mapper.WxPayNotifysMapper">
 	<resultMap id="BaseResultMap"
-		type="com.gkyt.ywgk.modular.dao.model.WxPayNotifys">
+		type="com.takeaway.modular.dao.model.WxPayNotifys">
 		<id column="id" property="id" jdbcType="INTEGER" />
 		<result column="time_end" property="timeEnd" jdbcType="VARCHAR" />
 		<result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR" />
@@ -26,7 +26,7 @@
 		err_code,result_code,sign,nonce_str,openid,is_verify,verify_date,trade_state
 	</sql>
 
-	<insert id="save" parameterType="com.gkyt.ywgk.modular.dao.model.WxPayNotifys">
+	<insert id="save" parameterType="com.takeaway.modular.dao.model.WxPayNotifys">
 		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
 			SELECT
 			LAST_INSERT_ID()

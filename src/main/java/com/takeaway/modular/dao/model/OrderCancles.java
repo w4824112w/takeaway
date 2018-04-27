@@ -14,6 +14,8 @@ public class OrderCancles {
 	private Date operAt;
 	private Integer operMan;
 	
+	private Orders orders;
+	
 	private List<OrderItems> orderItems;
 
 	public Integer getId() {
@@ -94,6 +96,14 @@ public class OrderCancles {
 
 	public void setOrderItems(List<OrderItems> orderItems) {
 		this.orderItems = orderItems;
+	}
+
+	public Orders getOrders() {
+		return orders;
+	}
+
+	public void setOrders(Orders orders) {
+		this.orders = orders;
 	}
 
 }

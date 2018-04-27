@@ -44,7 +44,7 @@ public class UserFavoritesApiController {
 	@ApiOperation(value = "新增会员收藏", httpMethod = "POST", notes = "新增会员收藏信息")
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
-			HttpServletResponse response, @ApiParam @RequestBody UserFavorites userFavorites) {
+			HttpServletResponse response,  @RequestBody UserFavorites userFavorites) {
 		try {
 			return userFavoritesService.save(userFavorites);
 		} catch (Exception e) {

@@ -25,12 +25,17 @@
 	</select>
 
 	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.FeedbacksDto"
-		resultMap="BaseResultMap">
+		resultType="com.takeaway.modular.dao.dto.FeedbacksDto">
 		select
-		<include refid="Base_Column_List" />
-		from tb_feedbacks f,tb_users u
-		where f.user_id=u.id
-		order by u.id desc
+		f.id, f.user_id as userId,
+		f.order_id as orderId,f.merchant_id as merchantId,f.item_id as itemId,
+		goodsScore,foodScore,distributionScore,created_at,content 
+		from tb_feedbacks f
+		where 1=1 
+		<if test="merchantId != null and merchantId != ''">
+			and f.merchant_id = #{merchantId,jdbcType=VARCHAR}
+		</if>
+		order by f.id desc
 	</select>
 	
 	<select id="getAll" resultMap="BaseResultMap">

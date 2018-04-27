@@ -1,4 +1,4 @@
-package com.takeaway.modular.controller.api;
+package com.takeaway.modular.controller.web;
 
 import java.util.Date;
 import java.util.List;
@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.UserCouponsDto;
+import com.takeaway.modular.dao.model.Managers;
 import com.takeaway.modular.dao.model.UserCoupons;
 import com.takeaway.modular.dao.model.Users;
 import com.takeaway.modular.service.UserCouponsService;
@@ -34,11 +36,11 @@ import com.takeaway.modular.service.UserCouponsService;
  *
  */
 @RestController
-@RequestMapping("/api/user_coupons")
-@Api(value = "会员优惠券信息---小程序接口", description = "UserCouponsApiController")
-public class UserCouponsApiController {
+@RequestMapping("/user_coupons")
+@Api(value = "会员优惠券管理", description = "UserCouponsController")
+public class UserCouponsController {
 	private static final Logger log = Logger
-			.getLogger(UserCouponsApiController.class);
+			.getLogger(UserCouponsController.class);
 
 	@Autowired
 	private UserCouponsService userCouponsService;
@@ -47,6 +49,12 @@ public class UserCouponsApiController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
 			HttpServletResponse response, @RequestBody UserCoupons userCoupons) {
+		HttpSession session = request.getSession();
+		Managers u = (Managers) session.getAttribute("s_user");
+		if (u == null) {
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
+		}
+		
 		try {
 			return userCouponsService.save(userCoupons);
 		} catch (Exception e) {
@@ -61,6 +69,12 @@ public class UserCouponsApiController {
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public JSONObject list(HttpServletRequest request,
 			HttpServletResponse response, String userId) {
+		HttpSession session = request.getSession();
+		Managers u = (Managers) session.getAttribute("s_user");
+		if (u == null) {
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
+		}
+		
 		List<UserCouponsDto> userCoupons = userCouponsService
 				.getCoupons(userId);
 		JSONObject result = new JSONObject();

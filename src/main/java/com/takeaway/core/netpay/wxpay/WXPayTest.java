@@ -33,7 +33,7 @@ public class WXPayTest {
 		payPackage.setOut_trade_no("12345678");
 		payPackage.setTotal_fee("2");
 		payPackage.setSpbill_create_ip("8.8.8.8");
-		payPackage.setTrade_type("APP");
+		payPackage.setTrade_type("JSAPI");
 		payPackage.setNonce_str(PayUtils.random_str());
 		String back = PayUtils.generatePayNativeReplyXML(payPackage);
 		log.info("统一下单后返回:"+back);

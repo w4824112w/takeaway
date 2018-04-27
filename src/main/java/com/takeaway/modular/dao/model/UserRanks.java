@@ -1,12 +1,19 @@
 package com.takeaway.modular.dao.model;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Date;
 
 public class UserRanks {
+	@ApiModelProperty(value = "ID(编辑时必填)", required = false)
 	private Integer id;
+	@ApiModelProperty(value = "等级名称", required = false)
 	private String name;
+	@ApiModelProperty(value = "开始积分", required = false)
 	private Integer startScore;
+	@ApiModelProperty(value = "结束积分", required = false)
 	private Integer endScore;
+	@ApiModelProperty(value = "折扣", required = false)
 	private Integer rebate;
 	private Date createdAt;
 

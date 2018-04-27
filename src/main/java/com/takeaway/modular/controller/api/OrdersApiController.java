@@ -84,7 +84,7 @@ public class OrdersApiController {
 	@ApiOperation(value = "下单", httpMethod = "POST", notes = "新增会员订单信息")
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
-			HttpServletResponse response, @ApiParam @RequestBody Orders orders) {
+			HttpServletResponse response,@RequestBody Orders orders) {
 		try {
 			return ordersService.save(orders);
 		} catch (Exception e) {

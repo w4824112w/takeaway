@@ -203,10 +203,9 @@ public class MerchantTypesController {
 	 * @return
 	 */
 	@ApiOperation(value = "删除", httpMethod = "POST", notes = "删除商户类型信息")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "商户类型id", required = true, dataType = "String", paramType = "form") })
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public JSONObject delete(HttpServletRequest request,
-			HttpServletResponse response, String id) {
+			HttpServletResponse response, @ApiParam @RequestBody MerchantTypes merchantTypes) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -214,7 +213,7 @@ public class MerchantTypesController {
 		}
 
 		try {
-			int result = merchantTypesService.delete(id);
+			int result = merchantTypesService.delete(merchantTypes.getId().toString());
 			if (result > 0) {
 				return ErrorEnums.getResult(ErrorEnums.SUCCESS, "删除商户类型", null);
 			} else {

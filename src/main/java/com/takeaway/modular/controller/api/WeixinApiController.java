@@ -40,7 +40,7 @@ import com.takeaway.modular.service.WxPayNotifysService;
 
 @RestController
 @RequestMapping("/api/weixin")
-@Api(value="微信支付接口",description="WeixinApiController")
+@Api(value="微信支付接口---小程序接口",description="WeixinApiController")
 public class WeixinApiController {
 	private static final Logger log = Logger
 			.getLogger(WeixinApiController.class);
@@ -73,6 +73,11 @@ public class WeixinApiController {
 			log.info("微信支付成功返回result_code参数:"+map.get("result_code"));
 			if (map.get("result_code").toString().equalsIgnoreCase("SUCCESS")) {
 				String orderNo=map.get("out_trade_no").toString();
+				Orders order=ordersService.getByOrderNo(orderNo);
+				if(order.getIsPay()==1){	// 防止订单修改支付成功状态后服务挂掉出现微信重复回调情况
+					response.getWriter().write(PayUtils.generatePaySuccessReplyXML());
+				}
+				
 				Integer isPay=1;
 				Integer isNotify=1;
 				String successTime=map.get("time_end").toString();
@@ -85,7 +90,6 @@ public class WeixinApiController {
 				wxPayNotifys.setVerifyDate(new Date());
 				wxPayNotifysService.save(wxPayNotifys);
 				
-				Orders order=ordersService.getByOrderNo(orderNo);
 				order.setIsPay(1);	// 0：未支付;1：已支付;
 				order.setPayDate(new Date());
 				ordersService.update(order);
@@ -103,6 +107,7 @@ public class WeixinApiController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "orderNo", value = "订单号", required = true, dataType = "String", paramType = "form"),
 		//	@ApiImplicitParam(name = "payTypeId", value = "支付类型id", required = false, dataType = "String", paramType = "form"),
+			@ApiImplicitParam(name = "openid", value = "openid", required = true, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "itemName", value = "商品名称", required = true, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "amount", value = "订单总金额(单位：元)", required = true, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "num", value = "数量", required = true, dataType = "String", paramType = "form"),
@@ -110,7 +115,7 @@ public class WeixinApiController {
 	})
 	@RequestMapping(value = "/wxpay", method = RequestMethod.POST)
 	public JSONObject callbackForWxpay(HttpServletRequest request,
-			HttpServletResponse response,String orderNo,String itemName,String amount,String num,String itemId) {
+			HttpServletResponse response,String orderNo,String openid,String itemName,String amount,String num,String itemId) {
 
 		amount=new BigDecimal(amount).multiply(new BigDecimal(100)).intValue()+"";	//元转分
 		payRequestsService.save(null, PaymentType.weixin.getName(), orderNo, itemName, amount, Configure.getNotifyCallbackUrl(), null);
@@ -124,7 +129,8 @@ public class WeixinApiController {
 		payPackage.setTotal_fee(amount);
 		String ip=HttpUtil.getIpAddr(request);
 		payPackage.setSpbill_create_ip(ip);
-		payPackage.setTrade_type("APP");
+		payPackage.setTrade_type("JSAPI");
+		payPackage.setOpenid(openid);
 		payPackage.setNonce_str(PayUtils.random_str());
 		String back = PayUtils.generatePayNativeReplyXML(payPackage);
 		log.info("统一下单后返回:"+back);

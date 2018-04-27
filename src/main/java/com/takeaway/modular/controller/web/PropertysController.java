@@ -133,8 +133,14 @@ public class PropertysController {
 		}
 
 		List<Propertys> propertys = propertysService.getByItemId(itemId);
+		
+/*		Propertys parent=new Propertys();
+		if(propertys.size()>0){
+			parent=propertysService.getById(propertys.get(0).getPid().toString());
+		}*/
 
 		JSONObject result = new JSONObject();
+	//	result.put("parent", parent);
 		result.put("propertys", propertys);
 		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "查询", result);
 	}
@@ -268,7 +274,7 @@ public class PropertysController {
 	@ApiOperation(value = "批量更新", httpMethod = "POST", notes = "更新商品属性信息")
 	@RequestMapping(value = "/bathcUpdate", method = RequestMethod.POST)
 	public JSONObject bathcUpdate(HttpServletRequest request,
-			HttpServletResponse response,@ApiParam @RequestBody List<Propertys> propertys) {
+			HttpServletResponse response,@ApiParam @RequestBody Propertys propertys) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -332,7 +338,7 @@ public class PropertysController {
 	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "商品属性id", required = true, dataType = "String", paramType = "form") })
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public JSONObject delete(HttpServletRequest request,
-			HttpServletResponse response, String id) {
+			HttpServletResponse response, @ApiParam @RequestBody Propertys propertys) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -340,7 +346,7 @@ public class PropertysController {
 		}
 
 		try {
-			int result = propertysService.delete(id);
+			int result = propertysService.delete(propertys.getId().toString());
 			if (result > 0) {
 				return ErrorEnums.getResult(ErrorEnums.SUCCESS, "删除商品属性", null);
 			} else {

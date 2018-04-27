@@ -60,14 +60,30 @@
 	</select>
 	
 	<select id="getByItemId" parameterType="java.lang.String" resultType="com.takeaway.modular.dao.model.Merchants">
-		select m.id from tb_merchants m,tb_item_merchants im where m.id=im.merchant_id 
-		where im.item_id = #{itemId,jdbcType=VARCHAR}
+		select m.id,m.name from tb_merchants m,tb_item_merchants im where m.id=im.merchant_id 
+		and im.item_id = #{itemId,jdbcType=VARCHAR}
 	</select>
 	
 	<select id="appIndex" resultType="com.takeaway.modular.dao.dto.MerchantsDto">
 		select
 		<include refid="Base_Column_List" />
 		from tb_merchants where status=1 order by id desc
+	</select>
+	
+	<select id="homePage" parameterType="com.takeaway.modular.dao.dto.MerchantsDto" resultType="com.takeaway.modular.dao.dto.MerchantsDto">
+		select 
+		sum(dayPrice) as dayPrice,sum(dayOrder) dayOrder,sum(pendingOrder) pendingOrder,sum(refundingOrder) as refundingOrder 
+		from (
+		select
+		(select sum(o.total_price) from tb_orders o where  date(created_at) = curdate() and o.merchant_id=m.id ) as dayPrice,
+		(select count(0) from tb_orders o where  date(o.created_at) = curdate() and o.merchant_id=m.id ) as dayOrder,
+		(select count(0) from tb_orders o where  status=0  and date(o.created_at) = curdate() and o.merchant_id=m.id ) as pendingOrder,
+		(select count(0) from tb_orders o where status=3 and  date(o.created_at) = curdate() and o.merchant_id=m.id ) as refundingOrder 
+		from tb_merchants m where status=1   
+		<if test="id != null and id != ''">
+			and m.id=#{id,jdbcType=VARCHAR}
+		</if>
+		order by m.id desc) temp
 	</select>
 	
 	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.MerchantsDto"

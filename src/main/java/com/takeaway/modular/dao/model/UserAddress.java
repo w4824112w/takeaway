@@ -1,12 +1,19 @@
 package com.takeaway.modular.dao.model;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Date;
 
 public class UserAddress {
+	@ApiModelProperty(value = "ID(编辑时必填)", required = false)
 	private Integer id;
+	@ApiModelProperty(value = "会员ID", required = false)
 	private Integer userId;
+	@ApiModelProperty(value = "收货人名称", required = false)
 	private String name;
+	@ApiModelProperty(value = "收货人手机", required = false)
 	private String phone;
+	@ApiModelProperty(value = "收货人地址", required = false)
 	private String address;
 	private Date createdAt;
 

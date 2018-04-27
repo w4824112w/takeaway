@@ -1,20 +1,35 @@
 package com.takeaway.modular.dao.model;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Date;
 
 public class UserCoupons {
+	@ApiModelProperty(value = "ID(编辑时必填)", required = false)
 	private Integer id;
+	@ApiModelProperty(value = "优惠券ID", required = false)
 	private Integer couponId;
+	@ApiModelProperty(value = "优惠券兑换码", required = false)
 	private String couponCode;
+	@ApiModelProperty(value = "数量", required = false)
 	private Integer amount;
+	@ApiModelProperty(value = "会员ID", required = false)
 	private Integer userId;
+	@ApiModelProperty(value = "会员名称", required = false)
 	private String userName;
+	@ApiModelProperty(value = "使用状态(1:未用，0：已用 -1:删除)", required = false)
 	private Integer status;
+	@ApiModelProperty(value = "有效状态(1:有效 -1:删除)", required = false)
 	private Integer isFlag;
+	@ApiModelProperty(value = "优惠券类型", required = false)
 	private Integer type;
+	@ApiModelProperty(value = "优惠券开始时间", required = false)
 	private Date startDate;
+	@ApiModelProperty(value = "优惠券结束时间", required = false)
 	private Date endDate;
+	@ApiModelProperty(value = "优惠券获得时间", required = false)
 	private Date gainTime;
+	@ApiModelProperty(value = "优惠券名称", required = false)
 	private String couponName;
 
 	public Integer getId() {

@@ -17,6 +17,10 @@ import com.takeaway.commons.utils.MD5Util;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.FeedbacksDto;
 import com.takeaway.modular.dao.mapper.FeedbacksMapper;
+import com.takeaway.modular.dao.mapper.ItemsMapper;
+import com.takeaway.modular.dao.mapper.MerchantsMapper;
+import com.takeaway.modular.dao.mapper.OrdersMapper;
+import com.takeaway.modular.dao.mapper.UsersMapper;
 import com.takeaway.modular.dao.model.Feedbacks;
 
 /**
@@ -29,10 +33,28 @@ import com.takeaway.modular.dao.model.Feedbacks;
 public class FeedbacksService {
 	@Autowired
 	private FeedbacksMapper feedbacksMapper;
+	
+	@Autowired
+	private UsersMapper usersMapper;
+	
+	@Autowired
+	private OrdersMapper ordersMapper;
+	
+	@Autowired
+	private MerchantsMapper merchantsMapper;
+	
+	@Autowired
+	private ItemsMapper itemsMapper;
 
-	public PageResult<Feedbacks> findPage(PageBounds bounds, FeedbacksDto dto) {
-		PageList<Feedbacks> feedbacks = feedbacksMapper.findPage(bounds, dto);
-		return new PageResult<Feedbacks>(feedbacks);
+	public PageResult<FeedbacksDto> findPage(PageBounds bounds, FeedbacksDto dto) {
+		PageList<FeedbacksDto> feedbacks = feedbacksMapper.findPage(bounds, dto);
+		for (FeedbacksDto feedback : feedbacks) {
+			feedback.setUsers(usersMapper.getById(feedback.getUserId()));
+			feedback.setOrders(ordersMapper.getById(feedback.getOrderId()));
+			feedback.setMerchants(merchantsMapper.getById(feedback.getMerchantId()));
+			feedback.setItems(itemsMapper.getById(feedback.getItemId()));
+		}
+		return new PageResult<FeedbacksDto>(feedbacks);
 	}
 
 	@Transactional
@@ -65,11 +87,11 @@ public class FeedbacksService {
 	public List<Feedbacks> getByUserId(String userId) {
 		return feedbacksMapper.getByUserId(userId);
 	}
-	
+
 	public List<Feedbacks> getByMerchantId(String merchantId) {
 		return feedbacksMapper.getByMerchantId(merchantId);
 	}
-	
+
 	@Transactional
 	public int delete(String id) {
 		return feedbacksMapper.delete(id);

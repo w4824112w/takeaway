@@ -142,6 +142,12 @@ public class MerchantsService {
 		return merchants;
 	}
 
+	public MerchantsDto homePage(String id) {
+		MerchantsDto dto=new MerchantsDto();
+		dto.setId(id);
+		return merchantsMapper.homePage(dto);
+	}
+	
 	@Transactional
 	public int delete(String id) {
 		List<MerchantPictures> merchantPictures = merchantPicturesMapper

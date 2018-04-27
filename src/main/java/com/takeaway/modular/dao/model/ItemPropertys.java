@@ -6,6 +6,8 @@ public class ItemPropertys {
 	private Integer propertyId;
 	private Double price;
 	private Integer isOpen;
+	
+	Propertys parentPropertys;
 
 	public Integer getId() {
 		return id;
@@ -46,5 +48,14 @@ public class ItemPropertys {
 	public void setIsOpen(Integer isOpen) {
 		this.isOpen = isOpen;
 	}
+
+	public Propertys getParentPropertys() {
+		return parentPropertys;
+	}
+
+	public void setParentPropertys(Propertys parentPropertys) {
+		this.parentPropertys = parentPropertys;
+	}
+
 
 }

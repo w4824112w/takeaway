@@ -15,6 +15,8 @@ public interface MerchantsMapper {
 	
 	Merchants getById(String id);
 	
+	MerchantsDto homePage(MerchantsDto dto);
+	
 	PageList<MerchantsDto> findPage(PageBounds bounds,MerchantsDto dto);
 	
 	List<Merchants> getAll();

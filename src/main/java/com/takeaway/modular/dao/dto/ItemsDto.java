@@ -11,6 +11,7 @@ public class ItemsDto {
 	private String originPrice;
 	private String costPrice;
 	private String price;
+	private String packingCharge;
 	private String unit;
 	private String salesVolume;
 	private String tips;
@@ -247,6 +248,14 @@ public class ItemsDto {
 
 	public void setPictures(List<ItemPicturesDto> pictures) {
 		this.pictures = pictures;
+	}
+
+	public String getPackingCharge() {
+		return packingCharge;
+	}
+
+	public void setPackingCharge(String packingCharge) {
+		this.packingCharge = packingCharge;
 	}
 
 }

@@ -129,6 +129,9 @@
 		<include refid="Base_Column_List" />
 		from tb_orders 
 		where 1=1 
+		<if test="userId != null and userId != ''">
+			and user_id = #{userId,jdbcType=VARCHAR}
+		</if>
 		<if test="orderNo != null and orderNo != ''">
 			and order_no = #{orderNo,jdbcType=VARCHAR}
 		</if>

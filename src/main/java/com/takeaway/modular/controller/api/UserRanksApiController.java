@@ -42,7 +42,7 @@ public class UserRanksApiController {
 	@ApiOperation(value = "新增会员等级等级", httpMethod = "POST", notes = "新增会员等级信息")
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
-			HttpServletResponse response, @ApiParam @RequestBody UserRanks userRanks) {
+			HttpServletResponse response, @RequestBody UserRanks userRanks) {
 		try {
 			return userRanksService.save(userRanks);
 		} catch (Exception e) {
