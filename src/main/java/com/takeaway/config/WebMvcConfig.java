@@ -18,6 +18,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.takeaway.commons.springtool.SpringContextsUtil;
+import com.takeaway.core.netpay.wxpay.utils.WxMappingJackson2HttpMessageConverter;
 
 
 @Configuration
@@ -32,9 +33,9 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     /**
      * 配置viewController,提供映射路径
      */
-/*    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/webSocket").setViewName("/webSocket");
-    }*/
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/ws").setViewName("/ws");
+    }
     
     /**
      * 获得spring上下文
@@ -65,9 +66,13 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
      */
 	@Bean
 	public RestTemplate getRestTemplate(){
-		RestTemplate restTemplate = new RestTemplate();
+/*		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
-		return restTemplate;
+		return restTemplate;*/
+		
+	    RestTemplate restTemplate = new RestTemplate();
+	    restTemplate.getMessageConverters().add(new WxMappingJackson2HttpMessageConverter());
+	    return restTemplate;
 	}
     
 /*    @Bean

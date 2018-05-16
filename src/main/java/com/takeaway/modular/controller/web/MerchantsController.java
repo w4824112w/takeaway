@@ -188,7 +188,7 @@ public class MerchantsController {
 					null);
 		}
 
-		MerchantsDto merchants = merchantsService.homePage(merchantId);
+		MerchantsDto merchants = merchantsService.homePage(merchantId,u.getType());
 
 		JSONObject result = new JSONObject();
 		result.put("merchants", merchants);

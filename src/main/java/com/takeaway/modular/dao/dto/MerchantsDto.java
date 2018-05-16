@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.takeaway.modular.dao.model.Activitys;
 import com.takeaway.modular.dao.model.Coupons;
+import com.takeaway.modular.dao.model.MerchantPictures;
 
 public class MerchantsDto {
 	private String id;
@@ -50,6 +51,8 @@ public class MerchantsDto {
 	private Boolean isFavorite; // 是否收藏
 	private List<Coupons> coupons; // 优惠卷
 	private List<Activitys> activitys; // 满减活动
+	
+	private List<MerchantPictures> pictures;
 
 	public String getId() {
 		return id;
@@ -385,6 +388,14 @@ public class MerchantsDto {
 
 	public void setRefundingOrder(String refundingOrder) {
 		this.refundingOrder = refundingOrder;
+	}
+
+	public List<MerchantPictures> getPictures() {
+		return pictures;
+	}
+
+	public void setPictures(List<MerchantPictures> pictures) {
+		this.pictures = pictures;
 	}
 
 }

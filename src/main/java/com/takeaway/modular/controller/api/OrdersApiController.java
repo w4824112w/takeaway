@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 import com.takeaway.commons.utils.RandomSequence;
 import com.takeaway.core.enums.ErrorEnums;
+import com.takeaway.core.websocket.WebSocketServer;
 import com.takeaway.modular.dao.dto.OrdersDto;
 import com.takeaway.modular.dao.model.Managers;
 import com.takeaway.modular.dao.model.Orders;
@@ -81,12 +82,14 @@ public class OrdersApiController {
 		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "获取编辑对象", result);
 	}
 	
-	@ApiOperation(value = "下单", httpMethod = "POST", notes = "新增会员订单信息")
-	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	@ApiOperation(value = "下单", httpMethod = "GET", notes = "新增会员订单信息")
+	@RequestMapping(value = "/save", method = RequestMethod.GET)
 	public JSONObject save(HttpServletRequest request,
 			HttpServletResponse response,@RequestBody Orders orders) {
 		try {
-			return ordersService.save(orders);
+			JSONObject result= ordersService.save(orders);
+			WebSocketServer.sendInfo(result.toJSONString());
+			return result;
 		} catch (Exception e) {
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增", null);
 		}

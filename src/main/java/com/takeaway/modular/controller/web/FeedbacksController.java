@@ -117,7 +117,11 @@ public class FeedbacksController {
 		dto.setMerchantId(merchantId);
 		PageResult<FeedbacksDto> feedbacks = feedbacksService.findPage(bounds,dto);
 		JSONObject result = new JSONObject();
-		result.put("feedbacks", feedbacks);
+		result.put("merchantId", merchantId);
+		result.put("page", feedbacks.getPaginator().getPage());
+		result.put("rows", feedbacks.getPaginator().getLimit());
+		result.put("totalCount", feedbacks.getPaginator().getTotalCount());
+		result.put("feedbacks", feedbacks.getPageList());
 
 		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "会员订单评价信息查询", result);
 

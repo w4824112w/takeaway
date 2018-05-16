@@ -103,7 +103,7 @@ public class WeixinApiController {
 		
 	}
 	
-	@ApiOperation(value = "支付", httpMethod = "POST", notes = "微信支付")
+	@ApiOperation(value = "支付", httpMethod = "GET", notes = "微信支付")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "orderNo", value = "订单号", required = true, dataType = "String", paramType = "form"),
 		//	@ApiImplicitParam(name = "payTypeId", value = "支付类型id", required = false, dataType = "String", paramType = "form"),
@@ -113,7 +113,7 @@ public class WeixinApiController {
 			@ApiImplicitParam(name = "num", value = "数量", required = true, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "itemId", value = "商品id", required = true, dataType = "String", paramType = "form")
 	})
-	@RequestMapping(value = "/wxpay", method = RequestMethod.POST)
+	@RequestMapping(value = "/wxpay", method = RequestMethod.GET)
 	public JSONObject callbackForWxpay(HttpServletRequest request,
 			HttpServletResponse response,String orderNo,String openid,String itemName,String amount,String num,String itemId) {
 

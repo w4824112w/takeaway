@@ -1,6 +1,7 @@
 package com.takeaway.modular.service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,10 +16,12 @@ import com.takeaway.commons.page.PageResult;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.controller.web.UploadController;
 import com.takeaway.modular.dao.dto.ItemMerchantsDto;
+import com.takeaway.modular.dao.dto.ItemPicturesDto;
 import com.takeaway.modular.dao.dto.ItemsDto;
 import com.takeaway.modular.dao.mapper.ItemMerchantsMapper;
 import com.takeaway.modular.dao.mapper.ItemPicturesMapper;
 import com.takeaway.modular.dao.mapper.ItemPropertysMapper;
+import com.takeaway.modular.dao.mapper.ItemTypesMapper;
 import com.takeaway.modular.dao.mapper.ItemsMapper;
 import com.takeaway.modular.dao.mapper.MerchantsMapper;
 import com.takeaway.modular.dao.mapper.PropertysMapper;
@@ -27,6 +30,7 @@ import com.takeaway.modular.dao.model.ItemPictures;
 import com.takeaway.modular.dao.model.ItemPropertys;
 import com.takeaway.modular.dao.model.ItemTypes;
 import com.takeaway.modular.dao.model.Items;
+import com.takeaway.modular.dao.model.Propertys;
 
 /**
  * 本地的
@@ -40,6 +44,9 @@ public class ItemsService {
 	private ItemsMapper itemsMapper;
 
 	@Autowired
+	private ItemTypesMapper itemTypesMapper;
+
+	@Autowired
 	private ItemPicturesMapper itemPicturesMapper;
 
 	@Autowired
@@ -47,16 +54,21 @@ public class ItemsService {
 
 	@Autowired
 	private ItemPropertysMapper itemPropertysMapper;
-	
+
 	@Autowired
 	private PropertysMapper propertysMapper;
-	
+
 	@Autowired
 	private MerchantsMapper merchantsMapper;
 
-	public PageResult<Items> findPage(PageBounds bounds, ItemsDto dto) {
-		PageList<Items> merchants = itemsMapper.findPage(bounds, dto);
-		return new PageResult<Items>(merchants);
+	public PageResult<ItemsDto> findPage(PageBounds bounds, ItemsDto dto) {
+		PageList<ItemsDto> items = itemsMapper.findPage(bounds, dto);
+		for (ItemsDto item : items) {
+			List<ItemPicturesDto> pictures = itemPicturesMapper.getByItemId(item
+					.getId().toString());
+			item.setPictures(pictures);
+		}
+		return new PageResult<ItemsDto>(items);
 	}
 
 	@Transactional
@@ -83,6 +95,10 @@ public class ItemsService {
 			itemPicturesMapper.save(itemPictures);
 		}
 
+		ItemTypes itemTypes = new ItemTypes();
+		itemTypes.setId(items.getItemType());
+		itemTypesMapper.increase(itemTypes);
+
 		if (result > 0) {
 			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "新增商品", result);
 		} else {
@@ -97,7 +113,7 @@ public class ItemsService {
 		items.setUpdatedAt(new Date());
 		Integer itemId = items.getId();
 
-		List<ItemPictures> oldPictures = itemPicturesMapper.getByItemId(itemId
+		List<ItemPicturesDto> oldPictures = itemPicturesMapper.getByItemId(itemId
 				.toString());
 
 		result = itemsMapper.update(items);
@@ -116,14 +132,15 @@ public class ItemsService {
 		}
 
 		for (ItemPictures merchantPictures : items.getPictures()) {
+			merchantPictures.setItemId(itemId);
 			merchantPictures.setCreatedAt(new Date());
 			itemPicturesMapper.save(merchantPictures);
 		}
 
 		// 更新背景图片
-		for (ItemPictures picture : oldPictures) {
-		//	String upload_dir = UploadController.resourcePath();// 上传路径
-		//	File file = new File(upload_dir + picture.getUrl());
+		for (ItemPicturesDto picture : oldPictures) {
+			// String upload_dir = UploadController.resourcePath();// 上传路径
+			// File file = new File(upload_dir + picture.getUrl());
 			File file = new File(picture.getUrl());
 			file.delete();
 		}
@@ -157,22 +174,39 @@ public class ItemsService {
 		}
 	}
 
-	public Items getById(String id) {
-		Items items = itemsMapper.getById(id);
+	public ItemsDto getById(String id) {
+		ItemsDto items = itemsMapper.getById(id);
 		items.setMerchants(merchantsMapper.getByItemId(id));
-		items.setPropertys(propertysMapper.getByItemId(id));
+
+		List<Propertys> pids = propertysMapper.getPidByItemId(id);
+		List<Propertys> retPropertys = new ArrayList<Propertys>();
+		for (Propertys pid : pids) {
+			Propertys ret = propertysMapper.getById(pid.getPid().toString());
+			Propertys dto = new Propertys();
+			dto.setPid(ret.getId());
+			dto.setItemId(id);
+			ret.setSubPropertys(propertysMapper.getByItemIdAndPid(dto));
+			;
+			retPropertys.add(ret);
+		}
+		items.setPropertys(retPropertys);
 		items.setPictures(itemPicturesMapper.getByItemId(id));
 		return items;
 	}
 
 	@Transactional
 	public int delete(String id) {
-		List<ItemPictures> itemPictures = itemPicturesMapper.getByItemId(id);
-		for (ItemPictures picture : itemPictures) {
+		List<ItemPicturesDto> itemPictures = itemPicturesMapper.getByItemId(id);
+		for (ItemPicturesDto picture : itemPictures) {
 			String upload_dir = UploadController.resourcePath();// 上传路径
 			File file = new File(upload_dir + picture.getUrl());
 			file.delete();
 		}
+
+		ItemsDto items = itemsMapper.getById(id);
+		ItemTypes itemTypes = new ItemTypes();
+		itemTypes.setId(Integer.parseInt(items.getItemType()));
+		itemTypesMapper.reduce(itemTypes);
 
 		itemPicturesMapper.delByItemId(id);
 		itemMerchantsMapper.delByItemId(id.toString());
@@ -184,7 +218,7 @@ public class ItemsService {
 		List<Items> items = itemsMapper.getAll();
 		return items;
 	}
-	
+
 	public List<Items> getAllByMerchantId(String merchantId) {
 		return itemsMapper.getByMerchantId(merchantId);
 	}

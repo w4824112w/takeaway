@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.takeaway.core.enums.ErrorEnums;
+import com.takeaway.core.websocket.RequestMessage;
+import com.takeaway.core.websocket.ResponseMessage;
 import com.takeaway.modular.dao.model.Users;
 import com.takeaway.modular.service.UsersService;
 
@@ -27,7 +29,6 @@ import com.takeaway.modular.service.UsersService;
  *
  */
 @Controller
-@Api(value = "ws消息通知", description = "WebSocketController")
 public class WebSocketController {
 	private static final Logger log = Logger
 			.getLogger(WebSocketController.class);
@@ -36,14 +37,10 @@ public class WebSocketController {
 	// 当浏览器向服务端发送请求时,通过@MessageMapping映射/welcome这个地址,类似于@ResponseMapping
 	@SendTo("/topic/getResponse")
 	// 当服务器有消息时,会对订阅了@SendTo中的路径的浏览器发送消息
-	public JSONObject say(String message) {
-		try {
-			// 睡眠1秒
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "welcome,"+message+"!", null);
+	public ResponseMessage   say(RequestMessage  message) {
+        System.out.println(message.getName());
+        return new ResponseMessage("welcome," + message.getName() + " !");
+
 	}
 
 }

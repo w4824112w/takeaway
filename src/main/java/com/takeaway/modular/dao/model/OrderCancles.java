@@ -6,7 +6,7 @@ import java.util.List;
 public class OrderCancles {
 	private Integer id;
 	private Integer orderId;
-	private Integer status;
+	private String refundNo;
 	private Integer size;
 	private String name;
 	private Double totalPrice;
@@ -32,14 +32,6 @@ public class OrderCancles {
 
 	public void setOrderId(Integer orderId) {
 		this.orderId = orderId;
-	}
-
-	public Integer getStatus() {
-		return status;
-	}
-
-	public void setStatus(Integer status) {
-		this.status = status;
 	}
 
 	public Integer getSize() {
@@ -104,6 +96,14 @@ public class OrderCancles {
 
 	public void setOrders(Orders orders) {
 		this.orders = orders;
+	}
+
+	public String getRefundNo() {
+		return refundNo;
+	}
+
+	public void setRefundNo(String refundNo) {
+		this.refundNo = refundNo;
 	}
 
 }

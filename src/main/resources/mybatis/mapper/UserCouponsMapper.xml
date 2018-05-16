@@ -86,7 +86,7 @@
 		#{startDate,jdbcType=TIMESTAMP},
 		#{endDate,jdbcType=TIMESTAMP},
 		#{gainTime,jdbcType=TIMESTAMP},
-		#{couponName,jdbcType=VARCHAR},
+		#{couponName,jdbcType=VARCHAR}
 		)
 	</insert>
 

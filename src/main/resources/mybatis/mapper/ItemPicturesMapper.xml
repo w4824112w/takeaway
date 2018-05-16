@@ -13,7 +13,7 @@
 		id,url,item_id,created_at
 	</sql>
 
-	<select id="getByItemId" parameterType="java.lang.String" resultMap="BaseResultMap">
+	<select id="getByItemId" parameterType="java.lang.String" resultType="com.takeaway.modular.dao.dto.ItemPicturesDto">
 		select
 		<include refid="Base_Column_List" />
 		from tb_item_pictures

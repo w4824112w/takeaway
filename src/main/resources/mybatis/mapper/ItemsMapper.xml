@@ -31,11 +31,13 @@
 		description,status,created_at,updated_at,city_id,origin
 	</sql>
 
-	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+	<select id="getById" parameterType="java.lang.String" resultType="com.takeaway.modular.dao.dto.ItemsDto">
 		select
-		<include refid="Base_Column_List" />
-		from tb_items
-		where id = #{id,jdbcType=VARCHAR}
+		i.id,i.item_type as itemType,i.name,i.code,i.label,i.origin_price as originPrice,i.cost_price as costPrice,
+		i.price,i.packingCharge,i.unit,i.sales_volume as salesVolume,i.tips,i.remain,i.stock,i.stock_status as stockStatus,
+		i.description,i.status,i.created_at as createdAt,i.updated_at as updatedAt,i.city_id as cityId,i.origin
+		from tb_items i
+		where i.id = #{id,jdbcType=VARCHAR}
 	</select>
 
 	<select id="getAll" resultMap="BaseResultMap">
@@ -54,9 +56,10 @@
 	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.ItemsDto"
 		resultType="com.takeaway.modular.dao.dto.ItemsDto">
 		select  
- 		i.id,i.`name`,i.`code`,i.unit,i.price,i.packingCharge,it.`name` as itemTypeName,
+ 		distinct i.id,i.`name`,i.`code`,i.unit,i.price,i.packingCharge,it.`name` as itemTypeName,
  		i.label,i.sales_volume as salesVolume,i.stock_status as stockStatus,
- 		i.stock,i.`status`,im.is_puton as isPuton,m.`name` as merchantName,m.id as  merchantId
+ 		i.stock,i.`status`,im.is_puton as isPuton
+ 		<!-- ,m.`name` as merchantName,m.id as  merchantId -->
 		from tb_items i,tb_item_types it,tb_merchants m,tb_item_merchants im
 		where i.item_type=it.id and i.id=im.item_id and im.merchant_id=m.id
 		<if test="merchantId != null and merchantId != ''">

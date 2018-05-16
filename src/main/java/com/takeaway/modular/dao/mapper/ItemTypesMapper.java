@@ -21,6 +21,10 @@ public interface ItemTypesMapper {
 	
 	int update(ItemTypes itemTypes);
 	
+	int increase(ItemTypes itemTypes);
+	
+	int reduce(ItemTypes itemTypes);
+	
 	int delete(String id);
 	
 	List<ItemTypes> getByMerchantId(String merchantId);

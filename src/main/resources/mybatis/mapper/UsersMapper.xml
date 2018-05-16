@@ -63,6 +63,13 @@
 		from tb_users
 		where id = #{id,jdbcType=VARCHAR}
 	</select>
+	
+	<select id="getByOpenid" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_users
+		where openId = #{openId,jdbcType=VARCHAR}
+	</select>
 
 	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.UsersDto"
 		resultType="com.takeaway.modular.dao.dto.UsersDto">

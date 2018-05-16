@@ -17,6 +17,8 @@ public class Orders {
 	private Integer orderType;
 	@ApiModelProperty(value = "商品总金额(未进行任何折扣的总价格)", required = false)
 	private Double totalPrice;
+	@ApiModelProperty(value = "打包费", required = false)
+	private Double packingCharge;
 	@ApiModelProperty(value = "运费", required = false)
 	private Double deliverMoney;
 	@ApiModelProperty(value = "(0：待处理;1：已处理;2：已完成;3：退款中;4：已评价;5：配送中;9：作废;)", required = false)
@@ -432,6 +434,14 @@ public class Orders {
 
 	public void setOrderItems(List<OrderItems> orderItems) {
 		this.orderItems = orderItems;
+	}
+
+	public Double getPackingCharge() {
+		return packingCharge;
+	}
+
+	public void setPackingCharge(Double packingCharge) {
+		this.packingCharge = packingCharge;
 	}
 
 }

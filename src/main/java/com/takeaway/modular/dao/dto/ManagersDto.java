@@ -1,5 +1,7 @@
 package com.takeaway.modular.dao.dto;
 
+import java.util.Date;
+
 public class ManagersDto {
 	private String id;
 	private String name;
@@ -10,6 +12,7 @@ public class ManagersDto {
 	private String roleId;
 	private String merchantId;
 	private String status;
+	private String lastTime;
 
 	private String roleName;
 
@@ -91,6 +94,14 @@ public class ManagersDto {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getLastTime() {
+		return lastTime;
+	}
+
+	public void setLastTime(String lastTime) {
+		this.lastTime = lastTime;
 	}
 
 }

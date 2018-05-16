@@ -1,5 +1,9 @@
 package com.takeaway.modular.dao.dto;
 
+import java.util.List;
+
+import com.takeaway.modular.dao.model.CouponMerchants;
+
 public class CouponsDto {
 	private String id;
 	private String name;
@@ -16,6 +20,9 @@ public class CouponsDto {
 	private String endDate;
 	private String updatedAt;
 	private String status;
+	
+	private List<CouponMerchants> merchants;
+	private List<CouponPicturesDto> pictures;
 
 	public String getId() {
 		return id;
@@ -135,6 +142,22 @@ public class CouponsDto {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public List<CouponPicturesDto> getPictures() {
+		return pictures;
+	}
+
+	public void setPictures(List<CouponPicturesDto> pictures) {
+		this.pictures = pictures;
+	}
+
+	public List<CouponMerchants> getMerchants() {
+		return merchants;
+	}
+
+	public void setMerchants(List<CouponMerchants> merchants) {
+		this.merchants = merchants;
 	}
 
 }

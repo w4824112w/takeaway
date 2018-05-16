@@ -8,6 +8,10 @@ public class PropertysDto {
 	private String pid;
 	private String createdAt;
 	private String updatedAt;
+	
+	private String price;
+	private String isOpen;
+	
 	public String getId() {
 		return id;
 	}
@@ -37,6 +41,18 @@ public class PropertysDto {
 	}
 	public void setUpdatedAt(String updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+	public String getPrice() {
+		return price;
+	}
+	public void setPrice(String price) {
+		this.price = price;
+	}
+	public String getIsOpen() {
+		return isOpen;
+	}
+	public void setIsOpen(String isOpen) {
+		this.isOpen = isOpen;
 	}
 
 

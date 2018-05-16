@@ -15,7 +15,11 @@ import com.takeaway.commons.page.PageList;
 import com.takeaway.commons.page.PageResult;
 import com.takeaway.commons.utils.RandomSequence;
 import com.takeaway.core.enums.ErrorEnums;
+import com.takeaway.core.websocket.WebSocketServer;
+import com.takeaway.modular.dao.dto.BusinessReportDto;
+import com.takeaway.modular.dao.dto.OrderItemsDto;
 import com.takeaway.modular.dao.dto.OrdersDto;
+import com.takeaway.modular.dao.dto.ReportDto;
 import com.takeaway.modular.dao.mapper.OrderItemsMapper;
 import com.takeaway.modular.dao.mapper.OrdersMapper;
 import com.takeaway.modular.dao.model.OrderItems;
@@ -35,12 +39,32 @@ public class OrdersService {
 	@Autowired
 	private OrderItemsMapper orderItemsMapper;
 
-	public PageResult<Orders> findPage(PageBounds bounds, OrdersDto dto) {
-		PageList<Orders> orders = ordersMapper.findPage(bounds, dto);
-		for(Orders order:orders){
+	public PageResult<OrdersDto> findPage(PageBounds bounds, OrdersDto dto) {
+		PageList<OrdersDto> orders = ordersMapper.findPage(bounds, dto);
+		for(OrdersDto order:orders){
 			order.setOrderItems(orderItemsMapper.getByOrderId(order.getId().toString()));
 		}
-		return new PageResult<Orders>(orders);
+		return new PageResult<OrdersDto>(orders);
+	}
+	
+	public PageResult<ReportDto> reportQuery(PageBounds bounds, ReportDto dto) {
+		PageList<ReportDto> report = ordersMapper.reportQuery(bounds, dto);
+		return new PageResult<ReportDto>(report);
+	}
+	
+	public PageResult<BusinessReportDto> businessReport(PageBounds bounds, BusinessReportDto dto) {
+		PageList<BusinessReportDto> report = ordersMapper.businessReport(bounds, dto);
+		return new PageResult<BusinessReportDto>(report);
+	}
+	
+	public List<ReportDto> reportExport(ReportDto dto) {
+		List<ReportDto> report = ordersMapper.reportExport(dto);
+		return report;
+	}
+	
+	public PageResult<OrderItemsDto> salesReportQuery(PageBounds bounds, OrderItemsDto dto) {
+		PageList<OrderItemsDto> report = orderItemsMapper.reportQuery(bounds, dto);
+		return new PageResult<OrderItemsDto>(report);
 	}
 	
 	public PageResult<Orders> findReminderPage(PageBounds bounds, OrdersDto dto) {
@@ -78,8 +102,11 @@ public class OrdersService {
 			orderItemsMapper.save(orderItems);
 		}
 		
+		JSONObject ret = new JSONObject();
+		ret.put("orders", orders);
+		
 		if (result > 0) {
-			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "新增订单", result);
+			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "新增订单", ret);
 		} else {
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增订单", null);
 		}

@@ -9,12 +9,13 @@
 		<result column="status" property="status" jdbcType="INTEGER" />
 		<result column="role_id" property="roleId" jdbcType="INTEGER" />
 		<result column="merchant_id" property="merchantId" jdbcType="INTEGER" />
-		<result column="created_at" property="createdAt" jdbcType="DATE" />
-		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+		<result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+		<result column="lastTime" property="lastTime" jdbcType="TIMESTAMP" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		id, name,password_hash,
-		role_id,merchant_id,type,status,created_at,updated_at
+		role_id,merchant_id,type,status,created_at,updated_at,lastTime
 	</sql>
 
 	<select id="login" parameterType="com.takeaway.modular.dao.dto.ManagersDto"
@@ -86,16 +87,29 @@
 
 	<update id="update" parameterType="com.takeaway.modular.dao.model.Managers">
 		update tb_managers
-		set
-		name =
-		#{name,jdbcType=VARCHAR},
-		password_hash =
-		#{passwordHash,jdbcType=VARCHAR},
-		role_id = #{roleId,jdbcType=INTEGER},
-		merchant_id = #{merchantId,jdbcType=INTEGER},
-		status = #{status,jdbcType=VARCHAR},
-		updated_at =
-		#{updatedAt,jdbcType=TIMESTAMP}
+		<set>
+			<if test="name != null">
+				name =#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="passwordHash != null">
+				password_hash =#{passwordHash,jdbcType=VARCHAR},
+			</if>
+			<if test="roleId != null">
+				role_id = #{roleId,jdbcType=INTEGER},
+			</if>
+			<if test="merchantId != null">
+				merchant_id = #{merchantId,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=VARCHAR},
+			</if>
+			<if test="updatedAt != null">
+				updated_at =#{updatedAt,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastTime != null">
+				lastTime =#{lastTime,jdbcType=TIMESTAMP}
+			</if>
+		</set>
 		where id = #{id,jdbcType=INTEGER}
 	</update>
 </mapper>

@@ -10,11 +10,15 @@ import com.takeaway.modular.dao.model.Coupons;
 
 public interface CouponsMapper {
 	
-	Coupons getById(String id);
+	CouponsDto getById(String id);
 	
-	PageList<Coupons> findPage(PageBounds bounds,CouponsDto dto);
+	PageList<CouponsDto> findPage(PageBounds bounds,CouponsDto dto);
 	
 	List<Coupons> getAll();
+	
+	List<CouponsDto> getIndexAll();
+	
+	List<Coupons> getBackAll();
 	
 	List<Coupons> getByMerchantId(String merchantId);
 	

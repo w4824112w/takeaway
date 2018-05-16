@@ -11,9 +11,9 @@ import com.takeaway.modular.dao.model.Items;
 
 public interface ItemsMapper {
 	
-	Items getById(String id);
+	ItemsDto getById(String id);
 	
-	PageList<Items> findPage(PageBounds bounds,ItemsDto dto);
+	PageList<ItemsDto> findPage(PageBounds bounds,ItemsDto dto);
 	
 	List<Items> getAll();
 	

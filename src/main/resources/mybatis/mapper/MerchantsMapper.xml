@@ -93,8 +93,10 @@
 		(select sum(o.total_price) from tb_orders o where  month(created_at) = month(now()) and o.merchant_id=m.id ) as monthPrice,
 		(select count(0) from tb_orders o where  month(o.created_at) = month(now()) and o.merchant_id=m.id ) as monthOrder,
 		(select count(0) from tb_item_merchants where merchant_id=m.id) as itemCount,
- 		(select count(0) from tb_item_merchants im,tb_items i 
- 		where im.item_id=i.id and im.merchant_id=m.id group by i.item_type ) as itemTypeCount,
+ 		<!-- (select count(0) from tb_item_merchants im,tb_items i 
+ 		where im.item_id=i.id and im.merchant_id=m.id group by i.item_type ) as itemTypeCount, -->
+ 		(select sum(it.quantity) from tb_item_merchants im,tb_items i,tb_item_types it    
+ 		where im.item_id=i.id and im.merchant_id=m.id and i.item_type=it.id ) as itemTypeCount,
  	 	(select count(0) from tb_coupon_merchants cm 
  	 	where cm.merchant_id=m.id) as activityCount
 		from tb_merchants m,tb_merchant_types mt  

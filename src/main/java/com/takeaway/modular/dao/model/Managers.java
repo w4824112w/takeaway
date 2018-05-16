@@ -12,6 +12,7 @@ public class Managers {
 	private Integer roleId;
 	private Integer merchantId;
 	private Integer status;
+	private Date lastTime;
 
 	private Merchants merchants;
 
@@ -93,6 +94,14 @@ public class Managers {
 
 	public void setType(Integer type) {
 		this.type = type;
+	}
+
+	public Date getLastTime() {
+		return lastTime;
+	}
+
+	public void setLastTime(Date lastTime) {
+		this.lastTime = lastTime;
 	}
 
 }

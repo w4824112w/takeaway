@@ -74,9 +74,4 @@ public class OrderCanclesService {
 		return OrderCanclesMapper.getById(id);
 	}
 	
-	@Transactional
-	public int delete(String id) {
-		return OrderCanclesMapper.delete(id);
-	}
-
 }

@@ -41,8 +41,8 @@ public class UserAddressApiController {
 	@Autowired
 	private UserAddressService userAddressService;
 
-	@ApiOperation(value = "新增会员收货地址收货地址", httpMethod = "POST", notes = "新增会员收货地址信息")
-	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	@ApiOperation(value = "新增会员收货地址收货地址", httpMethod = "GET", notes = "新增会员收货地址信息")
+	@RequestMapping(value = "/save", method = RequestMethod.GET)
 	public JSONObject save(HttpServletRequest request,
 			HttpServletResponse response, @RequestBody UserAddress userAddress) {
 		try {

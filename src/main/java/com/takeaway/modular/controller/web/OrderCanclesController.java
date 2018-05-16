@@ -142,7 +142,6 @@ public class OrderCanclesController {
 			orderCancles.setSize(size);
 			orderCancles.setName(name);
 			orderCancles.setTotalPrice(totalPrice);
-			orderCancles.setStatus(0);	// 0：未取消;1：已取消;
 			return orderCanclesService.save(orderCancles);
 		} catch (Exception e) {
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增", null);
@@ -150,53 +149,5 @@ public class OrderCanclesController {
 
 	}
 
-	@ApiOperation(value = "更新", httpMethod = "POST", notes = "更新订单退单信息")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "id", value = "订单退单id", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "status", value = "订单退单状态", required = false, dataType = "Integer", paramType = "form") })
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public JSONObject update(HttpServletRequest request,
-			HttpServletResponse response, String id, Integer status) {
-		HttpSession session = request.getSession();
-		Managers u = (Managers) session.getAttribute("s_user");
-		if (u == null) {
-			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
-		}
-
-		try {
-			OrderCancles orderCancles = orderCanclesService.getById(id);
-			orderCancles.setStatus(status);
-			return orderCanclesService.update(orderCancles);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ErrorEnums.getResult(ErrorEnums.ERROR, "更新", null);
-		}
-
-	}
-
-	@ApiOperation(value = "删除", httpMethod = "POST", notes = "删除订单退单信息")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "订单退单id", required = true, dataType = "String", paramType = "form") })
-	@RequestMapping(value = "/delete", method = RequestMethod.POST)
-	public JSONObject delete(HttpServletRequest request,
-			HttpServletResponse response, String id) {
-		HttpSession session = request.getSession();
-		Managers u = (Managers) session.getAttribute("s_user");
-		if (u == null) {
-			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
-		}
-
-		try {
-			int result = orderCanclesService.delete(id);
-			if (result > 0) {
-				return ErrorEnums.getResult(ErrorEnums.SUCCESS, "删除订单退单", null);
-			} else {
-				return ErrorEnums.getResult(ErrorEnums.ERROR, "删除订单退单", null);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ErrorEnums.getResult(ErrorEnums.ERROR, "删除订单退单", null);
-		}
-
-	}
 
 }

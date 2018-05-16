@@ -32,11 +32,28 @@
 		and ip.item_id = #{itemId,jdbcType=VARCHAR}
 	</select>
 	
+	<select id="getPidByItemId" parameterType="java.lang.String" resultType="com.takeaway.modular.dao.model.Propertys">
+		select distinct p.pid from tb_propertys p,tb_item_propertys ip 
+		where p.id=ip.property_id 
+		and ip.item_id = #{itemId,jdbcType=VARCHAR}
+	</select>
+	
 	<select id="getByPid" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List" />
-		from tb_propertys
-		where pid = #{pid,jdbcType=VARCHAR}
+		select 
+		 <include refid="Base_Column_List" />
+		from tb_propertys p where p.pid = #{pid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getByItemIdAndPid" parameterType="com.takeaway.modular.dao.model.Propertys" resultType="com.takeaway.modular.dao.model.Propertys">
+		select 
+		 p.id,p.`name`,p.pid,p.created_at as createdAt,p.updated_at as updatedAt,ip.price,ip.is_open as isOpen
+		from tb_propertys p,tb_item_propertys ip where p.id=ip.property_id 
+		<if test="pid != null and pid != ''">
+			and p.pid = #{pid,jdbcType=VARCHAR}
+		</if>
+		<if test="itemId != null and itemId != ''">
+			and ip.item_id = #{itemId,jdbcType=INTEGER}
+		</if>
 	</select>
 
 	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.PropertysDto"

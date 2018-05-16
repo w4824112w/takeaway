@@ -24,11 +24,13 @@
 		couponSendType,created_at,startDate,endDate,updated_at,status
 	</sql>
 
-	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+	<select id="getById" parameterType="java.lang.String" resultType="com.takeaway.modular.dao.dto.CouponsDto">
 		select
-		<include refid="Base_Column_List" />
-		from tb_coupons
-		where id = #{id,jdbcType=VARCHAR}
+		c.id,c.name,c.couponMoney,c.spendMoney,c.description,c.sendNum,c.receiveNum,
+		c.sendStartTime,c.sendEndTime,c.couponSendType,c.created_at as createdAt,
+		c.startDate,c.endDate,c.updated_at as updatedAt,c.status
+		from tb_coupons c
+		where c.id = #{id,jdbcType=VARCHAR}
 	</select>
 	
 	<select id="getByMerchantId" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -43,16 +45,32 @@
 		<include refid="Base_Column_List" />
 		from tb_coupons where status=1 order by id desc
 	</select>
-
-	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.CouponsDto"
-		resultMap="BaseResultMap">
+	
+	<select id="getIndexAll" resultType="com.takeaway.modular.dao.dto.CouponsDto">
+		select
+		c.id,c.name,c.couponMoney,c.spendMoney,c.description,c.sendNum,c.receiveNum,
+		c.sendStartTime,c.sendEndTime,c.couponSendType,c.created_at as createdAt,
+		c.startDate,c.endDate,c.updated_at as updatedAt,c.status
+		from tb_coupons c where c.status=1 and c.couponSendType=1 order by id desc
+	</select>
+	
+	<select id="getBackAll" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from tb_coupons where status=1 
+		from tb_coupons where status=1 and couponSendType=3 order by id desc
+	</select>
+
+	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.CouponsDto"
+		resultType="com.takeaway.modular.dao.dto.CouponsDto">
+		select
+		c.id,c.name,c.couponMoney,c.spendMoney,c.description,c.sendNum,c.receiveNum,
+		c.sendStartTime,c.sendEndTime,c.couponSendType,c.created_at as createdAt,
+		c.startDate,c.endDate,c.updated_at as updatedAt,c.status
+		from tb_coupons c where status=1 
 		<if test="name != null and name != ''">
-			and name like "%"#{name,jdbcType=VARCHAR}"%"
+			and c.name like "%"#{name,jdbcType=VARCHAR}"%"
 		</if>
-		order by id desc
+		order by c.id desc
 	</select>
 
 	<delete id="delete" parameterType="java.lang.String">

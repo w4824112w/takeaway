@@ -10,6 +10,10 @@ public class Propertys {
 	private Date createdAt;
 	private Date updatedAt;
 
+	private String price;
+	private String isOpen;
+	private String itemId;
+	
 	List<Propertys> subPropertys;
 
 	public Integer getId() {
@@ -58,6 +62,30 @@ public class Propertys {
 
 	public void setSubPropertys(List<Propertys> subPropertys) {
 		this.subPropertys = subPropertys;
+	}
+
+	public String getPrice() {
+		return price;
+	}
+
+	public void setPrice(String price) {
+		this.price = price;
+	}
+
+	public String getIsOpen() {
+		return isOpen;
+	}
+
+	public void setIsOpen(String isOpen) {
+		this.isOpen = isOpen;
+	}
+
+	public String getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(String itemId) {
+		this.itemId = itemId;
 	}
 
 

@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageList;
+import com.takeaway.modular.dao.dto.BusinessReportDto;
 import com.takeaway.modular.dao.dto.OrdersDto;
+import com.takeaway.modular.dao.dto.ReportDto;
 import com.takeaway.modular.dao.model.Orders;
 
 public interface OrdersMapper {
@@ -32,7 +34,13 @@ public interface OrdersMapper {
 	
 	List<Orders> getByRefund(String userId);
 	
-	PageList<Orders> findPage(PageBounds bounds, OrdersDto dto);
+	PageList<OrdersDto> findPage(PageBounds bounds, OrdersDto dto);
+	
+	PageList<ReportDto> reportQuery(PageBounds bounds, ReportDto dto);
+	
+	PageList<BusinessReportDto> businessReport(PageBounds bounds, BusinessReportDto dto);
+	
+	List<ReportDto> reportExport(ReportDto dto);
 	
 	PageList<Orders> findReminderPage(PageBounds bounds, OrdersDto dto);
 

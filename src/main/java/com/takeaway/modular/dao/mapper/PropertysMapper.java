@@ -18,7 +18,11 @@ public interface PropertysMapper {
 	
 	List<Propertys> getByItemId(String itemId);
 	
+	List<Propertys> getPidByItemId(String itemId);
+	
 	List<Propertys> getByPid(String pid);
+	
+	List<Propertys> getByItemIdAndPid(Propertys propertys);
 	
 	int save(Propertys propertys);
 	

@@ -11,6 +11,10 @@ public class OrderItemsDto {
 	private String itemType;
 	private String itemTypeName;
 	private String itemName;
+	private String merchantId;
+
+	private String totalNums;
+	private String totalPrice;
 
 	public String getId() {
 		return id;
@@ -90,6 +94,30 @@ public class OrderItemsDto {
 
 	public void setItemName(String itemName) {
 		this.itemName = itemName;
+	}
+
+	public String getTotalNums() {
+		return totalNums;
+	}
+
+	public void setTotalNums(String totalNums) {
+		this.totalNums = totalNums;
+	}
+
+	public String getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(String totalPrice) {
+		this.totalPrice = totalPrice;
+	}
+
+	public String getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
 	}
 
 }

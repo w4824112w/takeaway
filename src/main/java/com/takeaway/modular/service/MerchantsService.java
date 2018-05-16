@@ -49,10 +49,10 @@ public class MerchantsService {
 
 	@Autowired
 	private CouponsMapper couponsMapper;
-	
+
 	@Autowired
 	private ActivitysMapper activitysMapper;
-	
+
 	@Autowired
 	private UserFavoritesMapper userFavoritesMapper;
 
@@ -77,7 +77,7 @@ public class MerchantsService {
 		merchants.setCreatedAt(new Date());
 		result = merchantsMapper.save(merchants);
 		Integer merchantId = merchants.getId();
-		
+
 		for (MerchantPictures merchantPictures : merchants.getPictures()) {
 			merchantPictures.setMerchantId(merchantId);
 			merchantPictures.setCreatedAt(new Date());
@@ -85,11 +85,13 @@ public class MerchantsService {
 		}
 
 		// 默认密码，md5加密
-		Managers user=new Managers();
+		Managers user = new Managers();
+		user.setName(merchants.getAccountName());
 		user.setPasswordHash(MD5Util.MD5(merchants.getAccountPassword()));
 		user.setRoleId(1);
 		user.setType(0); // (0：普通;1：超级;)
 		user.setStatus(1);
+		user.setMerchantId(merchantId);
 		user.setCreatedAt(new Date());
 		managersMapper.save(user);
 
@@ -111,7 +113,7 @@ public class MerchantsService {
 				.getByMerchantId(merchantId.toString());
 
 		result = merchantsMapper.update(merchants);
-		
+
 		merchantPicturesMapper.delByMerchantId(merchantId.toString());
 
 		for (MerchantPictures merchantPictures : merchants.getPictures()) {
@@ -142,12 +144,14 @@ public class MerchantsService {
 		return merchants;
 	}
 
-	public MerchantsDto homePage(String id) {
-		MerchantsDto dto=new MerchantsDto();
-		dto.setId(id);
+	public MerchantsDto homePage(String id, Integer type) {
+		MerchantsDto dto = new MerchantsDto();
+		if (type != 1) {
+			dto.setId(id);
+		}
 		return merchantsMapper.homePage(dto);
 	}
-	
+
 	@Transactional
 	public int delete(String id) {
 		List<MerchantPictures> merchantPictures = merchantPicturesMapper
@@ -166,7 +170,7 @@ public class MerchantsService {
 	public List<Merchants> getAll() {
 		return merchantsMapper.getAll();
 	}
-	
+
 	public List<Merchants> getByItemId(String itemId) {
 		return merchantsMapper.getByItemId(itemId);
 	}
@@ -175,6 +179,9 @@ public class MerchantsService {
 		List<MerchantsDto> merchants = merchantsMapper.appIndex();
 		for (MerchantsDto dto : merchants) {
 			String merchantId = dto.getId().toString();
+			List<MerchantPictures> pictures = merchantPicturesMapper
+					.getByMerchantId(merchantId.toString());
+			dto.setPictures(pictures);
 			dto.setMonthOrder(ordersMapper
 					.getMonthOrdersByMerchantId(merchantId) + "");
 			UserFavoritesDto query = new UserFavoritesDto();

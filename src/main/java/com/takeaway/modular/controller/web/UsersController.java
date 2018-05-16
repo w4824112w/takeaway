@@ -76,7 +76,7 @@ public class UsersController {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
-			return ErrorEnums.getResult(ErrorEnums.ERROR, "用户已超时，请退出登录", null);
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
 		}
 
 		UsersDto dto = new UsersDto();
@@ -112,7 +112,7 @@ public class UsersController {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
-			return ErrorEnums.getResult(ErrorEnums.ERROR, "用户已超时，请退出登录", null);
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
 		}
 
 		Users user = usersService.getById(id);
@@ -217,7 +217,7 @@ public class UsersController {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
-			return ErrorEnums.getResult(ErrorEnums.ERROR, "用户已超时，请退出登录", null);
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
 		}
 
 		try {

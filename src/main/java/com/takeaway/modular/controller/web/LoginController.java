@@ -84,6 +84,9 @@ public class LoginController {
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "账号已删除", null);
 		}
 
+		u.setLastTime(new Date());
+		managersService.update(u);
+		
 		HttpSession session = request.getSession();
 		session.setAttribute("s_user", u);
 

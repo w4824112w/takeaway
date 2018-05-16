@@ -1,12 +1,18 @@
 package com.takeaway.modular.dao.dto;
 
+import java.util.List;
+
+import com.takeaway.modular.dao.model.OrderItems;
+
 public class OrdersDto {
 	private String id;
 	private String orderNo;
 	private String merchantId;
+	private String merchantName;
 	private String userId;
 	private String orderType;
 	private String totalPrice;
+	private String packingCharge;
 	private String deliverMoney;
 	private String status;
 	private String createdAt;
@@ -43,11 +49,17 @@ public class OrdersDto {
 	private String orderScore;
 	private String couponMoney;
 	private String activityMoney;
+	private String targetName;	//	优惠券或活动名称
 
 	private String processing; // 未处理订单数
 	private String refunding; // 退款中的外卖订单数
 	private String todayOrders; // 今日订单数
 	private String todayTurnover; // 今日营业额
+
+	private String startTime; // 开始日期
+	private String endTime; // 结束日期
+	
+	private List<OrderItems> orderItems;
 
 	public String getId() {
 		return id;
@@ -415,6 +427,54 @@ public class OrdersDto {
 
 	public void setActivityMoney(String activityMoney) {
 		this.activityMoney = activityMoney;
+	}
+
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+
+	public String getPackingCharge() {
+		return packingCharge;
+	}
+
+	public void setPackingCharge(String packingCharge) {
+		this.packingCharge = packingCharge;
+	}
+
+	public String getMerchantName() {
+		return merchantName;
+	}
+
+	public void setMerchantName(String merchantName) {
+		this.merchantName = merchantName;
+	}
+
+	public String getTargetName() {
+		return targetName;
+	}
+
+	public void setTargetName(String targetName) {
+		this.targetName = targetName;
+	}
+
+	public List<OrderItems> getOrderItems() {
+		return orderItems;
+	}
+
+	public void setOrderItems(List<OrderItems> orderItems) {
+		this.orderItems = orderItems;
 	}
 
 }

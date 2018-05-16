@@ -80,7 +80,9 @@ public class ManagersService {
 
 	public Managers getById(String id) {
 		Managers managers=managersMapper.getById(id);
-		managers.setMerchants(merchantsMapper.getById(managers.getMerchantId().toString()));
+		if(managers.getType()!=1){
+			managers.setMerchants(merchantsMapper.getById(managers.getMerchantId().toString()));
+		}
 		return managers;
 	}
 

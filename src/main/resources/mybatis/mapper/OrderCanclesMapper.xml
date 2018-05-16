@@ -4,7 +4,6 @@
 	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.OrderCancles">
 		<id column="id" property="id" jdbcType="INTEGER" />
 		<result column="order_id" property="orderId" jdbcType="INTEGER" />
-		<result column="status" property="status" jdbcType="INTEGER" />
 		<result column="size" property="size" jdbcType="INTEGER" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="total_price" property="totalPrice" jdbcType="DOUBLE" />
@@ -13,7 +12,7 @@
 		<result column="oper_man" property="operMan" jdbcType="INTEGER" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		id,order_id,status,size,name,
+		id,order_id,size,name,
 		total_price,created_at,oper_at,oper_man
 	</sql>
 
@@ -36,23 +35,17 @@
 		order by id desc
 	</select>
 	
-	<update id="delete" parameterType="java.lang.String">
-		update tb_order_cancles
-		set status = 9
-		where id = #{id,jdbcType=VARCHAR}
-	</update>
-
 	<insert id="save" parameterType="com.takeaway.modular.dao.model.OrderCancles">
 		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
 			SELECT
 			LAST_INSERT_ID()
 		</selectKey>
 		insert into tb_order_cancles (
-		order_id,status,size,name,total_price,created_at
+		order_id,size,name,total_price,created_at
 		)
 		values
 		(
-		#{orderId,jdbcType=INTEGER},#{status,jdbcType=INTEGER},#{size,jdbcType=INTEGER},
+		#{orderId,jdbcType=INTEGER},#{size,jdbcType=INTEGER},
 		#{name,jdbcType=VARCHAR},#{totalPrice,jdbcType=DOUBLE},#{createdAt,jdbcType=TIMESTAMP}
 		)
 	</insert>
@@ -60,9 +53,6 @@
 	<update id="update" parameterType="com.takeaway.modular.dao.model.OrderCancles">
 	update tb_order_cancles
 	<set>
-		<if test="status != null">
-			status = #{status,jdbcType=INTEGER},
-		</if>
 		<if test="updatedAt != null">
 			updated_at = #{updatedAt,jdbcType=TIMESTAMP},
 		</if>

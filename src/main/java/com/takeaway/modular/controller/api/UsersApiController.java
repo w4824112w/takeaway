@@ -42,8 +42,8 @@ public class UsersApiController {
 	@Autowired
 	private UsersService usersService;
 
-	@ApiOperation(value = "新增会员", httpMethod = "POST", notes = "新增会员信息")
-	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	@ApiOperation(value = "新增会员", httpMethod = "GET", notes = "新增会员信息")
+	@RequestMapping(value = "/save", method = RequestMethod.GET)
 	public JSONObject save(HttpServletRequest request,
 			HttpServletResponse response, @RequestBody Users user) {
 		try {
@@ -55,4 +55,20 @@ public class UsersApiController {
 
 	}
 
+	@ApiOperation(value = "详情", httpMethod = "GET", notes = "我的信息")
+	@ApiImplicitParams({ 
+		@ApiImplicitParam(name = "openid", value = "openid", required = true, dataType = "String", paramType = "query")
+		})
+	@RequestMapping(value = "/details", method = RequestMethod.GET)
+	public JSONObject details(HttpServletRequest request,
+			HttpServletResponse response, String openid) {
+
+		Users user = usersService.getByOpenid(openid);
+
+		JSONObject result = new JSONObject();
+		result.put("openid", openid);
+		result.put("users", user);
+		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "获取我的信息", result);
+	}
+	
 }

@@ -3,6 +3,8 @@ package com.takeaway.modular.dao.model;
 import java.util.Date;
 import java.util.List;
 
+import com.takeaway.modular.dao.dto.CouponPicturesDto;
+
 public class Coupons {
 	private Integer id;
 	private String name;
@@ -21,6 +23,8 @@ public class Coupons {
 	private Integer status;
 
 	private List<CouponMerchants> merchants;
+	
+	private List<CouponPictures> pictures;
 
 	public Integer getId() {
 		return id;
@@ -149,5 +153,15 @@ public class Coupons {
 	public void setMerchants(List<CouponMerchants> merchants) {
 		this.merchants = merchants;
 	}
+
+	public List<CouponPictures> getPictures() {
+		return pictures;
+	}
+
+	public void setPictures(List<CouponPictures> pictures) {
+		this.pictures = pictures;
+	}
+
+
 
 }

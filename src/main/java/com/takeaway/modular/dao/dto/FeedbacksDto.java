@@ -20,7 +20,7 @@ public class FeedbacksDto {
 	private Users users;
 	private Orders orders;
 	private Merchants merchants;
-	private Items items;
+	private ItemsDto items;
 
 	public String getId() {
 		return id;
@@ -126,12 +126,13 @@ public class FeedbacksDto {
 		this.merchants = merchants;
 	}
 
-	public Items getItems() {
+	public ItemsDto getItems() {
 		return items;
 	}
 
-	public void setItems(Items items) {
+	public void setItems(ItemsDto items) {
 		this.items = items;
 	}
+
 
 }

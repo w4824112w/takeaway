@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.takeaway.core.enums.ErrorEnums;
+import com.takeaway.modular.dao.dto.CouponsDto;
 import com.takeaway.modular.dao.dto.UserCouponsDto;
+import com.takeaway.modular.dao.model.Coupons;
+import com.takeaway.modular.dao.model.Managers;
 import com.takeaway.modular.dao.model.UserCoupons;
 import com.takeaway.modular.dao.model.Users;
+import com.takeaway.modular.service.CouponsService;
 import com.takeaway.modular.service.UserCouponsService;
 
 /**
@@ -43,8 +48,11 @@ public class UserCouponsApiController {
 	@Autowired
 	private UserCouponsService userCouponsService;
 
-	@ApiOperation(value = "新增会员优惠券", httpMethod = "POST", notes = "新增会员优惠券信息")
-	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	@Autowired
+	private CouponsService couponsService;
+	
+	@ApiOperation(value = "新增会员优惠券", httpMethod = "GET", notes = "新增会员优惠券信息")
+	@RequestMapping(value = "/save", method = RequestMethod.GET)
 	public JSONObject save(HttpServletRequest request,
 			HttpServletResponse response, @RequestBody UserCoupons userCoupons) {
 		try {
@@ -56,6 +64,18 @@ public class UserCouponsApiController {
 
 	}
 
+	@ApiOperation(value = "查询所有优惠卷列表", httpMethod = "GET", notes = "查询所有优惠卷列表信息")
+	@RequestMapping(value = "/all", method = RequestMethod.GET)
+	public JSONObject all(HttpServletRequest request,
+			HttpServletResponse response) {
+
+		List<CouponsDto> coupons = couponsService.getIndexAll();
+
+		JSONObject result = new JSONObject();
+		result.put("coupons", coupons);
+		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "查询", result);
+	}
+	
 	@ApiOperation(value = "列表", httpMethod = "GET", notes = "获取会员优惠券")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "userId", value = "会员id", required = false, dataType = "String", paramType = "query") })
 	@RequestMapping(value = "/list", method = RequestMethod.GET)

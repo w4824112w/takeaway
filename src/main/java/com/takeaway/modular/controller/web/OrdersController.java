@@ -82,7 +82,7 @@ public class OrdersController {
 		dto.setUserId(userId);
 		dto.setOrderNo(orderNo);
 		PageBounds bounds = new PageBounds(page, rows);
-		PageResult<Orders> orders = ordersService.findPage(bounds, dto);
+		PageResult<OrdersDto> orders = ordersService.findPage(bounds, dto);
 
 		JSONObject result = new JSONObject();
 		result.put("orderNo", orderNo);

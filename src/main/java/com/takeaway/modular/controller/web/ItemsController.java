@@ -82,11 +82,13 @@ public class ItemsController {
 		}
 
 		ItemsDto dto = new ItemsDto();
-		dto.setMerchantId(merchantId);
+		if(u.getType()!=1){
+			dto.setMerchantId(u.getMerchantId().toString());
+		}
 		dto.setName(name);
 		PageBounds bounds = new PageBounds(page, rows);
 
-		PageResult<Items> items = itemsService.findPage(bounds, dto);
+		PageResult<ItemsDto> items = itemsService.findPage(bounds, dto);
 
 		JSONObject result = new JSONObject();
 		result.put("merchantId", merchantId);
@@ -146,7 +148,7 @@ public class ItemsController {
 					null);
 		}
 
-		Items items = itemsService.getById(id);
+		ItemsDto items = itemsService.getById(id);
 
 		JSONObject result = new JSONObject();
 		result.put("items", items);

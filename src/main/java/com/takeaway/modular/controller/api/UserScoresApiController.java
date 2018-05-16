@@ -39,8 +39,8 @@ public class UserScoresApiController {
 	@Autowired
 	private UserScoresService userScoresService;
 
-	@ApiOperation(value = "新增会员积分明细积分明细", httpMethod = "POST", notes = "新增会员积分明细信息")
-	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	@ApiOperation(value = "新增会员积分明细积分明细", httpMethod = "GET", notes = "新增会员积分明细信息")
+	@RequestMapping(value = "/save", method = RequestMethod.GET)
 	public JSONObject save(HttpServletRequest request,
 			HttpServletResponse response, @RequestBody UserScores userScores) {
 		try {

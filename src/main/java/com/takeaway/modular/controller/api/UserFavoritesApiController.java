@@ -41,8 +41,8 @@ public class UserFavoritesApiController {
 	@Autowired
 	private UserFavoritesService userFavoritesService;
 
-	@ApiOperation(value = "新增会员收藏", httpMethod = "POST", notes = "新增会员收藏信息")
-	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	@ApiOperation(value = "新增会员收藏", httpMethod = "GET", notes = "新增会员收藏信息")
+	@RequestMapping(value = "/save", method = RequestMethod.GET)
 	public JSONObject save(HttpServletRequest request,
 			HttpServletResponse response,  @RequestBody UserFavorites userFavorites) {
 		try {

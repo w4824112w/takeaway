@@ -28,6 +28,8 @@ public class Configure {
 	private static String key = "";
 	
 	private static String notifyCallbackUrl = "";
+	
+	private static String refundNotifyCallbackUrl = "";
 			
 	//是否使用异步线程的方式来上报API测速，默认为异步模式
 	private static boolean useThreadToDoReport = true;
@@ -75,6 +77,7 @@ public class Configure {
 			secret=prop.getProperty("secret");
 			mchID=prop.getProperty("mch_id");
 			notifyCallbackUrl=prop.getProperty("notify_url");
+			refundNotifyCallbackUrl=prop.getProperty("refund_notify_url");
 			key=prop.getProperty("apikey");
 			certLocalPath=prop.getProperty("certlocal");
 			certPassword=prop.getProperty("certpw");
@@ -193,6 +196,14 @@ public class Configure {
 
 	public static void setSecret(String secret) {
 		Configure.secret = secret;
+	}
+
+	public static String getRefundNotifyCallbackUrl() {
+		return refundNotifyCallbackUrl;
+	}
+
+	public static void setRefundNotifyCallbackUrl(String refundNotifyCallbackUrl) {
+		Configure.refundNotifyCallbackUrl = refundNotifyCallbackUrl;
 	}
 
 }

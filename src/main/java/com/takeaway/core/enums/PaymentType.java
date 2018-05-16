@@ -7,7 +7,8 @@ package com.takeaway.core.enums;
  */
 public enum PaymentType {
 	alipay("alipay"),
-	weixin("weixin");
+	weixin("weixin"),
+	refund("refund");
 
     private String name;
 

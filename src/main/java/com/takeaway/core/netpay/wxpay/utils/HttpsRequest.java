@@ -48,8 +48,8 @@ public class HttpsRequest{
     private CloseableHttpClient httpClient;
 
     public HttpsRequest() throws UnrecoverableKeyException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException {
-        init();
-    //	noCert();
+    //	init();
+    	noCert();
     }
 
     private void noCert()throws IOException, KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyManagementException {

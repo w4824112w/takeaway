@@ -107,6 +107,40 @@ public class PayUtils {
 		return null;
 	}
 
+	public static String generateRefundNativeReplyXML(PayPackage payPackage) {
+		try {
+
+			Map<String, String> map = BeanUtils.describe(payPackage);
+			map.remove("class");
+			// 尝试微信支付提供的方法
+			String dto2sign = Signature.getSign4Object(payPackage);
+			payPackage.setSign(dto2sign);
+
+			XmlMapper xmlMapper = new XmlMapper();
+			xmlMapper.setSerializationInclusion(Include.NON_EMPTY);
+
+			String xmlContent = xmlMapper.writeValueAsString(payPackage);
+			
+		//	System.out.println("xml------"+xmlContent);
+
+		//	String xmlContent = "<xml><appid><![CDATA[wx4973a8b575999262]]</appid><mch_id><![CDATA[1320273701]]</mch_id><nonce_str><![CDATA[rc7p6eyhto16qdpzu7e8y43fq567mghv]]</nonce_str><sign><![CDATA[EDE307995AC6F7A9495D077112D7BDE0]]</sign><body><![CDATA[weixintest]]</body><out_trade_no><![CDATA[201412051510]]</out_trade_no><total_fee><![CDATA[1]]</total_fee><spbill_create_ip><![CDATA[8.8.8.8]]</spbill_create_ip><notify_url><![CDATA[http://www.prisonpublic.com/ywgk-app/api/weixin/callback]]</notify_url><trade_type><![CDATA[APP]]</trade_type></xml>";
+
+			// System.out.println("统一下单，以前方法，生成的传输XML数据:"+xmlContent);
+			// System.out.println("统一下单，微信提供的方法，生成的传输XML数据:"+xmlContent);
+			HttpsRequest httpsRequest = new HttpsRequest();
+			// String result = httpsRequest.sendPost(Configure.UNIFY_PAY_API,
+			// xmlContent);
+			String result = httpsRequest.sendPost(Configure.REFUND_API,
+					xmlContent);
+			 System.out.println("调用申请退款接口后返回数据:"+result);
+			return result;
+		} catch (Exception e) {
+			logger.info("e:" + e);
+		}
+
+		return null;
+	}
+	
 	public static Map<String, String> generateAppPay(PrePayInfo info) {
 		// 提取需要重新签名的map
 		Map<String, String> signMap = new HashMap<String, String>();

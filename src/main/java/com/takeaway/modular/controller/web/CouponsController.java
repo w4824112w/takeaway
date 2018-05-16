@@ -84,7 +84,7 @@ public class CouponsController {
 		dto.setName(name);
 		PageBounds bounds = new PageBounds(page, rows);
 
-		PageResult<Coupons> coupons = couponsService.findPage(bounds, dto);
+		PageResult<CouponsDto> coupons = couponsService.findPage(bounds, dto);
 
 		JSONObject result = new JSONObject();
 		result.put("name", name);
@@ -123,6 +123,24 @@ public class CouponsController {
 		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "查询", result);
 	}
 
+	@ApiOperation(value = "查询优惠卷列表", httpMethod = "GET", notes = "查询后台送券的类型的优惠卷列表信息")
+	@RequestMapping(value = "/backList", method = RequestMethod.GET)
+	public JSONObject backList(HttpServletRequest request,
+			HttpServletResponse response) {
+		HttpSession session = request.getSession();
+		Managers u = (Managers) session.getAttribute("s_user");
+		if (u == null) {
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录",
+					null);
+		}
+
+		List<Coupons> coupons = couponsService.getBackAll();
+
+		JSONObject result = new JSONObject();
+		result.put("coupons", coupons);
+		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "查询", result);
+	}
+	
 	/**
 	 * 编辑优惠卷
 	 * 
@@ -143,7 +161,7 @@ public class CouponsController {
 					null);
 		}
 
-		Coupons coupons = couponsService.getById(id);
+		CouponsDto coupons = couponsService.getById(id);
 
 		JSONObject result = new JSONObject();
 		result.put("coupons", coupons);

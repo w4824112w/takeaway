@@ -25,8 +25,12 @@ public class PayPackage {
 	private String attach;		//附加数据 attach
 
 	private String out_trade_no;//商户订单号 out_trade_no
-
+	
+	private String out_refund_no;//商户退款单号 out_refund_no
+	
 	private String total_fee;	//订单价格 total_fee
+	
+	private String refund_fee;	//退款总金额 refund_fee
 
 	private String spbill_create_ip;	//订单生成的客户端IP spbill_create_ip
 	
@@ -191,6 +195,30 @@ public class PayPackage {
 
 	public void setNotify_url(String notify_url) {
 		this.notify_url = notify_url;
+	}
+
+
+
+	public String getOut_refund_no() {
+		return out_refund_no;
+	}
+
+
+
+	public void setOut_refund_no(String out_refund_no) {
+		this.out_refund_no = out_refund_no;
+	}
+
+
+
+	public String getRefund_fee() {
+		return refund_fee;
+	}
+
+
+
+	public void setRefund_fee(String refund_fee) {
+		this.refund_fee = refund_fee;
 	}
 	
 	

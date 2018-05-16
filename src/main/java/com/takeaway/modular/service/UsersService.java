@@ -73,6 +73,10 @@ public class UsersService {
 	public Users getById(String id) {
 		return usersMapper.getById(id);
 	}
+	
+	public Users getByOpenid(String openid) {
+		return usersMapper.getByOpenid(openid);
+	}
 
 	@Transactional
 	public int delete(String id) {

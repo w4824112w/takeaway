@@ -64,10 +64,31 @@
 
 	<update id="update" parameterType="com.takeaway.modular.dao.model.ItemTypes">
 		update tb_item_types
-		set
-		code = #{code,jdbcType=VARCHAR},
-		name = #{name,jdbcType=VARCHAR},
-		quantity = #{quantity,jdbcType=INTEGER}
+		<set>
+		<if test="code != null">
+			code = #{code,jdbcType=VARCHAR},
+		</if>
+		<if test="name != null">
+			name = #{name,jdbcType=VARCHAR},
+		</if>
+		<if test="quantity != null">
+			quantity = #{quantity,jdbcType=INTEGER}
+		</if>
+		</set>
+		where id =
+		#{id,jdbcType=INTEGER}
+	</update>
+	
+	<update id="increase" parameterType="com.takeaway.modular.dao.model.ItemTypes">
+		update tb_item_types
+		set quantity = quantity+1
+		where id =
+		#{id,jdbcType=INTEGER}
+	</update>
+	
+	<update id="reduce" parameterType="com.takeaway.modular.dao.model.ItemTypes">
+		update tb_item_types
+		set quantity = quantity-1
 		where id =
 		#{id,jdbcType=INTEGER}
 	</update>
