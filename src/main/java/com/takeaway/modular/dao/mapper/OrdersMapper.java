@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageList;
+import com.takeaway.modular.dao.dto.BossReportDto;
 import com.takeaway.modular.dao.dto.BusinessReportDto;
 import com.takeaway.modular.dao.dto.OrdersDto;
 import com.takeaway.modular.dao.dto.ReportDto;
@@ -39,6 +40,8 @@ public interface OrdersMapper {
 	PageList<ReportDto> reportQuery(PageBounds bounds, ReportDto dto);
 	
 	PageList<BusinessReportDto> businessReport(PageBounds bounds, BusinessReportDto dto);
+	
+	BossReportDto bossReport(BossReportDto dto);
 	
 	List<ReportDto> reportExport(ReportDto dto);
 	

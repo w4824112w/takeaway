@@ -66,15 +66,14 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
      */
 	@Bean
 	public RestTemplate getRestTemplate(){
-/*		RestTemplate restTemplate = new RestTemplate();
-		restTemplate.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
-		return restTemplate;*/
-		
 	    RestTemplate restTemplate = new RestTemplate();
+	    restTemplate.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
 	    restTemplate.getMessageConverters().add(new WxMappingJackson2HttpMessageConverter());
 	    return restTemplate;
 	}
     
+	
+	
 /*    @Bean
     public EmbeddedServletContainerCustomizer containerCustomizer(){
            return new EmbeddedServletContainerCustomizer() {

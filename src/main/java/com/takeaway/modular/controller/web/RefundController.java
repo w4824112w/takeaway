@@ -123,6 +123,7 @@ public class RefundController {
 	@ApiOperation(value = "退款", httpMethod = "POST", notes = "微信申请退款")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "orderNo", value = "订单号", required = true, dataType = "String", paramType = "form"),
+			@ApiImplicitParam(name = "refundNo", value = "退款单号", required = true, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "openid", value = "openid", required = true, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "totalFee", value = "订单总金额(单位：元)", required = true, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "refundFee", value = "退款总金额(单位：元)", required = true, dataType = "String", paramType = "form"),
@@ -130,7 +131,7 @@ public class RefundController {
 	})
 	@RequestMapping(value = "/wxrefund", method = RequestMethod.POST)
 	public JSONObject callbackForWxpay(HttpServletRequest request,
-			HttpServletResponse response,String orderNo,String totalFee,String refundFee,String num) {
+			HttpServletResponse response,String orderNo,String refundNo,String openid,String totalFee,String refundFee,String num) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -145,9 +146,9 @@ public class RefundController {
 					null);
 		}
 		
-		Users users=usersService.getById(orders.getUserId().toString());
+		Users users=usersService.getByOpenid(openid);
 		
-		String refundNo = RandomSequence.getSixteenRandomVal(); // 退单编号
+/*				String refundNo = RandomSequence.getSixteenRandomVal(); // 退单编号
 		OrderCancles orderCancles=new OrderCancles();
 		orderCancles.setOrderId(orders.getId());
 		orderCancles.setRefundNo(refundNo);
@@ -158,6 +159,8 @@ public class RefundController {
 		orderCancles.setOperAt(new Date());
 		orderCancles.setOperMan(u.getId());
 		orderCanclesService.save(orderCancles);	// 保存申请退款单
+*/		
+		OrderCancles orderCancles=orderCanclesService.getByRefundNo(refundNo);
 		
 		totalFee=new BigDecimal(totalFee).multiply(new BigDecimal(100)).intValue()+"";	//订单总金额元转分
 		refundFee=new BigDecimal(refundFee).multiply(new BigDecimal(100)).intValue()+"";	//退款总金额元转分

@@ -17,7 +17,7 @@ public interface ItemsMapper {
 	
 	List<Items> getAll();
 	
-	List<Items> getByMerchantId(String merchantId);
+	List<ItemsDto> getByMerchantId(ItemsDto dto);
 	
 	int save(Items items);
 	

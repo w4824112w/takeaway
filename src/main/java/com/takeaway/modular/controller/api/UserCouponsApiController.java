@@ -31,6 +31,7 @@ import com.takeaway.modular.dao.model.UserCoupons;
 import com.takeaway.modular.dao.model.Users;
 import com.takeaway.modular.service.CouponsService;
 import com.takeaway.modular.service.UserCouponsService;
+import com.takeaway.modular.service.UsersService;
 
 /**
  * 会员优惠券信息接口
@@ -51,8 +52,11 @@ public class UserCouponsApiController {
 	@Autowired
 	private CouponsService couponsService;
 	
-	@ApiOperation(value = "新增会员优惠券", httpMethod = "GET", notes = "新增会员优惠券信息")
-	@RequestMapping(value = "/save", method = RequestMethod.GET)
+	@Autowired
+	private UsersService usersService;
+	
+	@ApiOperation(value = "新增会员优惠券", httpMethod = "POST", notes = "新增会员优惠券信息")
+	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
 			HttpServletResponse response, @RequestBody UserCoupons userCoupons) {
 		try {
@@ -77,10 +81,12 @@ public class UserCouponsApiController {
 	}
 	
 	@ApiOperation(value = "列表", httpMethod = "GET", notes = "获取会员优惠券")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "userId", value = "会员id", required = false, dataType = "String", paramType = "query") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "openid", value = "openid", required = false, dataType = "String", paramType = "query") })
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public JSONObject list(HttpServletRequest request,
-			HttpServletResponse response, String userId) {
+			HttpServletResponse response, String openid) {
+		Users user=usersService.getByOpenid(openid);
+		String userId=user.getId().toString();
 		List<UserCouponsDto> userCoupons = userCouponsService
 				.getCoupons(userId);
 		JSONObject result = new JSONObject();

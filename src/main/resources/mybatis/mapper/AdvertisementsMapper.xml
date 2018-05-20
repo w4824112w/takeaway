@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.takeaway.modular.dao.mapper.AdvertisementsMapper">
+	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.Advertisements">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="type_id" property="typeId" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="sort" property="sort" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="created_at" property="createdAt" jdbcType="DATE" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, type_id,name,image_url,url,sort,status,created_at
+	</sql>
+	
+	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap" >
+		select
+		<include refid="Base_Column_List" />
+		from tb_advertisements
+		where id = #{id,jdbcType=VARCHAR} 
+	</select>
+	
+	<select id="getAll" parameterType="com.takeaway.modular.dao.dto.AdvertisementsDto" resultMap="BaseResultMap">
+	     select 
+	     <include refid="Base_Column_List" />
+	     from tb_advertisements order by id desc
+	</select>
+	
+	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.AdvertisementsDto" resultMap="BaseResultMap">
+	     select 
+	     <include refid="Base_Column_List" />
+	     from tb_advertisements where 1=1
+	      order by id desc
+	</select>
+	
+ 	<delete id="delete" parameterType="java.lang.String">
+	    delete from tb_advertisements where id = #{id,jdbcType=VARCHAR} 
+  	</delete>
+  	
+  	<insert id="save" parameterType="com.takeaway.modular.dao.model.Advertisements">
+	    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+	      SELECT LAST_INSERT_ID()
+	    </selectKey>
+	   	insert into tb_advertisements (
+			type_id,name,image_url,url,sort,status,created_at
+	      )
+	    values (#{typeId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+	    #{imageUrl,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER},
+	    #{status,jdbcType=INTEGER}, #{createdAt,jdbcType=TIMESTAMP})
+  	</insert>
+  
+    <update id="update" parameterType="com.takeaway.modular.dao.model.Advertisements">
+	    update tb_advertisements
+	    <set>		
+		    <if test="typeId != null">
+				type_id = #{typeId,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+	      	<if test="imageUrl != null">
+				image_url = #{imageUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="url != null">
+				url = #{url,jdbcType=VARCHAR},
+			</if>
+			<if test="sort != null">
+				sort = #{sort,jdbcType=INTEGER},
+			</if>
+	      	<if test="status != null">
+				status = #{status,jdbcType=INTEGER}
+			</if>
+	    </set>
+	    where id = #{id,jdbcType=INTEGER}
+  	</update>
+</mapper>

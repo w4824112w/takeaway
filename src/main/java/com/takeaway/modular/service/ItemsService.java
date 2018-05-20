@@ -64,8 +64,8 @@ public class ItemsService {
 	public PageResult<ItemsDto> findPage(PageBounds bounds, ItemsDto dto) {
 		PageList<ItemsDto> items = itemsMapper.findPage(bounds, dto);
 		for (ItemsDto item : items) {
-			List<ItemPicturesDto> pictures = itemPicturesMapper.getByItemId(item
-					.getId().toString());
+			List<ItemPicturesDto> pictures = itemPicturesMapper
+					.getByItemId(item.getId().toString());
 			item.setPictures(pictures);
 		}
 		return new PageResult<ItemsDto>(items);
@@ -113,8 +113,8 @@ public class ItemsService {
 		items.setUpdatedAt(new Date());
 		Integer itemId = items.getId();
 
-		List<ItemPicturesDto> oldPictures = itemPicturesMapper.getByItemId(itemId
-				.toString());
+		List<ItemPicturesDto> oldPictures = itemPicturesMapper
+				.getByItemId(itemId.toString());
 
 		result = itemsMapper.update(items);
 		itemMerchantsMapper.delByItemId(itemId.toString());
@@ -186,7 +186,6 @@ public class ItemsService {
 			dto.setPid(ret.getId());
 			dto.setItemId(id);
 			ret.setSubPropertys(propertysMapper.getByItemIdAndPid(dto));
-			;
 			retPropertys.add(ret);
 		}
 		items.setPropertys(retPropertys);
@@ -219,8 +218,31 @@ public class ItemsService {
 		return items;
 	}
 
-	public List<Items> getAllByMerchantId(String merchantId) {
-		return itemsMapper.getByMerchantId(merchantId);
+	public List<ItemsDto> getAllByMerchantId(String merchantId, String itemType) {
+		ItemsDto dto = new ItemsDto();
+		dto.setMerchantId(merchantId);
+		dto.setItemType(itemType);
+		List<ItemsDto> items = itemsMapper.getByMerchantId(dto);
+		for (ItemsDto item : items) {
+			String itemId=item.getId();
+			List<ItemPicturesDto> pictures = itemPicturesMapper
+					.getByItemId(itemId);
+			item.setPictures(pictures);
+			
+			
+			List<Propertys> pids = propertysMapper.getPidByItemId(itemId);
+			List<Propertys> retPropertys = new ArrayList<Propertys>();
+			for (Propertys pid : pids) {
+				Propertys ret = propertysMapper.getById(pid.getPid().toString());
+				Propertys pdto = new Propertys();
+				pdto.setPid(ret.getId());
+				pdto.setItemId(itemId);
+				ret.setSubPropertys(propertysMapper.getByItemIdAndPid(pdto));
+				retPropertys.add(ret);
+			}
+			item.setPropertys(retPropertys);
+		}
+		return items;
 	}
 
 }

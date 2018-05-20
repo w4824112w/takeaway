@@ -46,11 +46,21 @@
 		from tb_items where status=1 order by id desc
 	</select>
 
-	<select id="getByMerchantId" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select  i.*
-		from  tb_items i,tb_item_merchants im 
+	<select id="getByMerchantId" parameterType="com.takeaway.modular.dao.dto.ItemsDto" resultType="com.takeaway.modular.dao.dto.ItemsDto">
+		select distinct i.id,i.item_type as itemType,i.name,i.code,i.label,i.origin_price as originPrice,
+		i.cost_price as costPrice,i.price,i.packingCharge,i.unit,i.sales_volume as salesVolume,
+		i.tips,i.remain,i.stock,i.stock_status as stockStatus,i.description,i.status,
+		i.created_at as createdAt,i.updated_at as updatedAt,i.city_id as cityId,i.origin,
+		(select count(0) from tb_orders o,tb_order_items oi where o.id=oi.order_id and month(o.created_at)
+		= month(now()) and o.merchant_id=im.merchant_id and oi.item_id=i.id ) as monthOrder
+		from  tb_items i,tb_item_merchants im
 		where i.id=im.item_id 
-		and im.merchant_id = #{merchantId,jdbcType=VARCHAR}
+		<if test="merchantId != null and merchantId != ''">
+			and im.merchant_id = #{merchantId,jdbcType=VARCHAR}
+		</if>
+		<if test="itemType != null and itemType != ''">
+			and i.item_type = #{itemType,jdbcType=VARCHAR}
+		</if>
 	</select>
 
 	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.ItemsDto"

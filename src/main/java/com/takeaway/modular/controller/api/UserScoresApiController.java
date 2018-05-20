@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.model.UserScores;
+import com.takeaway.modular.dao.model.Users;
 import com.takeaway.modular.service.UserScoresService;
+import com.takeaway.modular.service.UsersService;
 
 /**
  * 会员积分明细信息接口
@@ -38,9 +40,12 @@ public class UserScoresApiController {
 
 	@Autowired
 	private UserScoresService userScoresService;
+	
+	@Autowired
+	private UsersService usersService;
 
-	@ApiOperation(value = "新增会员积分明细积分明细", httpMethod = "GET", notes = "新增会员积分明细信息")
-	@RequestMapping(value = "/save", method = RequestMethod.GET)
+/*	@ApiOperation(value = "新增会员积分明细", httpMethod = "POST", notes = "新增会员积分明细信息")
+	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
 			HttpServletResponse response, @RequestBody UserScores userScores) {
 		try {
@@ -50,13 +55,16 @@ public class UserScoresApiController {
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "系统出现异常", null);
 		}
 
-	}
+	}*/
 
 	@ApiOperation(value = "列表", httpMethod = "GET", notes = "获取会员积分明细")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "userId", value = "会员id", required = false, dataType = "Integer", paramType = "query") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "openid", value = "openid", required = false, dataType = "Integer", paramType = "query") })
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public JSONObject list(HttpServletRequest request,
-			HttpServletResponse response, String userId) {
+			HttpServletResponse response, String openid) {
+		Users user=usersService.getByOpenid(openid);
+		String userId=user.getId().toString();
+		
 		List<UserScores> userScores = userScoresService.getByUserId(userId);
 		JSONObject result = new JSONObject();
 		result.put("userScores", userScores);

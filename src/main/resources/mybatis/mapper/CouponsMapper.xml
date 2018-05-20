@@ -4,6 +4,7 @@
 	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.Coupons">
 		<id column="id" property="id" jdbcType="INTEGER" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="fullMoney" property="fullMoney" jdbcType="DOUBLE" />
 		<result column="couponMoney" property="couponMoney" jdbcType="DOUBLE" />
 		<result column="spendMoney" property="spendMoney" jdbcType="DOUBLE" />
 		<result column="description" property="description" jdbcType="VARCHAR" />
@@ -20,13 +21,13 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		id,name,couponMoney,spendMoney,description,sendNum,receiveNum,sendStartTime,sendEndTime,
+		id,name,fullMoney,couponMoney,spendMoney,description,sendNum,receiveNum,sendStartTime,sendEndTime,
 		couponSendType,created_at,startDate,endDate,updated_at,status
 	</sql>
 
 	<select id="getById" parameterType="java.lang.String" resultType="com.takeaway.modular.dao.dto.CouponsDto">
 		select
-		c.id,c.name,c.couponMoney,c.spendMoney,c.description,c.sendNum,c.receiveNum,
+		c.id,c.name,c.fullMoney,c.couponMoney,c.spendMoney,c.description,c.sendNum,c.receiveNum,
 		c.sendStartTime,c.sendEndTime,c.couponSendType,c.created_at as createdAt,
 		c.startDate,c.endDate,c.updated_at as updatedAt,c.status
 		from tb_coupons c
@@ -45,13 +46,27 @@
 		<include refid="Base_Column_List" />
 		from tb_coupons where status=1 order by id desc
 	</select>
+
+	<select id="getByCouponSendType" parameterType="com.takeaway.modular.dao.dto.CouponsDto" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_coupons c,tb_coupon_merchants cm where c.id=cm.targetId abd c.status=1  
+		<if test="merchantId != null and merchantId != ''">
+			and cm.merchant_id = #{merchantId,jdbcType=VARCHAR}
+		</if>
+		<if test="couponSendType != null and couponSendType != ''">
+			and c.couponSendType = #{couponSendType,jdbcType=VARCHAR}
+		</if>
+		order by c.id desc
+	</select>
 	
 	<select id="getIndexAll" resultType="com.takeaway.modular.dao.dto.CouponsDto">
 		select
-		c.id,c.name,c.couponMoney,c.spendMoney,c.description,c.sendNum,c.receiveNum,
+		c.id,c.name,c.fullMoney,c.couponMoney,c.spendMoney,c.description,c.sendNum,c.receiveNum,
 		c.sendStartTime,c.sendEndTime,c.couponSendType,c.created_at as createdAt,
-		c.startDate,c.endDate,c.updated_at as updatedAt,c.status
-		from tb_coupons c where c.status=1 and c.couponSendType=1 order by id desc
+		c.startDate,c.endDate,c.updated_at as updatedAt,c.status,cst.`name` as couponSendTypeName
+		from tb_coupons c LEFT JOIN tb_coupon_send_types cst ON c.couponSendType=cst.id 
+		 where c.status=1 and c.couponSendType=1 order by id desc
 	</select>
 	
 	<select id="getBackAll" resultMap="BaseResultMap">
@@ -63,7 +78,7 @@
 	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.CouponsDto"
 		resultType="com.takeaway.modular.dao.dto.CouponsDto">
 		select
-		c.id,c.name,c.couponMoney,c.spendMoney,c.description,c.sendNum,c.receiveNum,
+		c.id,c.name,c.fullMoney,c.couponMoney,c.spendMoney,c.description,c.sendNum,c.receiveNum,
 		c.sendStartTime,c.sendEndTime,c.couponSendType,c.created_at as createdAt,
 		c.startDate,c.endDate,c.updated_at as updatedAt,c.status
 		from tb_coupons c where status=1 
@@ -86,12 +101,13 @@
 			LAST_INSERT_ID()
 		</selectKey>
 		insert into tb_coupons (
-		name,couponMoney,spendMoney,description,sendNum,receiveNum,sendStartTime,sendEndTime,
+		name,fullMoney,couponMoney,spendMoney,description,sendNum,receiveNum,sendStartTime,sendEndTime,
 		couponSendType,startDate,endDate,created_at,status
 		)
 		values
 		(
 		#{name,jdbcType=VARCHAR},
+		#{fullMoney,jdbcType=DOUBLE},
 		#{couponMoney,jdbcType=DOUBLE},
 		#{spendMoney,jdbcType=DOUBLE},
 		#{description,jdbcType=VARCHAR},
@@ -111,6 +127,7 @@
 		update tb_coupons
 		set
 		name= #{name,jdbcType=VARCHAR},
+		fullMoney= #{fullMoney,jdbcType=DOUBLE},
 		couponMoney= #{couponMoney,jdbcType=DOUBLE},
 		spendMoney= #{spendMoney,jdbcType=DOUBLE},
 		description= #{description,jdbcType=VARCHAR},

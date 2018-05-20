@@ -4,7 +4,7 @@
 	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.OrderReserves">
 		<id column="id" property="id" jdbcType="INTEGER" />
 		<result column="order_id" property="orderId" jdbcType="INTEGER" />
-		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="reserve_no" property="reserveNo" jdbcType="VARCHAR" />
 		<result column="size" property="size" jdbcType="INTEGER" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="start_delivery_time" property="startDeliveryTime" jdbcType="DATE" />
@@ -16,7 +16,7 @@
 		<result column="oper_man" property="operMan" jdbcType="INTEGER" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		id,order_id,status,size,name,start_delivery_time,
+		id,order_id,reserve_no,size,name,start_delivery_time,
 		hope_delivery_time,limit_delivery_time,total_price,
 		created_at,oper_at,oper_man
 	</sql>
@@ -35,29 +35,23 @@
 		from tb_order_reserves 
 		where 1=1 
 		<if test="orderNo != null and orderNo != ''">
-			and order_no = #{orderNo,jdbcType=VARCHAR}
+			and reserve_no = #{reserveNo,jdbcType=VARCHAR}
 		</if>
 		order by id desc
 	</select>
 	
-	<update id="delete" parameterType="java.lang.String">
-		update tb_order_reserves
-		set status = 9
-		where id = #{id,jdbcType=VARCHAR}
-	</update>
-
 	<insert id="save" parameterType="com.takeaway.modular.dao.model.OrderReserves">
 		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
 			SELECT
 			LAST_INSERT_ID()
 		</selectKey>
 		insert into tb_order_reserves (
-		order_id,status,size,name,start_delivery_time,
+		order_id,reserve_no,size,name,start_delivery_time,
 		hope_delivery_time,limit_delivery_time,total_price,created_at
 		)
 		values
 		(
-		#{orderId,jdbcType=INTEGER},#{status,jdbcType=INTEGER},#{size,jdbcType=INTEGER},
+		#{orderId,jdbcType=INTEGER},#{reserveNo,jdbcType=VARCHAR},#{size,jdbcType=INTEGER},
 		#{name,jdbcType=VARCHAR},#{startDeliveryTime,jdbcType=TIMESTAMP},
 		#{hopeDeliveryTime,jdbcType=TIMESTAMP},#{limitDeliveryTime,jdbcType=TIMESTAMP},
 		#{totalPrice,jdbcType=DOUBLE},#{createdAt,jdbcType=TIMESTAMP}
@@ -67,8 +61,8 @@
 	<update id="update" parameterType="com.takeaway.modular.dao.model.OrderReserves">
 	update tb_order_reserves
 	<set>
-		<if test="status != null">
-			status = #{status,jdbcType=INTEGER},
+		<if test="reserveNo != null">
+			reserve_no = #{reserveNo,jdbcType=INTEGER},
 		</if>
 		<if test="updatedAt != null">
 			updated_at = #{updatedAt,jdbcType=TIMESTAMP},

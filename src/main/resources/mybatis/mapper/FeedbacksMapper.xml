@@ -7,6 +7,7 @@
 		<result column="order_id" property="orderId" jdbcType="INTEGER" />
 		<result column="merchant_id" property="merchantId" jdbcType="INTEGER" />
 		<result column="item_id" property="itemId" jdbcType="INTEGER" />
+		<result column="evaluate" property="evaluate" jdbcType="INTEGER" />
 		<result column="goodsScore" property="goodsScore" jdbcType="INTEGER" />
 		<result column="foodScore" property="foodScore" jdbcType="INTEGER" />
 		<result column="distributionScore" property="distributionScore" jdbcType="INTEGER" />
@@ -14,7 +15,7 @@
 		<result column="content" property="content" jdbcType="INTEGER" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		id, user_id,order_id,merchant_id,item_id,goodsScore,foodScore,distributionScore,created_at,content
+		id, user_id,order_id,merchant_id,item_id,evaluate,goodsScore,foodScore,distributionScore,created_at,content
 	</sql>
 
 	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -29,7 +30,7 @@
 		select
 		f.id, f.user_id as userId,
 		f.order_id as orderId,f.merchant_id as merchantId,f.item_id as itemId,
-		goodsScore,foodScore,distributionScore,created_at,content 
+		evaluate,goodsScore,foodScore,distributionScore,created_at,content 
 		from tb_feedbacks f
 		where 1=1 
 		<if test="merchantId != null and merchantId != ''">
@@ -51,6 +52,19 @@
 		where user_id = #{userId,jdbcType=VARCHAR}
 	</select>
 	
+	<select id="getTotalByGoodsScore" parameterType="com.takeaway.modular.dao.dto.FeedbacksDto" resultType="java.lang.Integer">
+		select sum(goodsScore)/count(0) as totalScore
+		from  tb_feedbacks f
+ 		where 1=1 
+		<if test="merchantId != null and merchantId != ''">
+			and f.merchant_id = #{merchantId,jdbcType=VARCHAR}
+		</if>
+ 		<if test="goodsScore != null and goodsScore != ''">
+			and f.goodsScore = #{goodsScore,jdbcType=VARCHAR}
+		</if>
+		group by f.merchant_id
+	</select>
+	
 	<select id="getByMerchantId" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
@@ -68,7 +82,7 @@
 			LAST_INSERT_ID()
 		</selectKey>
 		insert into tb_feedbacks (
-		user_id,order_id,merchant_id,item_id,goodsScore,foodScore,distributionScore,created_at,content
+		user_id,order_id,merchant_id,item_id,evaluate,goodsScore,foodScore,distributionScore,created_at,content
 		)
 		values
 		(
@@ -76,6 +90,7 @@
 		#{orderId,jdbcType=INTEGER}, 
 		#{merchantId,jdbcType=INTEGER}, 
 		#{itemId,jdbcType=INTEGER}, 
+		#{evaluate,jdbcType=INTEGER}, 
 		#{goodsScore,jdbcType=INTEGER}, 
 		#{foodScore,jdbcType=INTEGER}, 
 		#{distributionScore,jdbcType=INTEGER}, 

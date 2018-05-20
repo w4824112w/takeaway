@@ -44,14 +44,15 @@
     } */
     
     function connect() {
-    	var host = window.location.host;
-    	var url = "ws://"+host+"/ywgk/websocket";
-    	socket = new WebSocket(url);  
-    //    socket = new WebSocket("ws://localhost:8081/ywgk/websocket");  
+/*       	var host = window.location.host;
+    	var url = "ws://"+host+"/takeaway/websocket/7";
+    	socket = new WebSocket(url);   */ 
+     //   socket = new WebSocket("ws://localhost:8081/ywgk/websocket");  
+        socket = new WebSocket("wss://pandax.mofasion.com/ws/7");  
         //打开事件  
         socket.onopen = function() {  
             console.log("Socket 已打开");  
-            //socket.send("这是来自客户端的消息" + location.href + new Date());  
+          //  socket.send("这是来自客户端的消息" + location.href + new Date());  
         };  
         //获得消息事件  
         socket.onmessage = function(msg) {  

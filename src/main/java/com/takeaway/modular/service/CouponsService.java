@@ -13,6 +13,7 @@ import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageList;
 import com.takeaway.commons.page.PageResult;
 import com.takeaway.core.enums.ErrorEnums;
+import com.takeaway.modular.dao.dto.CouponMerchantsDto;
 import com.takeaway.modular.dao.dto.CouponPicturesDto;
 import com.takeaway.modular.dao.dto.CouponsDto;
 import com.takeaway.modular.dao.dto.ItemPicturesDto;
@@ -63,17 +64,20 @@ public class CouponsService {
 		int result;
 		coupons.setSendNum(0);
 		coupons.setReceiveNum(0);
-		coupons.setSendStartTime(new Date());
-		coupons.setSendEndTime(new Date());
+	//	coupons.setSendStartTime(new Date());
+	//	coupons.setSendEndTime(new Date());
 		coupons.setStatus(1);
 		coupons.setCreatedAt(new Date());
 		result = couponsMapper.save(coupons);
 		
 		Integer  couponsId = coupons.getId();
 		
-		for (CouponMerchants couponMerchants : coupons.getMerchants()) {
-			couponMerchants.setTargetId(couponsId);
-			couponMerchantsMapper.save(couponMerchants);
+		for (CouponMerchantsDto dto : coupons.getMerchants()) {
+			CouponMerchants couponMerchant=new CouponMerchants();
+			couponMerchant.setTargetId(couponsId);
+			couponMerchant.setType(Integer.parseInt(dto.getType()));
+			couponMerchant.setMerchantId(Integer.parseInt(dto.getMerchantId()));
+			couponMerchantsMapper.save(couponMerchant);
 		}
 		
 		for (CouponPictures couponPictures : coupons.getPictures()) {
@@ -94,8 +98,8 @@ public class CouponsService {
 		int result;
 		coupons.setSendNum(0);
 		coupons.setReceiveNum(0);
-		coupons.setSendStartTime(new Date());
-		coupons.setSendEndTime(new Date());
+	//	coupons.setSendStartTime(new Date());
+	//	coupons.setSendEndTime(new Date());
 		coupons.setStatus(1);
 		coupons.setUpdatedAt(new Date());
 		result = couponsMapper.update(coupons);
@@ -108,9 +112,13 @@ public class CouponsService {
 		couponMerchantsMapper.delByTargetId(couponsId.toString());
 		couponPicturesMapper.delByCouponId(couponsId.toString());
 		
-		for (CouponMerchants couponMerchants : coupons.getMerchants()) {
-			couponMerchants.setTargetId(couponsId);
-			couponMerchantsMapper.save(couponMerchants);
+		
+		for (CouponMerchantsDto dto : coupons.getMerchants()) {
+			CouponMerchants couponMerchant=new CouponMerchants();
+			couponMerchant.setTargetId(couponsId);
+			couponMerchant.setType(Integer.parseInt(dto.getType()));
+			couponMerchant.setMerchantId(Integer.parseInt(dto.getMerchantId()));
+			couponMerchantsMapper.save(couponMerchant);
 		}
 		
 		for (CouponPictures couponPictures : coupons.getPictures()) {

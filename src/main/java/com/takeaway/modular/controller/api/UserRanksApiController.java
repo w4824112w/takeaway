@@ -39,8 +39,8 @@ public class UserRanksApiController {
 	@Autowired
 	private UserRanksService userRanksService;
 
-	@ApiOperation(value = "新增会员等级等级", httpMethod = "GET", notes = "新增会员等级信息")
-	@RequestMapping(value = "/save", method = RequestMethod.GET)
+	@ApiOperation(value = "新增会员等级等级", httpMethod = "POST", notes = "新增会员等级信息")
+	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
 			HttpServletResponse response, @RequestBody UserRanks userRanks) {
 		try {

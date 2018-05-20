@@ -72,13 +72,10 @@ public class LoginApiController {
 	 */
 	@ApiOperation(value = "app用户登录", httpMethod = "GET", notes = "根据app会员账户、密码登录系统")
 	@ApiImplicitParams({
-			@ApiImplicitParam(name = "lat", value = "经度", required = true, dataType = "String", paramType = "query"),
-			@ApiImplicitParam(name = "lng", value = "纬度", required = true, dataType = "String", paramType = "query"),
 			@ApiImplicitParam(name = "code", value = "小程序登录时获取的code", required = true, dataType = "String", paramType = "query") })
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public JSONObject login(HttpServletRequest request,
-			HttpServletResponse response, String lat,String lng,String code) {
-		log.info("调用登录接口开始......");
+			HttpServletResponse response,String code) {
 
 		String url = "https://api.weixin.qq.com/sns/jscode2session?appid={appid}&secret={secret}&js_code={js_code}&grant_type={grant_type}";
 
@@ -99,9 +96,14 @@ public class LoginApiController {
 		log.info("json----" + json);
 		String openid="";
 		try {
-			openid= json.get("openid").toString();
+			if(json.get("openid")!=null){
+				openid= json.get("openid").toString();
+			}
+			if(StringUtils.isBlank(openid)){
+				return ErrorEnums.getResult(ErrorEnums.SERVER_ERROR, "openid为空,", json);
+			}
 		} catch (Exception e) {
-			return ErrorEnums.getResult(ErrorEnums.SERVER_ERROR, "超时,openid失败,", null);
+			return ErrorEnums.getResult(ErrorEnums.SERVER_ERROR, "超时,openid失败,", json);
 		}
 
 		Users user=usersService.getByOpenid(openid);
@@ -111,14 +113,10 @@ public class LoginApiController {
 			usersService.save(user);
 		}
 
-		UserLogs userLogs = new UserLogs();
-		userLogs.setLoginfo("会员app登录");
-		userLogs.setCreatedAt(new Date());
-		userLogs.setUserId(user.getId());
-		userLogsService.save(userLogs);
 
 		JSONObject result = new JSONObject();
 		result.put("openid", openid);
+		result.put("user", user);
 
 		log.info("调用登录接口结束......");
 		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "登录", result);

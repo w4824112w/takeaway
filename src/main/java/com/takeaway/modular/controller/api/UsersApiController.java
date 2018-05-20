@@ -42,8 +42,8 @@ public class UsersApiController {
 	@Autowired
 	private UsersService usersService;
 
-	@ApiOperation(value = "新增会员", httpMethod = "GET", notes = "新增会员信息")
-	@RequestMapping(value = "/save", method = RequestMethod.GET)
+	@ApiOperation(value = "新增会员", httpMethod = "POST", notes = "新增会员信息")
+	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
 			HttpServletResponse response, @RequestBody Users user) {
 		try {

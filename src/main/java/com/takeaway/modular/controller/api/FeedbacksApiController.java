@@ -24,7 +24,9 @@ import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.model.Feedbacks;
 import com.takeaway.modular.dao.model.Items;
 import com.takeaway.modular.dao.model.UserAddress;
+import com.takeaway.modular.dao.model.Users;
 import com.takeaway.modular.service.FeedbacksService;
+import com.takeaway.modular.service.UsersService;
 
 /**
  * 订单评价信息接口
@@ -41,9 +43,12 @@ public class FeedbacksApiController {
 
 	@Autowired
 	private FeedbacksService feedbacksService;
+	
+	@Autowired
+	private UsersService usersService;
 
-	@ApiOperation(value = "新增会员订单评价", httpMethod = "GET", notes = "新增会员订单评价信息")
-	@RequestMapping(value = "/save", method = RequestMethod.GET)
+	@ApiOperation(value = "新增会员订单评价", httpMethod = "POST", notes = "新增会员订单评价信息")
+	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
 			HttpServletResponse response,@RequestBody Feedbacks feedbacks) {
 		try {
@@ -56,11 +61,12 @@ public class FeedbacksApiController {
 	}
 
 	@ApiOperation(value = "列表", httpMethod = "GET", notes = "获取会员订单评价")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "userId", value = "会员id", required = true, dataType = "String", paramType = "query") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "openid", value = "openid", required = true, dataType = "String", paramType = "query") })
 	@RequestMapping(value = "/userFeedbacks", method = RequestMethod.GET)
 	public JSONObject userFeedbacks(HttpServletRequest request,
-			HttpServletResponse response, String userId) {
-		List<Feedbacks> feedbacks = feedbacksService.getByUserId(userId);
+			HttpServletResponse response, String openid) {
+		Users user=usersService.getByOpenid(openid);
+		List<Feedbacks> feedbacks = feedbacksService.getByUserId(user.getId().toString());
 		JSONObject result = new JSONObject();
 		result.put("feedbacks", feedbacks);
 

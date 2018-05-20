@@ -15,6 +15,8 @@ public class Feedbacks {
 	private Integer merchantId;
 	@ApiModelProperty(value = "商品ID(必填)", required = true)
 	private Integer itemId;
+	@ApiModelProperty(value = "商品评价(1~3)1:差评;2:一般;3:好评;", required = true)
+	private Integer evaluate;
 	@ApiModelProperty(value = "商品评分(1~5)", required = true)
 	private Integer goodsScore;
 	@ApiModelProperty(value = "食物评分(1~5)", required = true)
@@ -103,6 +105,14 @@ public class Feedbacks {
 
 	public void setDistributionScore(Integer distributionScore) {
 		this.distributionScore = distributionScore;
+	}
+
+	public Integer getEvaluate() {
+		return evaluate;
+	}
+
+	public void setEvaluate(Integer evaluate) {
+		this.evaluate = evaluate;
 	}
 
 }

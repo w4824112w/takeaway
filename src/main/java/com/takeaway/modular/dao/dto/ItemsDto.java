@@ -35,6 +35,9 @@ public class ItemsDto {
 	private String isPuton;
 	private String merchantId;
 	private String merchantName;
+	
+	private String monthPrice; // 月营业额
+	private String monthOrder; // 月订单数
 
 	private List<ItemMerchants> itemMerchants;
 	private List<ItemPropertys> itemPropertys;
@@ -222,6 +225,18 @@ public class ItemsDto {
 	}
 	public void setPictures(List<ItemPicturesDto> pictures) {
 		this.pictures = pictures;
+	}
+	public String getMonthPrice() {
+		return monthPrice;
+	}
+	public void setMonthPrice(String monthPrice) {
+		this.monthPrice = monthPrice;
+	}
+	public String getMonthOrder() {
+		return monthOrder;
+	}
+	public void setMonthOrder(String monthOrder) {
+		this.monthOrder = monthOrder;
 	}
 
 

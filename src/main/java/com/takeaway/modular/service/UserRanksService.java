@@ -47,7 +47,36 @@ public class UserRanksService {
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增会员等级", null);
 		}
 	}
+	
+	@Transactional
+	public JSONObject batchSave(List<UserRanks> userRanks) {
+		int result = 0;
+		for(UserRanks userRank:userRanks){
+			userRank.setCreatedAt(new Date());
+			result = userRanksMapper.save(userRank);
+		}
 
+		if (result > 0) {
+			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "批量新增会员等级", result);
+		} else {
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "批量新增会员等级", null);
+		}
+	}
+
+	@Transactional
+	public JSONObject batchUpdate(List<UserRanks> userRanks) {
+		int result = 0;
+		for(UserRanks userRank:userRanks){
+			result = userRanksMapper.update(userRank);
+		}
+
+		if (result > 0) {
+			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "批量更新会员等级", result);
+		} else {
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "批量更新会员等级", null);
+		}
+	}
+	
 	@Transactional
 	public JSONObject update(UserRanks userRanks) {
 		int result;

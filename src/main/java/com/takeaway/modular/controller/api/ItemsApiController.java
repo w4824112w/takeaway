@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageResult;
 import com.takeaway.core.enums.ErrorEnums;
+import com.takeaway.core.websocket.WebSocketServer;
 import com.takeaway.modular.dao.dto.ItemMerchantsDto;
 import com.takeaway.modular.dao.dto.ItemsDto;
 import com.takeaway.modular.dao.model.ItemTypes;
@@ -69,12 +71,14 @@ public class ItemsApiController {
 	 * @return
 	 */
 	@ApiOperation(value = "查询商品列表", httpMethod = "GET", notes = "查询所有商品列表信息")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "merchantId", value = "店铺id", required = false, dataType = "String", paramType = "query") })
+	@ApiImplicitParams({ 
+		@ApiImplicitParam(name = "merchantId", value = "店铺id", required = false, dataType = "String", paramType = "query"),
+		@ApiImplicitParam(name = "itemType", value = "店铺id", required = false, dataType = "String", paramType = "query")
+		})
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public JSONObject list(HttpServletRequest request,
-			HttpServletResponse response,String merchantId) {
-		
-		List<Items> items = itemsService.getAllByMerchantId(merchantId);
+			HttpServletResponse response,String merchantId,String itemType) {
+		List<ItemsDto> items = itemsService.getAllByMerchantId(merchantId,itemType);
 
 		JSONObject result = new JSONObject();
 		result.put("items", items);

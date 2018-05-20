@@ -6,7 +6,7 @@ import java.util.List;
 public class OrderReserves {
 	private Integer id;
 	private Integer orderId;
-	private Integer status;
+	private String reserveNo;
 	private Integer size;
 	private String name;
 	private Date startDeliveryTime;
@@ -37,12 +37,12 @@ public class OrderReserves {
 		this.orderId = orderId;
 	}
 
-	public Integer getStatus() {
-		return status;
+	public String getReserveNo() {
+		return reserveNo;
 	}
 
-	public void setStatus(Integer status) {
-		this.status = status;
+	public void setReserveNo(String reserveNo) {
+		this.reserveNo = reserveNo;
 	}
 
 	public Integer getSize() {
@@ -117,6 +117,14 @@ public class OrderReserves {
 		this.operMan = operMan;
 	}
 
+	public Orders getOrders() {
+		return orders;
+	}
+
+	public void setOrders(Orders orders) {
+		this.orders = orders;
+	}
+
 	public List<OrderItems> getOrderItems() {
 		return orderItems;
 	}
@@ -125,12 +133,5 @@ public class OrderReserves {
 		this.orderItems = orderItems;
 	}
 
-	public Orders getOrders() {
-		return orders;
-	}
-
-	public void setOrders(Orders orders) {
-		this.orders = orders;
-	}
 
 }

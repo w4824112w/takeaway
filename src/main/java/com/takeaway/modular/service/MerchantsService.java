@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,12 +14,15 @@ import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageList;
 import com.takeaway.commons.page.PageResult;
 import com.takeaway.commons.utils.MD5Util;
+import com.takeaway.commons.utils.MapDistance;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.controller.web.UploadController;
+import com.takeaway.modular.dao.dto.FeedbacksDto;
 import com.takeaway.modular.dao.dto.MerchantsDto;
 import com.takeaway.modular.dao.dto.UserFavoritesDto;
 import com.takeaway.modular.dao.mapper.ActivitysMapper;
 import com.takeaway.modular.dao.mapper.CouponsMapper;
+import com.takeaway.modular.dao.mapper.FeedbacksMapper;
 import com.takeaway.modular.dao.mapper.ManagersMapper;
 import com.takeaway.modular.dao.mapper.MerchantPicturesMapper;
 import com.takeaway.modular.dao.mapper.MerchantsMapper;
@@ -58,6 +62,9 @@ public class MerchantsService {
 
 	@Autowired
 	private MerchantPicturesMapper merchantPicturesMapper;
+	
+	@Autowired
+	private FeedbacksMapper feedbacksMapper;
 
 	public PageResult<MerchantsDto> findPage(PageBounds bounds, MerchantsDto dto) {
 		PageList<MerchantsDto> merchants = merchantsMapper
@@ -137,6 +144,25 @@ public class MerchantsService {
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "修改商户", result);
 		}
 	}
+	
+	@Transactional
+	public JSONObject updateDeliveryTime(String deliveryTime) {
+		int result = 0;
+		
+		List<Merchants> merchants=merchantsMapper.getAll();
+		for(Merchants merchant:merchants){
+			merchant.setDeliveryTime(deliveryTime);
+			merchantsMapper.update(merchant);
+			result++;
+		}
+		
+		if (result > 0) {
+			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "修改商户", result);
+		} else {
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "修改商户", result);
+		}
+	}
+	
 
 	public Merchants getById(String id) {
 		Merchants merchants = merchantsMapper.getById(id);
@@ -175,9 +201,13 @@ public class MerchantsService {
 		return merchantsMapper.getByItemId(itemId);
 	}
 
-	public List<MerchantsDto> getAllByUserId(String userId) {
+	public List<MerchantsDto> getAllByUserId(String lat,String lng,String userId) {
 		List<MerchantsDto> merchants = merchantsMapper.appIndex();
 		for (MerchantsDto dto : merchants) {
+			if(StringUtils.isNotBlank(lat)&&StringUtils.isNotBlank(lng)&&StringUtils.isNotBlank(dto.getLat())&&StringUtils.isNotBlank(dto.getLng())){
+				dto.setDistributionScope(MapDistance.getDistance(lat, lng, dto.getLat(), dto.getLng()));
+			}
+			
 			String merchantId = dto.getId().toString();
 			List<MerchantPictures> pictures = merchantPicturesMapper
 					.getByMerchantId(merchantId.toString());

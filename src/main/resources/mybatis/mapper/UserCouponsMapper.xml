@@ -72,14 +72,12 @@
 			LAST_INSERT_ID()
 		</selectKey>
 		insert into tb_user_coupons (
-		coupon_id,coupon_code,amount,user_id,user_name,status,is_flag,type,start_date,end_date,gain_time,coupon_name
+		coupon_id,amount,user_id,status,is_flag,type,start_date,end_date,gain_time,coupon_name
 		)
 		values
 		(#{couponId,jdbcType=INTEGER},
-		 #{couponCode,jdbcType=VARCHAR},
 		#{amount,jdbcType=INTEGER},
 		#{userId,jdbcType=INTEGER},
-		#{userName,jdbcType=VARCHAR},
 		#{status,jdbcType=INTEGER},
 		#{isFlag,jdbcType=INTEGER},
 		#{type,jdbcType=INTEGER},

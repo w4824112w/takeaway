@@ -23,7 +23,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.model.ItemTypes;
 import com.takeaway.modular.dao.model.UserFavorites;
+import com.takeaway.modular.dao.model.Users;
 import com.takeaway.modular.service.UserFavoritesService;
+import com.takeaway.modular.service.UsersService;
 
 /**
  * 会员收藏信息接口
@@ -40,9 +42,12 @@ public class UserFavoritesApiController {
 
 	@Autowired
 	private UserFavoritesService userFavoritesService;
+	
+	@Autowired
+	private UsersService usersService;
 
-	@ApiOperation(value = "新增会员收藏", httpMethod = "GET", notes = "新增会员收藏信息")
-	@RequestMapping(value = "/save", method = RequestMethod.GET)
+	@ApiOperation(value = "新增会员收藏", httpMethod = "POST", notes = "新增会员收藏信息")
+	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
 			HttpServletResponse response,  @RequestBody UserFavorites userFavorites) {
 		try {
@@ -55,10 +60,13 @@ public class UserFavoritesApiController {
 	}
 
 	@ApiOperation(value = "列表", httpMethod = "GET", notes = "获取会员收藏")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "userId", value = "会员id", required = false, dataType = "Integer", paramType = "query") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "openid", value = "openid", required = false, dataType = "Integer", paramType = "query") })
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public JSONObject list(HttpServletRequest request,
-			HttpServletResponse response, String userId) {
+			HttpServletResponse response, String openid) {
+		Users user=usersService.getByOpenid(openid);
+		String userId=user.getId().toString();
+		
 		List<UserFavorites> userFavorites = userFavoritesService
 				.getByUserId(userId);
 		JSONObject result = new JSONObject();

@@ -196,6 +196,30 @@
 		group by DATE_FORMAT(o.pay_date,'%Y-%m-%d')
 	</select>
 	
+ 	<select id="bossReport" parameterType="com.takeaway.modular.dao.dto.BossReportDto"
+		resultType="com.takeaway.modular.dao.dto.BossReportDto">
+		select 
+   		DATE_FORMAT(o.pay_date,'%Y-%m-%d') as settlTime,
+		sum(o.total_price) as totalPrice,
+		count(0)  as successCount,
+		(select distinct max(o.realTotalMoney) from tb_orders ) as maxMoney,
+		(select distinct min(o.realTotalMoney) from tb_orders ) as minMoney,
+		(select count(0) from tb_user_logs ul where ul.merchant_id = o.merchant_id 
+		<if test="reportTime != null and reportTime != ''">
+			and DATE_FORMAT(ul.created_at,'%Y-%m-%d') = #{reportTime,jdbcType=VARCHAR}
+		</if>
+		) as accessTimes,
+		sum(o.realTotalMoney) as realTotalMoney
+		from tb_orders o where o.is_pay=1 
+		<if test="reportTime != null and reportTime != ''">
+			and DATE_FORMAT(o.pay_date,'%Y-%m-%d') = #{reportTime,jdbcType=VARCHAR}
+		</if>
+		<if test="merchantId != null and merchantId != ''">
+			and o.merchant_id = #{merchantId,jdbcType=VARCHAR} 
+		</if>
+		group by DATE_FORMAT(o.pay_date,'%Y-%m-%d')
+	</select> 
+	
 	<select id="reportExport" parameterType="com.takeaway.modular.dao.dto.ReportDto"
 		resultType="com.takeaway.modular.dao.dto.ReportDto">
 		select DATE_FORMAT(o.pay_date,'%Y-%m-%d') as settlTime,
@@ -245,29 +269,28 @@
 		</selectKey>
 		insert into tb_orders (
 		order_no,merchant_id,user_id,
-		order_type,total_price,packingCharge,
+		total_price,packingCharge,
 		deliverMoney,status,created_at,
 		is_pay,realTotalMoney,is_ship,
 		is_receipt,is_received,is_refund,
-		refund_money,refundSrcStatus,is_reservation,
-		is_reminder,is_distribution,merchant_type,
-		remark,pay_type,is_invoice,
-		invoiceClient,is_appraises,userName,
+		is_reservation,
+		is_reminder,is_distribution,
+		remark,is_invoice,is_appraises,userName,
 		userPhone,userAddress,platform_commission,
-		orderScore,couponMoney,activityMoney
+		couponMoney,activityMoney
 		)
 		values
 		(#{orderNo,jdbcType=VARCHAR},#{merchantId,jdbcType=INTEGER},#{userId,jdbcType=INTEGER},
-		#{orderType,jdbcType=INTEGER},#{totalPrice,jdbcType=DOUBLE},#{packingCharge,jdbcType=DOUBLE},
+		#{totalPrice,jdbcType=DOUBLE},#{packingCharge,jdbcType=DOUBLE},
 		#{deliverMoney,jdbcType=DOUBLE},#{status,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP},
 		#{isPay,jdbcType=INTEGER},#{realTotalMoney,jdbcType=DOUBLE},#{isShip,jdbcType=INTEGER},
 		#{isReceipt,jdbcType=INTEGER},#{isReceived,jdbcType=INTEGER},#{isRefund,jdbcType=INTEGER},
-		#{refundMoney,jdbcType=DOUBLE},#{refundSrcStatus,jdbcType=INTEGER},#{isReservation,jdbcType=INTEGER},
-		#{isReminder,jdbcType=INTEGER},#{isDistribution,jdbcType=INTEGER},#{merchantType,jdbcType=INTEGER},
-		#{remark,jdbcType=VARCHAR},#{payType,jdbcType=INTEGER},#{isInvoice,jdbcType=INTEGER},
-		#{invoiceClient,jdbcType=VARCHAR},#{isAppraises,jdbcType=INTEGER},#{userName,jdbcType=VARCHAR},
+		#{isReservation,jdbcType=INTEGER},
+		#{isReminder,jdbcType=INTEGER},#{isDistribution,jdbcType=INTEGER},
+		#{remark,jdbcType=VARCHAR},#{isInvoice,jdbcType=INTEGER},
+		#{isAppraises,jdbcType=INTEGER},#{userName,jdbcType=VARCHAR},
 		#{userPhone,jdbcType=VARCHAR},#{userAddress,jdbcType=VARCHAR},#{platformCommission,jdbcType=DOUBLE},
-		#{orderScore,jdbcType=INTEGER},#{couponMoney,jdbcType=DOUBLE},#{activityMoney,jdbcType=DOUBLE}
+		#{couponMoney,jdbcType=DOUBLE},#{activityMoney,jdbcType=DOUBLE}
 		)
 	</insert>
 
@@ -335,7 +358,7 @@
 			is_invoice = #{isInvoice,jdbcType=INTEGER},
 		</if>
 		<if test="isAppraises != null">
-			is_appraises = #{isAppraises,jdbcType=INTEGER},
+			is_appraises = #{isAppraises,jdbcType=INTEGER}
 		</if>
     </set>
     where id = #{id,jdbcType=INTEGER}

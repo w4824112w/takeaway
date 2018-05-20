@@ -29,6 +29,7 @@ public class Merchants {
 	private Double fullFreeDistribution;
 	private Double distributionFee;
 	private String distributionScope;
+	private String deliveryTime;
 	private Integer isOnline;
 	private Date createdAt;
 	private Date updatedAt;
@@ -294,6 +295,14 @@ public class Merchants {
 
 	public void setAccountPassword(String accountPassword) {
 		this.accountPassword = accountPassword;
+	}
+
+	public String getDeliveryTime() {
+		return deliveryTime;
+	}
+
+	public void setDeliveryTime(String deliveryTime) {
+		this.deliveryTime = deliveryTime;
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.takeaway.modular.dao.model;
 
+import java.util.List;
+
 public class OrderItems {
 	private Integer id;
 	private Integer orderId;
@@ -12,6 +14,8 @@ public class OrderItems {
 	private String itemTypeName;
 	private String itemName;
 
+	private List<ItemPropertys> itemPropertys;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -90,6 +94,14 @@ public class OrderItems {
 
 	public void setTargetName(String targetName) {
 		this.targetName = targetName;
+	}
+
+	public List<ItemPropertys> getItemPropertys() {
+		return itemPropertys;
+	}
+
+	public void setItemPropertys(List<ItemPropertys> itemPropertys) {
+		this.itemPropertys = itemPropertys;
 	}
 
 }

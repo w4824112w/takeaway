@@ -23,7 +23,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.model.UserAddress;
 import com.takeaway.modular.dao.model.UserCoupons;
+import com.takeaway.modular.dao.model.Users;
 import com.takeaway.modular.service.UserAddressService;
+import com.takeaway.modular.service.UsersService;
 
 /**
  * 会员收货地址信息接口
@@ -40,11 +42,14 @@ public class UserAddressApiController {
 
 	@Autowired
 	private UserAddressService userAddressService;
+	
+	@Autowired
+	private UsersService usersService;
 
-	@ApiOperation(value = "新增会员收货地址收货地址", httpMethod = "GET", notes = "新增会员收货地址信息")
-	@RequestMapping(value = "/save", method = RequestMethod.GET)
+	@ApiOperation(value = "新增会员收货地址收货地址", httpMethod = "POST", notes = "新增会员收货地址信息")
+	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
-			HttpServletResponse response, @RequestBody UserAddress userAddress) {
+			HttpServletResponse response, @ApiParam @RequestBody UserAddress userAddress) {
 		try {
 			return userAddressService.save(userAddress);
 		} catch (Exception e) {
@@ -55,10 +60,12 @@ public class UserAddressApiController {
 	}
 
 	@ApiOperation(value = "列表", httpMethod = "GET", notes = "获取会员收货地址")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "userId", value = "会员id", required = false, dataType = "Integer", paramType = "query") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "openid", value = "openid", required = false, dataType = "Integer", paramType = "query") })
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public JSONObject list(HttpServletRequest request,
-			HttpServletResponse response, String userId) {
+			HttpServletResponse response, String openid) {
+		Users user=usersService.getByOpenid(openid);
+		String userId=user.getId().toString();
 		List<UserAddress> userAddress = userAddressService.getByUserId(userId);
 		JSONObject result = new JSONObject();
 		result.put("userAddress", userAddress);

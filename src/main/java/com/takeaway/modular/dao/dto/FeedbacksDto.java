@@ -11,6 +11,7 @@ public class FeedbacksDto {
 	private String orderId;
 	private String merchantId;
 	private String itemId;
+	private String evaluate;
 	private String goodsScore;
 	private String foodScore;
 	private String distributionScore;
@@ -132,6 +133,14 @@ public class FeedbacksDto {
 
 	public void setItems(ItemsDto items) {
 		this.items = items;
+	}
+
+	public String getEvaluate() {
+		return evaluate;
+	}
+
+	public void setEvaluate(String evaluate) {
+		this.evaluate = evaluate;
 	}
 
 

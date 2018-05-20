@@ -188,13 +188,14 @@ public class MerchantsController {
 					null);
 		}
 
-		MerchantsDto merchants = merchantsService.homePage(merchantId,u.getType());
+		MerchantsDto merchants = merchantsService.homePage(merchantId,
+				u.getType());
 
 		JSONObject result = new JSONObject();
 		result.put("merchants", merchants);
 		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "编辑商户", result);
 	}
-	
+
 	/**
 	 * 新增商户
 	 * 
@@ -314,34 +315,85 @@ public class MerchantsController {
 	 * @return
 	 */
 	@ApiOperation(value = "更新", httpMethod = "POST", notes = "更新商户信息")
-/*	@ApiImplicitParams({
-			@ApiImplicitParam(name = "id", value = "商户id", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "typeId", value = "商户类型id", required = true, dataType = "Integer", paramType = "form"),
-			@ApiImplicitParam(name = "name", value = "商户名称", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "code", value = "商户编号", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "provinceId", value = "省份id", required = true, dataType = "Integer", paramType = "form"),
-			@ApiImplicitParam(name = "cityId", value = "城市id", required = true, dataType = "Integer", paramType = "form"),
-			@ApiImplicitParam(name = "address", value = "地址", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "star", value = "星级", required = true, dataType = "Integer", paramType = "form"),
-			@ApiImplicitParam(name = "managerName", value = "负责人姓名", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "managerPhone", value = "负责人姓名", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "description", value = "店铺介绍", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "platformCommission", value = "平台佣金", required = true, dataType = "Double", paramType = "form"),
-			@ApiImplicitParam(name = "tel", value = "联系电话", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "lat", value = "经度", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "lng", value = "纬度", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "logo", value = "logo图", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "notice", value = "店铺公告", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "distributionInfo", value = "配送信息", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "startingPrice", value = "起送价", required = true, dataType = "Double", paramType = "form"),
-			@ApiImplicitParam(name = "fullFreeDistribution", value = "满多少免配送", required = true, dataType = "Double", paramType = "form"),
-			@ApiImplicitParam(name = "distributionFee", value = "配送费", required = true, dataType = "Double", paramType = "form"),
-			@ApiImplicitParam(name = "distributionScope", value = "配送范围", required = false, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "isOnline", value = "是否上线", required = true, dataType = "Integer", paramType = "form"),
-			@ApiImplicitParam(name = "pictures", value = "商户图片地址数组", required = false, dataType = "String", paramType = "form") })*/
+	/*
+	 * @ApiImplicitParams({
+	 * 
+	 * @ApiImplicitParam(name = "id", value = "商户id", required = true, dataType
+	 * = "String", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "typeId", value = "商户类型id", required = true,
+	 * dataType = "Integer", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "name", value = "商户名称", required = true,
+	 * dataType = "String", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "code", value = "商户编号", required = true,
+	 * dataType = "String", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "provinceId", value = "省份id", required = true,
+	 * dataType = "Integer", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "cityId", value = "城市id", required = true,
+	 * dataType = "Integer", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "address", value = "地址", required = true,
+	 * dataType = "String", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "star", value = "星级", required = true, dataType
+	 * = "Integer", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "managerName", value = "负责人姓名", required = true,
+	 * dataType = "String", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "managerPhone", value = "负责人姓名", required =
+	 * true, dataType = "String", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "description", value = "店铺介绍", required = true,
+	 * dataType = "String", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "platformCommission", value = "平台佣金", required =
+	 * true, dataType = "Double", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "tel", value = "联系电话", required = true, dataType
+	 * = "String", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "lat", value = "经度", required = true, dataType =
+	 * "String", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "lng", value = "纬度", required = true, dataType =
+	 * "String", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "logo", value = "logo图", required = true,
+	 * dataType = "String", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "notice", value = "店铺公告", required = true,
+	 * dataType = "String", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "distributionInfo", value = "配送信息", required =
+	 * true, dataType = "String", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "startingPrice", value = "起送价", required = true,
+	 * dataType = "Double", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "fullFreeDistribution", value = "满多少免配送",
+	 * required = true, dataType = "Double", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "distributionFee", value = "配送费", required =
+	 * true, dataType = "Double", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "distributionScope", value = "配送范围", required =
+	 * false, dataType = "String", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "isOnline", value = "是否上线", required = true,
+	 * dataType = "Integer", paramType = "form"),
+	 * 
+	 * @ApiImplicitParam(name = "pictures", value = "商户图片地址数组", required =
+	 * false, dataType = "String", paramType = "form") })
+	 */
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public JSONObject update(HttpServletRequest request,
-			HttpServletResponse response, @ApiParam @RequestBody Merchants merchants) {
+			HttpServletResponse response,
+			@ApiParam @RequestBody Merchants merchants) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -349,9 +401,36 @@ public class MerchantsController {
 					null);
 		}
 		try {
-			
+
 			return merchantsService.update(merchants);
 
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "更新", null);
+		}
+
+	}
+
+	/**
+	 * 调整商户配送服务时间
+	 * 
+	 * @param o
+	 * @param r
+	 * @return
+	 */
+	@ApiOperation(value = "调整", httpMethod = "GET", notes = "调整商户配送服务时间")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "deliveryTime", value = "配送服务时间", required = false, dataType = "String", paramType = "query") })
+	@RequestMapping(value = "/updateDeliveryTime", method = RequestMethod.GET)
+	public JSONObject updateDeliveryTime(HttpServletRequest request,
+			HttpServletResponse response, String deliveryTime) {
+		HttpSession session = request.getSession();
+		Managers u = (Managers) session.getAttribute("s_user");
+		if (u == null) {
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录",
+					null);
+		}
+		try {
+			return merchantsService.updateDeliveryTime(deliveryTime);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "更新", null);
@@ -370,7 +449,8 @@ public class MerchantsController {
 	@ApiOperation(value = "删除", httpMethod = "POST", notes = "删除商户信息")
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public JSONObject delete(HttpServletRequest request,
-			HttpServletResponse response, @ApiParam @RequestBody Merchants merchants) {
+			HttpServletResponse response,
+			@ApiParam @RequestBody Merchants merchants) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {

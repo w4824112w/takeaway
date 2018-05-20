@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageResult;
 import com.takeaway.core.enums.ErrorEnums;
+import com.takeaway.modular.dao.dto.ItemsDto;
 import com.takeaway.modular.dao.dto.UserRanksDto;
 import com.takeaway.modular.dao.dto.UserScoresDto;
+import com.takeaway.modular.dao.model.Items;
+import com.takeaway.modular.dao.model.Managers;
 import com.takeaway.modular.dao.model.UserRanks;
 import com.takeaway.modular.dao.model.UserScores;
 import com.takeaway.modular.service.UserRanksService;
@@ -57,6 +61,32 @@ public class UserRanksController {
 		}
 
 	}
+	
+	@ApiOperation(value = "批量新增会员等级", httpMethod = "POST", notes = "批量新增会员等级信息")
+	@RequestMapping(value = "/batchSave", method = RequestMethod.POST)
+	public JSONObject batchSave(HttpServletRequest request,
+			HttpServletResponse response, @RequestBody List<UserRanks> userRanks) {
+		try {
+			return userRanksService.batchSave(userRanks);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "系统出现异常", null);
+		}
+
+	}
+
+	@ApiOperation(value = "批量修改会员等级", httpMethod = "POST", notes = "批量修改会员等级信息")
+	@RequestMapping(value = "/batchUpdate", method = RequestMethod.POST)
+	public JSONObject batchUpdate(HttpServletRequest request,
+			HttpServletResponse response, @RequestBody List<UserRanks> userRanks) {
+		try {
+			return userRanksService.batchSave(userRanks);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "系统出现异常", null);
+		}
+
+	}
 
 	@ApiOperation(value = "列表", httpMethod = "GET", notes = "获取所有会员等级")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
@@ -70,6 +100,46 @@ public class UserRanksController {
 
 	}
 
+	@ApiOperation(value = "编辑会员等级等级", httpMethod = "GET", notes = "编辑会员等级")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "会员等级id", required = true, dataType = "String", paramType = "query") })
+	@RequestMapping(value = "/edit", method = RequestMethod.GET)
+	public JSONObject edit(HttpServletRequest request,
+			HttpServletResponse response, String id) {
+		HttpSession session = request.getSession();
+		Managers u = (Managers) session.getAttribute("s_user");
+		if (u == null) {
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录",
+					null);
+		}
+
+		UserRanks userRanks = userRanksService.getById(id);
+
+		JSONObject result = new JSONObject();
+		result.put("userRanks", userRanks);
+		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "编辑会员等级", result);
+	}
+	
+	@ApiOperation(value = "更新", httpMethod = "POST", notes = "更新会员等级")
+	@RequestMapping(value = "/update", method = RequestMethod.POST)
+	public JSONObject update(HttpServletRequest request,
+			@ApiParam @RequestBody UserRanks userRanks) {
+		HttpSession session = request.getSession();
+		Managers u = (Managers) session.getAttribute("s_user");
+		if (u == null) {
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录",
+					null);
+		}
+		try {
+			
+			return userRanksService.update(userRanks);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "更新", null);
+		}
+
+	}
+	
 	@ApiOperation(value = "列表", httpMethod = "GET", notes = "分页查询会员等级")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer", paramType = "query"),

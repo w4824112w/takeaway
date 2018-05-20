@@ -33,6 +33,7 @@ public class MerchantsDto {
 	private String fullFreeDistribution;
 	private String distributionFee;
 	private String distributionScope;
+	private String deliveryTime;
 	private String isOnline;
 	private String createdAt;
 	private String updatedAt;
@@ -396,6 +397,14 @@ public class MerchantsDto {
 
 	public void setPictures(List<MerchantPictures> pictures) {
 		this.pictures = pictures;
+	}
+
+	public String getDeliveryTime() {
+		return deliveryTime;
+	}
+
+	public void setDeliveryTime(String deliveryTime) {
+		this.deliveryTime = deliveryTime;
 	}
 
 }

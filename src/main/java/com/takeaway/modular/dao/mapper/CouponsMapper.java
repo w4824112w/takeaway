@@ -16,6 +16,8 @@ public interface CouponsMapper {
 	
 	List<Coupons> getAll();
 	
+	List<Coupons> getByCouponSendType(CouponsDto dto);
+	
 	List<CouponsDto> getIndexAll();
 	
 	List<Coupons> getBackAll();

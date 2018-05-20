@@ -3,7 +3,7 @@ package com.takeaway.modular.dao.dto;
 public class OrderReservesDto {
 	private String id;
 	private String orderId;
-	private String status;
+	private String reserveNo;
 	private String size;
 	private String name;
 	private String startDeliveryTime;
@@ -32,12 +32,12 @@ public class OrderReservesDto {
 		this.orderId = orderId;
 	}
 
-	public String getStatus() {
-		return status;
+	public String getReserveNo() {
+		return reserveNo;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setReserveNo(String reserveNo) {
+		this.reserveNo = reserveNo;
 	}
 
 	public String getSize() {
@@ -119,5 +119,6 @@ public class OrderReservesDto {
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
 	}
+
 
 }

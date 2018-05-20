@@ -36,6 +36,8 @@ public class UserCouponsService {
 	public JSONObject save(UserCoupons userCoupons) {
 		int result;
 		
+		userCoupons.setAmount(1);
+		userCoupons.setStartDate(new Date());
 		userCoupons.setGainTime(new Date());
 		userCoupons.setStatus(1); // 使用状态(1:未用，0：已用 -1:删除)
 		userCoupons.setIsFlag(1); // 有效状态(1:有效 -1:删除)

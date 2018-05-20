@@ -1,5 +1,6 @@
 package com.takeaway.modular.controller.api;
 
+import java.util.Date;
 import java.util.List;
 
 import io.swagger.annotations.Api;
@@ -26,11 +27,13 @@ import com.takeaway.modular.dao.model.Feedbacks;
 import com.takeaway.modular.dao.model.Managers;
 import com.takeaway.modular.dao.model.Merchants;
 import com.takeaway.modular.dao.model.UserAddress;
+import com.takeaway.modular.dao.model.UserLogs;
 import com.takeaway.modular.dao.model.Users;
 import com.takeaway.modular.service.ActivitysService;
 import com.takeaway.modular.service.CouponsService;
 import com.takeaway.modular.service.FeedbacksService;
 import com.takeaway.modular.service.MerchantsService;
+import com.takeaway.modular.service.UserLogsService;
 import com.takeaway.modular.service.UsersService;
 
 /**
@@ -57,13 +60,23 @@ public class MerchantsApiController {
 
 	@Autowired
 	private FeedbacksService feedbacksService;
+	
+	@Autowired
+	private UsersService usersService;
+	
+	@Autowired
+	private UserLogsService userLogsService;
 
 	@ApiOperation(value = "列表", httpMethod = "GET", notes = "获取商户店铺")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "userId", value = "会员id", required = false, dataType = "String", paramType = "query") })
+	@ApiImplicitParams({ 
+		@ApiImplicitParam(name = "lat", value = "经度", required = true, dataType = "String", paramType = "query"),
+		@ApiImplicitParam(name = "lng", value = "纬度", required = true, dataType = "String", paramType = "query"),
+		@ApiImplicitParam(name = "openid", value = "openid", required = true, dataType = "String", paramType = "query") })
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public JSONObject list(HttpServletRequest request,
-			HttpServletResponse response, String userId) {
-		List<MerchantsDto> merchants = merchantsService.getAllByUserId(userId);
+			HttpServletResponse response, String lat,String lng,String openid) {
+		Users user=usersService.getByOpenid(openid);
+		List<MerchantsDto> merchants = merchantsService.getAllByUserId(lat,lng,user.getId().toString());
 		JSONObject result = new JSONObject();
 		result.put("merchants", merchants);
 
@@ -72,11 +85,22 @@ public class MerchantsApiController {
 	}
 
 	@ApiOperation(value = "详情", httpMethod = "GET", notes = "商户信息")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "商户id", required = true, dataType = "String", paramType = "query") })
+	@ApiImplicitParams({ 
+		@ApiImplicitParam(name = "openid", value = "openid", required = true, dataType = "String", paramType = "query"),
+		@ApiImplicitParam(name = "id", value = "商户id", required = true, dataType = "String", paramType = "query") })
 	@RequestMapping(value = "/details", method = RequestMethod.GET)
 	public JSONObject details(HttpServletRequest request,
-			HttpServletResponse response, String id) {
+			HttpServletResponse response, String openid,String id) {
 		Merchants merchants = merchantsService.getById(id);
+		
+		Users user=usersService.getByOpenid(openid);
+		UserLogs userLogs = new UserLogs();
+		userLogs.setLoginfo("会员app登录");
+		userLogs.setCreatedAt(new Date());
+		userLogs.setUserId(user.getId());
+		userLogs.setMerchantId(merchants.getId());
+		userLogsService.save(userLogs);
+		
 		String merchantId = merchants.getId().toString();
 		/*List<Feedbacks> feedbacks = feedbacksService
 				.getByMerchantId(merchantId);*/

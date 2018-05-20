@@ -22,6 +22,13 @@
 		from tb_order_cancles 
 		where id = #{id,jdbcType=VARCHAR}
 	</select>
+	
+	<select id="getByRefundNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_order_cancles 
+		where refund_no = #{refundNo,jdbcType=VARCHAR}
+	</select>
 
 	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.OrderCanclesDto"
 		resultMap="BaseResultMap">

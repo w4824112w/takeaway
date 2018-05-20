@@ -34,6 +34,7 @@
 			jdbcType="DOUBLE" />
 		<result column="distribution_scope" property="distributionScope"
 			jdbcType="VARCHAR" />
+		<result column="deliveryTime" property="deliveryTime" jdbcType="VARCHAR" />
 		<result column="is_online" property="isOnline" jdbcType="INTEGER" />
 		<result column="status" property="status" jdbcType="INTEGER" />
 		<result column="created_at" property="createdAt" jdbcType="DATE" />
@@ -42,7 +43,7 @@
 	<sql id="Base_Column_List">
 		id,type_id,name,code,short_name,province_id,city_id,address,star,manager_name,manager_phone,
 		description,platform_commission,tel,lat,lng,logo,notice,start_date,end_date,distribution_info,
-		starting_price,full_free_distribution,distribution_fee,distribution_scope,is_online,
+		starting_price,full_free_distribution,distribution_fee,distribution_scope,deliveryTime,is_online,
 		status,created_at,updated_at
 	</sql>
 
@@ -58,49 +59,74 @@
 		<include refid="Base_Column_List" />
 		from tb_merchants where status=1 order by id desc
 	</select>
-	
-	<select id="getByItemId" parameterType="java.lang.String" resultType="com.takeaway.modular.dao.model.Merchants">
-		select m.id,m.name from tb_merchants m,tb_item_merchants im where m.id=im.merchant_id 
+
+	<select id="getByItemId" parameterType="java.lang.String"
+		resultType="com.takeaway.modular.dao.model.Merchants">
+		select m.id,m.name from tb_merchants m,tb_item_merchants im
+		where m.id=im.merchant_id
 		and im.item_id = #{itemId,jdbcType=VARCHAR}
 	</select>
-	
+
 	<select id="appIndex" resultType="com.takeaway.modular.dao.dto.MerchantsDto">
 		select
-		<include refid="Base_Column_List" />
-		from tb_merchants where status=1 order by id desc
+		m.id,m.type_id as typeId,m.name,m.code,m.short_name as shortName,m.province_id as provinceId,m.city_id as cityId,
+		m.address,m.manager_name as managerName,m.manager_phone as managerPhone,
+		m.description,m.platform_commission as platformCommission,m.tel,m.lat,m.lng,m.logo,m.notice,
+		m.start_date as startDate,m.end_date as endDate,m.distribution_info as distributionInfo,
+		m.starting_price as startingPrice,m.full_free_distribution as fullFreeDistribution,m.distribution_fee as distributionFee,
+		m.distribution_scope as distributionScope,m.deliveryTime,m.is_online as isOnline,
+		m.status,m.created_at as createdAt,m.updated_at as updatedAt,
+		(select ROUND(sum(goodsScore)/count(0)) from  tb_feedbacks f where f.merchant_id=m.id group by f.merchant_id) as star
+		from tb_merchants m where m.status=1 order by m.id desc
 	</select>
-	
-	<select id="homePage" parameterType="com.takeaway.modular.dao.dto.MerchantsDto" resultType="com.takeaway.modular.dao.dto.MerchantsDto">
-		select 
-		sum(dayPrice) as dayPrice,sum(dayOrder) dayOrder,sum(pendingOrder) pendingOrder,sum(refundingOrder) as refundingOrder 
+
+	<select id="homePage" parameterType="com.takeaway.modular.dao.dto.MerchantsDto"
+		resultType="com.takeaway.modular.dao.dto.MerchantsDto">
+		select
+		sum(dayPrice) as dayPrice,sum(dayOrder) dayOrder,sum(pendingOrder)
+		pendingOrder,sum(refundingOrder) as refundingOrder
 		from (
 		select
-		(select sum(o.total_price) from tb_orders o where  date(created_at) = curdate() and o.merchant_id=m.id ) as dayPrice,
-		(select count(0) from tb_orders o where  date(o.created_at) = curdate() and o.merchant_id=m.id ) as dayOrder,
-		(select count(0) from tb_orders o where  status=0  and date(o.created_at) = curdate() and o.merchant_id=m.id ) as pendingOrder,
-		(select count(0) from tb_orders o where status=3 and  date(o.created_at) = curdate() and o.merchant_id=m.id ) as refundingOrder 
-		from tb_merchants m where status=1   
+		(select sum(o.total_price) from tb_orders o where
+		date(created_at) = curdate() and o.merchant_id=m.id ) as dayPrice,
+		(select count(0) from tb_orders o where date(o.created_at) = curdate()
+		and o.merchant_id=m.id ) as dayOrder,
+		(select count(0) from tb_orders o
+		where status=0 and date(o.created_at) = curdate() and
+		o.merchant_id=m.id ) as pendingOrder,
+		(select count(0) from tb_orders o
+		where status=3 and date(o.created_at) = curdate() and
+		o.merchant_id=m.id ) as refundingOrder
+		from tb_merchants m where status=1
 		<if test="id != null and id != ''">
 			and m.id=#{id,jdbcType=VARCHAR}
 		</if>
 		order by m.id desc) temp
 	</select>
-	
+
 	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.MerchantsDto"
 		resultType="com.takeaway.modular.dao.dto.MerchantsDto">
 		select
-		m.id,m.`name`,m.type_id as typeId,m.`code`,mt.`name` as typeName,m.tel,m.address,
-		(select sum(o.total_price) from tb_orders o where  month(created_at) = month(now()) and o.merchant_id=m.id ) as monthPrice,
-		(select count(0) from tb_orders o where  month(o.created_at) = month(now()) and o.merchant_id=m.id ) as monthOrder,
-		(select count(0) from tb_item_merchants where merchant_id=m.id) as itemCount,
- 		<!-- (select count(0) from tb_item_merchants im,tb_items i 
- 		where im.item_id=i.id and im.merchant_id=m.id group by i.item_type ) as itemTypeCount, -->
- 		(select sum(it.quantity) from tb_item_merchants im,tb_items i,tb_item_types it    
- 		where im.item_id=i.id and im.merchant_id=m.id and i.item_type=it.id ) as itemTypeCount,
- 	 	(select count(0) from tb_coupon_merchants cm 
- 	 	where cm.merchant_id=m.id) as activityCount
-		from tb_merchants m,tb_merchant_types mt  
-		where m.type_id=mt.id and m.status=1 
+		m.id,m.`name`,m.type_id as typeId,m.`code`,mt.`name` as
+		typeName,m.tel,m.address,
+		(select sum(o.total_price) from tb_orders o
+		where month(created_at) = month(now()) and o.merchant_id=m.id ) as
+		monthPrice,
+		(select count(0) from tb_orders o where month(o.created_at)
+		= month(now()) and o.merchant_id=m.id ) as monthOrder,
+		(select count(0)
+		from tb_item_merchants where merchant_id=m.id) as itemCount,
+		<!-- (select count(0) from tb_item_merchants im,tb_items i where im.item_id=i.id 
+			and im.merchant_id=m.id group by i.item_type ) as itemTypeCount, -->
+		(select sum(it.quantity) from tb_item_merchants im,tb_items
+		i,tb_item_types it
+		where im.item_id=i.id and im.merchant_id=m.id and i.item_type=it.id ) as
+		itemTypeCount,
+		(select count(0) from tb_coupon_merchants cm
+		where cm.merchant_id=m.id) as activityCount
+		from tb_merchants
+		m,tb_merchant_types mt
+		where m.type_id=mt.id and m.status=1
 		<if test="name != null and name != ''">
 			and m.name like "%"#{name,jdbcType=VARCHAR}"%"
 		</if>
@@ -109,7 +135,8 @@
 
 	<delete id="delete" parameterType="java.lang.String">
 		update tb_merchants
-		set status = -1
+		set status
+		= -1
 		where id = #{id,jdbcType=VARCHAR}
 	</delete>
 
@@ -121,7 +148,7 @@
 		insert into tb_merchants (
 		type_id,name,code,province_id,city_id,address,star,manager_name,manager_phone,
 		description,platform_commission,tel,lat,lng,logo,notice,start_date,end_date,distribution_info,
-		starting_price,full_free_distribution,distribution_fee,distribution_scope,is_online,
+		starting_price,full_free_distribution,distribution_fee,distribution_scope,deliveryTime,is_online,
 		status,created_at
 		)
 		values (#{typeId,jdbcType=INTEGER},
@@ -132,7 +159,7 @@
 		#{lat,jdbcType=VARCHAR},#{lng,jdbcType=VARCHAR},#{logo,jdbcType=VARCHAR},
 		#{notice,jdbcType=VARCHAR},#{startDate,jdbcType=TIMESTAMP},#{endDate,jdbcType=TIMESTAMP},
 		#{distributionInfo,jdbcType=VARCHAR},#{startingPrice,jdbcType=DOUBLE},#{fullFreeDistribution,jdbcType=DOUBLE},
-		#{distributionFee,jdbcType=DOUBLE},#{distributionScope,jdbcType=VARCHAR},
+		#{distributionFee,jdbcType=DOUBLE},#{distributionScope,jdbcType=VARCHAR},#{deliveryTime,jdbcType=VARCHAR},
 		#{isOnline,jdbcType=INTEGER},#{status,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP}
 		)
 	</insert>
@@ -180,6 +207,8 @@
 		#{distributionFee,jdbcType=DOUBLE},
 		distribution_scope =
 		#{distributionScope,jdbcType=VARCHAR},
+		deliveryTime =
+		#{deliveryTime,jdbcType=VARCHAR},
 		is_online =
 		#{isOnline,jdbcType=INTEGER},
 		status =

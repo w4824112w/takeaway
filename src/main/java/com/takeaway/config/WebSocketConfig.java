@@ -1,10 +1,15 @@
 package com.takeaway.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.web.socket.server.standard.ServerEndpointExporter;
+
 
 
 
@@ -13,28 +18,16 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
  */
 @Configuration
 //注解开启使用STOMP协议来传输基于代理(message broker)的消息,这时控制器支持使用@MessageMapping,就像使用@RequestMapping一样
-@EnableWebSocketMessageBroker
-public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer{
+//@EnableWebSocketMessageBroker
+public class WebSocketConfig {
 
-/*    @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/websocket")
-                .setAllowedOrigins("http://localhost:8976")
-                .addInterceptors()
-                .withSockJS();
-    }*/
-
-    @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {//注册STOMP协议的节点(endpoint),并映射指定的url
-        //注册一个STOMP的endpoint,并指定使用SockJS协议
-        registry.addEndpoint("/endpointSang").withSockJS();
-
-    }
-
-    @Override
-    public void configureMessageBroker(MessageBrokerRegistry registry) {//配置消息代理(Message Broker)
-        //广播式应配置一个/topic消息代理
-        registry.enableSimpleBroker("/topic");
-
-    }    
+	/**
+	 * 如果是以jar运行需要打开下面注释，如果是war运行则不需要
+	 * @return
+	 */
+/*    @Bean  
+    public ServerEndpointExporter serverEndpointExporter() {  
+        return new ServerEndpointExporter();  
+    }  */
+    
 }

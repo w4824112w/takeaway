@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +25,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.takeaway.commons.utils.DateUtil;
 import com.takeaway.commons.utils.HttpUtil;
+import com.takeaway.commons.utils.RandomSequence;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.core.enums.PaymentType;
 import com.takeaway.core.netpay.wxpay.api.PayUtils;
@@ -32,6 +34,7 @@ import com.takeaway.core.netpay.wxpay.bean.PrePayInfo;
 import com.takeaway.core.netpay.wxpay.utils.Configure;
 import com.takeaway.core.netpay.wxpay.utils.MapUtil;
 import com.takeaway.core.netpay.wxpay.utils.Signature;
+import com.takeaway.core.websocket.WebSocketServer;
 import com.takeaway.modular.dao.model.Orders;
 import com.takeaway.modular.dao.model.WxPayNotifys;
 import com.takeaway.modular.service.OrdersService;
@@ -103,21 +106,26 @@ public class WeixinApiController {
 		
 	}
 	
-	@ApiOperation(value = "支付", httpMethod = "GET", notes = "微信支付")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "orderNo", value = "订单号", required = true, dataType = "String", paramType = "form"),
-		//	@ApiImplicitParam(name = "payTypeId", value = "支付类型id", required = false, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "openid", value = "openid", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "itemName", value = "商品名称", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "amount", value = "订单总金额(单位：元)", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "num", value = "数量", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "itemId", value = "商品id", required = true, dataType = "String", paramType = "form")
-	})
-	@RequestMapping(value = "/wxpay", method = RequestMethod.GET)
+	@ApiOperation(value = "支付", httpMethod = "POST", notes = "微信支付")
+	@RequestMapping(value = "/wxpay", method = RequestMethod.POST)
 	public JSONObject callbackForWxpay(HttpServletRequest request,
-			HttpServletResponse response,String orderNo,String openid,String itemName,String amount,String num,String itemId) {
-
-		amount=new BigDecimal(amount).multiply(new BigDecimal(100)).intValue()+"";	//元转分
+			HttpServletResponse response,@RequestBody Orders orders) {
+		Map money = ordersService.computePrice(orders);
+		Double realPayMoney=Double.parseDouble(money.get("realTotalMoney").toString())+Double.parseDouble(money.get("distributionFee").toString())+Double.parseDouble(money.get("packingCharge").toString());
+		Double realTotalMoney=orders.getRealTotalMoney();
+		log.info("realTotalMoney---"+realTotalMoney+"---realPayMoney----"+realPayMoney);
+		if(realTotalMoney!=realPayMoney){
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "下单", null);
+		}
+		
+		String orderNo = RandomSequence.getSixteenRandomVal(); // 订单编号
+		orders.setOrderNo(orderNo);
+		ordersService.save(orders);
+		
+		String openid=orders.getOpenid();
+		
+		String itemName="紫竹林外卖"+orderNo;
+		String amount=realPayMoney*100+"";	//元转分
 		payRequestsService.save(null, PaymentType.weixin.getName(), orderNo, itemName, amount, Configure.getNotifyCallbackUrl(), null);
 		
 		PayPackage payPackage = new PayPackage();
@@ -142,6 +150,7 @@ public class WeixinApiController {
 				if(prePayInfo.getResult_code().equals("SUCCESS")){//业务结果
 					Map<String, String> map = PayUtils.generateAppPay(prePayInfo);
 					log.info("成功:"+map.toString());
+					WebSocketServer.sendInfo(orders.getMerchantId().toString(),orders.toString());
 					return ErrorEnums.getResult(ErrorEnums.SUCCESS, "微信支付", map);
 				}else{
 					log.info("失败:"+prePayInfo.getErr_code_des());

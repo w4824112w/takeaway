@@ -141,7 +141,6 @@ public class OrderReservesController {
 			orderReserves.setStartDeliveryTime(startDeliveryTime);
 			orderReserves.setHopeDeliveryTime(hopeDeliveryTime);
 			orderReserves.setLimitDeliveryTime(limitDeliveryTime);
-			orderReserves.setStatus(0);	// 0：未预定;1：已预定;
 			return orderReservesService.save(orderReserves);
 		} catch (Exception e) {
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增", null);
@@ -164,7 +163,6 @@ public class OrderReservesController {
 
 		try {
 			OrderReserves orderReserves = orderReservesService.getById(id);
-			orderReserves.setStatus(status);
 			return orderReservesService.update(orderReserves);
 		} catch (Exception e) {
 			e.printStackTrace();

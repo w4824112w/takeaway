@@ -281,6 +281,30 @@ public class OrdersController {
 
 	}
 
+	@ApiOperation(value = "配送", httpMethod = "POST", notes = "订单变为已配送并赠送会员积分")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "id", value = "订单id", required = true, dataType = "String", paramType = "form"),
+			})
+	@RequestMapping(value = "/updateDistribution", method = RequestMethod.POST)
+	public JSONObject updateDistribution(HttpServletRequest request,
+			HttpServletResponse response, String id, Integer status) {
+		HttpSession session = request.getSession();
+		Managers u = (Managers) session.getAttribute("s_user");
+		if (u == null) {
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
+		}
+
+		try {
+			Orders orders = ordersService.getById(id);
+			orders.setStatus(2);	//	(0：待处理;1：已处理;2：已完成;3：退款中;4：已评价;5：配送中;9：作废;)
+			return ordersService.updateDistribution(orders);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "更新", null);
+		}
+
+	}
+	
 	@ApiOperation(value = "删除", httpMethod = "POST", notes = "删除订单信息")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "订单id", required = true, dataType = "String", paramType = "form") })
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)

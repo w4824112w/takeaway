@@ -19,6 +19,7 @@ import com.takeaway.modular.dao.mapper.OrderItemsMapper;
 import com.takeaway.modular.dao.mapper.OrdersMapper;
 import com.takeaway.modular.dao.model.OrderCancles;
 import com.takeaway.modular.dao.model.OrderReserves;
+import com.takeaway.modular.dao.model.Orders;
 
 /**
  * 本地的
@@ -74,4 +75,7 @@ public class OrderCanclesService {
 		return OrderCanclesMapper.getById(id);
 	}
 	
+	public OrderCancles getByRefundNo(String refundNo) {
+		return OrderCanclesMapper.getByRefundNo(refundNo);
+	}
 }

@@ -7,6 +7,7 @@ import com.takeaway.modular.dao.model.CouponMerchants;
 public class CouponsDto {
 	private String id;
 	private String name;
+	private String fullMoney;
 	private String couponMoney;
 	private String spendMoney;
 	private String description;
@@ -15,11 +16,13 @@ public class CouponsDto {
 	private String sendStartTime;
 	private String sendEndTime;
 	private String couponSendType;
+	private String couponSendTypeName;
 	private String createdAt;
 	private String startDate;
 	private String endDate;
 	private String updatedAt;
 	private String status;
+	private String merchantId;
 	
 	private List<CouponMerchants> merchants;
 	private List<CouponPicturesDto> pictures;
@@ -158,6 +161,30 @@ public class CouponsDto {
 
 	public void setMerchants(List<CouponMerchants> merchants) {
 		this.merchants = merchants;
+	}
+
+	public String getCouponSendTypeName() {
+		return couponSendTypeName;
+	}
+
+	public void setCouponSendTypeName(String couponSendTypeName) {
+		this.couponSendTypeName = couponSendTypeName;
+	}
+
+	public String getFullMoney() {
+		return fullMoney;
+	}
+
+	public void setFullMoney(String fullMoney) {
+		this.fullMoney = fullMoney;
+	}
+
+	public String getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
 	}
 
 }
