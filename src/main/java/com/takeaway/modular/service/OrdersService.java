@@ -26,6 +26,7 @@ import com.takeaway.modular.dao.dto.ReportDto;
 import com.takeaway.modular.dao.mapper.ActivitysMapper;
 import com.takeaway.modular.dao.mapper.CouponMerchantsMapper;
 import com.takeaway.modular.dao.mapper.CouponsMapper;
+import com.takeaway.modular.dao.mapper.ItemPropertysMapper;
 import com.takeaway.modular.dao.mapper.ItemsMapper;
 import com.takeaway.modular.dao.mapper.MerchantsMapper;
 import com.takeaway.modular.dao.mapper.OrderItemsMapper;
@@ -76,6 +77,9 @@ public class OrdersService {
 	
 	@Autowired
 	private ActivitysMapper activitysMapper;
+	
+	@Autowired
+	private ItemPropertysMapper itemPropertysMapper;
 	
 	
 	public PageResult<OrdersDto> findPage(PageBounds bounds, OrdersDto dto) {
@@ -177,11 +181,12 @@ public class OrdersService {
 		Merchants merchants=merchantsMapper.getById(merchantId);
 
 		for(OrderItems orderItem : orders.getOrderItems()){
-			ItemsDto items=itemsMapper.getById(orderItem.getItemId().toString());
-			realTotalMoney+=orderItem.getItemPrice()*orderItem.getItemNums();	//	增加商品价格*数量
+			ItemsDto items=itemsMapper.getById(orderItem.getItemId().toString());	// 查询数据库对应商品
+			realTotalMoney+=Double.parseDouble(items.getPrice())*orderItem.getItemNums();	//	增加商品价格*数量
 			if(orderItem.getItemPropertys()!=null){
 				for(ItemPropertys ItemPropertys:orderItem.getItemPropertys()){
-					realTotalMoney+=ItemPropertys.getPrice()*orderItem.getItemNums();	// 增加商品属性价格*数量 
+					ItemPropertys ItemProperty=itemPropertysMapper.getByItemIdAndPropertyId(ItemPropertys);	// 查询数据库对应属性
+					realTotalMoney+=ItemProperty.getPrice()*orderItem.getItemNums();	// 增加商品属性价格*数量 
 				}
 			}
 			packingCharge+=Double.parseDouble(items.getPackingCharge())*orderItem.getItemNums();	//	增加打包费*数量
@@ -203,8 +208,10 @@ public class OrdersService {
 		
 		if(orders.getCoupons()!=null){
 			for(Coupons coupon:orders.getCoupons()){
-				if(realTotalMoney>=coupon.getSpendMoney()){
-					realTotalMoney-=coupon.getSpendMoney();
+				CouponsDto couponsDto=couponsMapper.getById(coupon.getId().toString());	// 查询数据库对应优惠券
+				Double spendMoney=Double.parseDouble(couponsDto.getSpendMoney());	// 最低消费金额
+				if(realTotalMoney>=spendMoney){
+					realTotalMoney-=Double.parseDouble(couponsDto.getCouponMoney());	// 优惠券实际面额
 				}
 			}
 		}

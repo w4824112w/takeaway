@@ -21,7 +21,20 @@
 		where item_id =
 		#{itemId,jdbcType=VARCHAR}
 	</select>
-
+	
+	<select id="getByItemIdAndPropertyId" parameterType="com.takeaway.modular.dao.model.ItemPropertys" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_item_propertys ip 
+		where 1=1 
+		<if test="itemId != null and itemId != ''">
+			and ip.item_id = #{itemId,jdbcType=VARCHAR}
+		</if>
+		<if test="propertyId != null and propertyId != ''">
+			and ip.property_id = #{propertyId,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
 	<delete id="delByItemId" parameterType="java.lang.String">
 		delete from
 		tb_item_propertys where item_id =

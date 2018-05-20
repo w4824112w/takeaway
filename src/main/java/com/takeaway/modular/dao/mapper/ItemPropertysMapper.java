@@ -10,6 +10,8 @@ public interface ItemPropertysMapper {
 	
 	List<ItemPropertys> getByItemId(String itemId);
 	
+	ItemPropertys getByItemIdAndPropertyId(ItemPropertys temPropertys);
+	
 	int delByItemId(String itemId);
 	
 	int save(ItemPropertys temPropertys);
