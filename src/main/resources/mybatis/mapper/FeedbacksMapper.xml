@@ -7,6 +7,7 @@
 		<result column="order_id" property="orderId" jdbcType="INTEGER" />
 		<result column="merchant_id" property="merchantId" jdbcType="INTEGER" />
 		<result column="item_id" property="itemId" jdbcType="INTEGER" />
+		<result column="pid" property="pid" jdbcType="INTEGER" />
 		<result column="evaluate" property="evaluate" jdbcType="INTEGER" />
 		<result column="goodsScore" property="goodsScore" jdbcType="INTEGER" />
 		<result column="foodScore" property="foodScore" jdbcType="INTEGER" />
@@ -15,7 +16,7 @@
 		<result column="content" property="content" jdbcType="INTEGER" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		id, user_id,order_id,merchant_id,item_id,evaluate,goodsScore,foodScore,distributionScore,created_at,content
+		id, user_id,order_id,merchant_id,item_id,pid,evaluate,goodsScore,foodScore,distributionScore,created_at,content
 	</sql>
 
 	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -27,11 +28,11 @@
 
 	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.FeedbacksDto"
 		resultType="com.takeaway.modular.dao.dto.FeedbacksDto">
-		select
-		f.id, f.user_id as userId,
-		f.order_id as orderId,f.merchant_id as merchantId,f.item_id as itemId,
-		evaluate,goodsScore,foodScore,distributionScore,created_at,content 
-		from tb_feedbacks f
+		select 
+		f.id, f.user_id as userId,f.order_id as orderId,f.merchant_id as merchantId,
+		f.item_id as itemId,f.pid ,f.evaluate,f.goodsScore,f.foodScore,
+  		f.distributionScore,f.created_at as createdAt,f.content  
+		from tb_feedbacks f 
 		where 1=1 
 		<if test="merchantId != null and merchantId != ''">
 			and f.merchant_id = #{merchantId,jdbcType=VARCHAR}
@@ -82,7 +83,7 @@
 			LAST_INSERT_ID()
 		</selectKey>
 		insert into tb_feedbacks (
-		user_id,order_id,merchant_id,item_id,evaluate,goodsScore,foodScore,distributionScore,created_at,content
+		user_id,order_id,merchant_id,item_id,pid,evaluate,goodsScore,foodScore,distributionScore,created_at,content
 		)
 		values
 		(
@@ -90,6 +91,7 @@
 		#{orderId,jdbcType=INTEGER}, 
 		#{merchantId,jdbcType=INTEGER}, 
 		#{itemId,jdbcType=INTEGER}, 
+		#{pid,jdbcType=INTEGER}, 
 		#{evaluate,jdbcType=INTEGER}, 
 		#{goodsScore,jdbcType=INTEGER}, 
 		#{foodScore,jdbcType=INTEGER}, 

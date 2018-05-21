@@ -51,7 +51,7 @@
 	
 	<select id="getCoupons" parameterType="com.takeaway.modular.dao.dto.UserCouponsDto" resultType="com.takeaway.modular.dao.dto.UserCouponsDto">
 		select
-		uc.id,uc.start_date as startDate,uc.end_date as endDate,
+		uc.id,uc.coupon_id as couponId,uc.start_date as startDate,uc.end_date as endDate,
 		c.`name` as couponName,c.couponMoney,c.spendMoney,
 		c.description,c.sendNum,c.receiveNum,c.sendStartTime,c.sendEndTime,c.couponSendType
 		from tb_user_coupons uc,tb_coupons c

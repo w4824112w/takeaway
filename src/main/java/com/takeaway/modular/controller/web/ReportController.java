@@ -63,13 +63,14 @@ public class ReportController {
 			@ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer", paramType = "query"),
 			@ApiImplicitParam(name = "rows", value = "页数", required = true, dataType = "Integer", paramType = "query"),
 			@ApiImplicitParam(name = "startTime", value = "开始日期", required = false, dataType = "String", paramType = "query"),
-			@ApiImplicitParam(name = "endTime", value = "结束日期", required = false, dataType = "String", paramType = "query") })
+			@ApiImplicitParam(name = "endTime", value = "结束日期", required = false, dataType = "String", paramType = "query"),
+			@ApiImplicitParam(name = "merchantId", value = "店铺id", required = false, dataType = "String", paramType = "query") })
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public JSONObject page(HttpServletRequest request,
 			HttpServletResponse response,
 			@RequestParam(value = "page", defaultValue = "1") int page,
 			@RequestParam(value = "rows", defaultValue = "10") int rows,
-			String startTime, String endTime) {
+			String startTime, String endTime, String merchantId) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -80,8 +81,10 @@ public class ReportController {
 		ReportDto dto = new ReportDto();
 		dto.setStartTime(startTime);
 		dto.setEndTime(endTime);
-		if(u.getType()!=1){
+		if (u.getType() != 1) {
 			dto.setMerchantId(u.getMerchantId().toString());
+		} else {
+			dto.setMerchantId(merchantId);
 		}
 		PageBounds bounds = new PageBounds(page, rows);
 		PageResult<ReportDto> report = ordersService.reportQuery(bounds, dto);
@@ -99,11 +102,11 @@ public class ReportController {
 	@ApiOperation(value = "导出", httpMethod = "GET", notes = "导出财务统计报表")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "startTime", value = "开始日期", required = false, dataType = "String", paramType = "query"),
-			@ApiImplicitParam(name = "endTime", value = "结束日期", required = false, dataType = "String", paramType = "query") })
+			@ApiImplicitParam(name = "endTime", value = "结束日期", required = false, dataType = "String", paramType = "query"),
+			@ApiImplicitParam(name = "merchantId", value = "店铺id", required = false, dataType = "String", paramType = "query")})
 	@RequestMapping(value = "/export", method = RequestMethod.GET)
 	public JSONObject export(HttpServletRequest request,
-			HttpServletResponse response,
-			String startTime, String endTime) {
+			HttpServletResponse response, String startTime, String endTime,String merchantId) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -114,8 +117,10 @@ public class ReportController {
 		ReportDto dto = new ReportDto();
 		dto.setStartTime(startTime);
 		dto.setEndTime(endTime);
-		if(u.getType()!=1){
+		if (u.getType() != 1) {
 			dto.setMerchantId(u.getMerchantId().toString());
+		} else {
+			dto.setMerchantId(merchantId);
 		}
 		List<ReportDto> report = ordersService.reportExport(dto);
 
@@ -197,12 +202,12 @@ public class ReportController {
 				colIndex++;
 
 				ReportDto o = report.get(i);
-				
+
 				// 第2列：时间
 				cell = row.createCell(colIndex);
 				cell.setCellValue(o.getSettlTime());
 				colIndex++;
-				
+
 				// 第3列：营业额
 				cell = row.createCell(colIndex);
 				cell.setCellValue(o.getTotalPrice());
@@ -212,37 +217,37 @@ public class ReportController {
 				cell = row.createCell(colIndex);
 				cell.setCellValue(o.getDeliverMoney());
 				colIndex++;
-				
+
 				// 第5列：优惠券金额
 				cell = row.createCell(colIndex);
 				cell.setCellValue(o.getCouponMoney());
 				colIndex++;
-				
+
 				// 第6列：满减送金额
 				cell = row.createCell(colIndex);
 				cell.setCellValue(o.getActivityMoney());
 				colIndex++;
-				
+
 				// 第7列：实际支付金额
 				cell = row.createCell(colIndex);
 				cell.setCellValue(o.getRealTotalMoney());
 				colIndex++;
-				
+
 				// 第8列：平台服务费
 				cell = row.createCell(colIndex);
 				cell.setCellValue(o.getPlatformServiceFee());
 				colIndex++;
-				
+
 				// 第9列：实际收入
 				cell = row.createCell(colIndex);
 				cell.setCellValue(o.getRealIncome());
 				colIndex++;
-				
+
 				// 第10列：微信手续费
 				cell = row.createCell(colIndex);
 				cell.setCellValue(o.getWxProcedures());
 				colIndex++;
-				
+
 				// 第11列：结算金额
 				cell = row.createCell(colIndex);
 				cell.setCellValue(o.getSettleMoney());

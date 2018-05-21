@@ -144,6 +144,9 @@
 		<if test="orderNo != null and orderNo != ''">
 			and o.order_no = #{orderNo,jdbcType=VARCHAR}
 		</if>
+		<if test="merchantId != null and merchantId != ''">
+			and o.merchant_id = #{merchantId,jdbcType=VARCHAR}
+		</if>
 		order by o.id desc
 	</select>
 	

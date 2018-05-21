@@ -80,7 +80,7 @@ public class UserRanksController {
 	public JSONObject batchUpdate(HttpServletRequest request,
 			HttpServletResponse response, @RequestBody List<UserRanks> userRanks) {
 		try {
-			return userRanksService.batchSave(userRanks);
+			return userRanksService.batchUpdate(userRanks);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "系统出现异常", null);

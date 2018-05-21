@@ -11,6 +11,7 @@ public class FeedbacksDto {
 	private String orderId;
 	private String merchantId;
 	private String itemId;
+	private String pid;
 	private String evaluate;
 	private String goodsScore;
 	private String foodScore;
@@ -141,6 +142,14 @@ public class FeedbacksDto {
 
 	public void setEvaluate(String evaluate) {
 		this.evaluate = evaluate;
+	}
+
+	public String getPid() {
+		return pid;
+	}
+
+	public void setPid(String pid) {
+		this.pid = pid;
 	}
 
 

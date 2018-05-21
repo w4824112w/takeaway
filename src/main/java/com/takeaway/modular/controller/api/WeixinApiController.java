@@ -36,9 +36,11 @@ import com.takeaway.core.netpay.wxpay.utils.MapUtil;
 import com.takeaway.core.netpay.wxpay.utils.Signature;
 import com.takeaway.core.websocket.WebSocketServer;
 import com.takeaway.modular.dao.model.Orders;
+import com.takeaway.modular.dao.model.Users;
 import com.takeaway.modular.dao.model.WxPayNotifys;
 import com.takeaway.modular.service.OrdersService;
 import com.takeaway.modular.service.PayRequestsService;
+import com.takeaway.modular.service.UsersService;
 import com.takeaway.modular.service.WxPayNotifysService;
 
 @RestController
@@ -50,6 +52,9 @@ public class WeixinApiController {
 	
 	@Autowired
 	private OrdersService ordersService;
+	
+	@Autowired
+	private UsersService usersService;
 	
 	@Autowired
 	private PayRequestsService payRequestsService;
@@ -110,22 +115,29 @@ public class WeixinApiController {
 	@RequestMapping(value = "/wxpay", method = RequestMethod.POST)
 	public JSONObject callbackForWxpay(HttpServletRequest request,
 			HttpServletResponse response,@RequestBody Orders orders) {
+		log.info("开始计算价格....orders:"+orders.toString());
 		Map money = ordersService.computePrice(orders);
+		log.info("开始计算价格结束...."+money.toString());
+	//	return ErrorEnums.getResult(ErrorEnums.SUCCESS, "微信支付", money);
+		
+		log.info("开始判断价格是否正确.....");
 		Double realPayMoney=Double.parseDouble(money.get("realTotalMoney").toString())+Double.parseDouble(money.get("distributionFee").toString())+Double.parseDouble(money.get("packingCharge").toString());
 		Double realTotalMoney=orders.getRealTotalMoney();
 		log.info("realTotalMoney---"+realTotalMoney+"---realPayMoney----"+realPayMoney);
-		if(realTotalMoney!=realPayMoney){
+		if((Math.abs(realTotalMoney-realPayMoney)>0)){
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "下单", null);
 		}
 		
 		String orderNo = RandomSequence.getSixteenRandomVal(); // 订单编号
 		orders.setOrderNo(orderNo);
-		ordersService.save(orders);
 		
 		String openid=orders.getOpenid();
+		Users users=usersService.getByOpenid(openid);
+		orders.setUserId(users.getId());
+		ordersService.save(orders);
 		
 		String itemName="紫竹林外卖"+orderNo;
-		String amount=realPayMoney*100+"";	//元转分
+		String amount=(int)(realPayMoney*100)+"";	//元转分
 		payRequestsService.save(null, PaymentType.weixin.getName(), orderNo, itemName, amount, Configure.getNotifyCallbackUrl(), null);
 		
 		PayPackage payPackage = new PayPackage();
@@ -150,7 +162,7 @@ public class WeixinApiController {
 				if(prePayInfo.getResult_code().equals("SUCCESS")){//业务结果
 					Map<String, String> map = PayUtils.generateAppPay(prePayInfo);
 					log.info("成功:"+map.toString());
-					WebSocketServer.sendInfo(orders.getMerchantId().toString(),orders.toString());
+				//	WebSocketServer.sendInfo(orders.getMerchantId().toString(),orders.toString());
 					return ErrorEnums.getResult(ErrorEnums.SUCCESS, "微信支付", map);
 				}else{
 					log.info("失败:"+prePayInfo.getErr_code_des());

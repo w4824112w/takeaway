@@ -6,13 +6,10 @@ import java.util.Date;
 import java.util.List;
 
 public class Orders {
-	@ApiModelProperty(value = "ID(编辑时必填)", required = false)
 	private Integer id;
-	@ApiModelProperty(value = "订单号", required = false)
 	private String orderNo;
 	@ApiModelProperty(value = "店铺ID", required = false)
 	private Integer merchantId;
-	@ApiModelProperty(value = "会员ID", required = false)
 	private Integer userId;
 	private Integer orderType;
 	@ApiModelProperty(value = "商品总金额(未进行任何折扣的总价格)", required = false)
@@ -44,14 +41,11 @@ public class Orders {
 	private Integer isReminder;
 	private Date reminderDate;
 	private Integer isDistribution;
-	@ApiModelProperty(value = "店铺类型", required = false)
 	private Integer merchantType;
 	@ApiModelProperty(value = "订单备注", required = false)
 	private String remark;
 	private Integer payType;
-	@ApiModelProperty(value = "是否需要发票(0：不需要;1：需要;)", required = false)
 	private Integer isInvoice;
-	@ApiModelProperty(value = "发票抬头", required = false)
 	private String invoiceClient;
 	private Integer isAppraises;
 	@ApiModelProperty(value = "收货人名称", required = false)
@@ -60,15 +54,14 @@ public class Orders {
 	private String userPhone;
 	@ApiModelProperty(value = "收货人地址", required = false)
 	private String userAddress;
-	@ApiModelProperty(value = "平台佣金", required = false)
 	private Double platformCommission;
-	@ApiModelProperty(value = "所得积分", required = false)
 	private Integer orderScore;
 	@ApiModelProperty(value = "优惠券金额", required = false)
 	private Double couponMoney;
 	@ApiModelProperty(value = "满减活动优惠金额", required = false)
 	private Double activityMoney;
 	
+	@ApiModelProperty(value = "openid", required = false)
 	private String openid;
 
 	private List<OrderItems> orderItems;

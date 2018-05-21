@@ -114,7 +114,11 @@ public class FeedbacksController {
 		
 		PageBounds bounds = new PageBounds(page, rows);
 		FeedbacksDto dto=new FeedbacksDto();
-		dto.setMerchantId(merchantId);
+		if (u.getType() != 1) {
+			dto.setMerchantId(u.getMerchantId().toString());
+		}else{
+			dto.setMerchantId(merchantId);
+		}
 		PageResult<FeedbacksDto> feedbacks = feedbacksService.findPage(bounds,dto);
 		JSONObject result = new JSONObject();
 		result.put("merchantId", merchantId);

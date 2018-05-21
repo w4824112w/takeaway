@@ -65,13 +65,15 @@ public class OrdersController {
 			@ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer", paramType = "query"),
 			@ApiImplicitParam(name = "rows", value = "页数", required = true, dataType = "Integer", paramType = "query"),
 			@ApiImplicitParam(name = "userId", value = "会员id", required = false, dataType = "String", paramType = "query"),
-			@ApiImplicitParam(name = "orderNo", value = "订单编号", required = false, dataType = "String", paramType = "query")})
+			@ApiImplicitParam(name = "orderNo", value = "订单编号", required = false, dataType = "String", paramType = "query"),
+			@ApiImplicitParam(name = "merchantId", value = "店铺id", required = false, dataType = "String", paramType = "query")
+			})
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public JSONObject page(HttpServletRequest request,
 			HttpServletResponse response,
 			@RequestParam(value = "page", defaultValue = "1") int page,
 			@RequestParam(value = "rows", defaultValue = "10") int rows,
-			String userId,String orderNo) {
+			String userId,String orderNo,String merchantId) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -81,6 +83,11 @@ public class OrdersController {
 		OrdersDto dto = new OrdersDto();
 		dto.setUserId(userId);
 		dto.setOrderNo(orderNo);
+		if (u.getType() != 1) {
+			dto.setMerchantId(u.getMerchantId().toString());
+		}else{
+			dto.setMerchantId(merchantId);
+		}
 		PageBounds bounds = new PageBounds(page, rows);
 		PageResult<OrdersDto> orders = ordersService.findPage(bounds, dto);
 
@@ -287,7 +294,7 @@ public class OrdersController {
 			})
 	@RequestMapping(value = "/updateDistribution", method = RequestMethod.POST)
 	public JSONObject updateDistribution(HttpServletRequest request,
-			HttpServletResponse response, String id, Integer status) {
+			HttpServletResponse response, String id) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {

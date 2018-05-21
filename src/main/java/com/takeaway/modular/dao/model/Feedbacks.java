@@ -15,6 +15,8 @@ public class Feedbacks {
 	private Integer merchantId;
 	@ApiModelProperty(value = "商品ID(必填)", required = true)
 	private Integer itemId;
+	@ApiModelProperty(value = "评价id(有pid代表是评价下的回复)", required = true)
+	private Integer pid;
 	@ApiModelProperty(value = "商品评价(1~3)1:差评;2:一般;3:好评;", required = true)
 	private Integer evaluate;
 	@ApiModelProperty(value = "商品评分(1~5)", required = true)
@@ -113,6 +115,14 @@ public class Feedbacks {
 
 	public void setEvaluate(Integer evaluate) {
 		this.evaluate = evaluate;
+	}
+
+	public Integer getPid() {
+		return pid;
+	}
+
+	public void setPid(Integer pid) {
+		this.pid = pid;
 	}
 
 }
