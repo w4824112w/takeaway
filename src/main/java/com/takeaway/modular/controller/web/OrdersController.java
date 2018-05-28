@@ -4,8 +4,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,6 +34,7 @@ import com.takeaway.commons.utils.RandomSequence;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.OrdersDto;
 import com.takeaway.modular.dao.model.Managers;
+import com.takeaway.modular.dao.model.Merchants;
 import com.takeaway.modular.dao.model.OrderItems;
 import com.takeaway.modular.dao.model.Orders;
 import com.takeaway.modular.service.OrdersService;
@@ -138,7 +142,48 @@ public class OrdersController {
 		result.put("rows", orders.getPaginator().getLimit());
 		result.put("totalCount", orders.getPaginator().getTotalCount());
 		result.put("orders", orders.getPageList());
-		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "查询", result);
+		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "查询催单", result);
+	}
+	
+	/**
+	 * 分页查询订单预订单
+	 * 
+	 * @param request
+	 * @param response
+	 * @param page
+	 * @param rows
+	 * @param dto
+	 * @return
+	 */
+	@ApiOperation(value = "查询", httpMethod = "GET", notes = "分页查询订单预订单信息")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer", paramType = "query"),
+			@ApiImplicitParam(name = "rows", value = "页数", required = true, dataType = "Integer", paramType = "query"),
+			@ApiImplicitParam(name = "orderNo", value = "订单编号", required = false, dataType = "String", paramType = "query") })
+	@RequestMapping(value = "/reservesPage", method = RequestMethod.GET)
+	public JSONObject reservesPage(HttpServletRequest request,
+			HttpServletResponse response,
+			@RequestParam(value = "page", defaultValue = "1") int page,
+			@RequestParam(value = "rows", defaultValue = "10") int rows,
+			String orderNo) {
+		HttpSession session = request.getSession();
+		Managers u = (Managers) session.getAttribute("s_user");
+		if (u == null) {
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录", null);
+		}
+
+		OrdersDto dto = new OrdersDto();
+		dto.setOrderNo(orderNo);
+		PageBounds bounds = new PageBounds(page, rows);
+		PageResult<Orders> orders = ordersService.findReservesPage(bounds, dto);
+
+		JSONObject result = new JSONObject();
+		result.put("orderNo", orderNo);
+		result.put("page", orders.getPaginator().getPage());
+		result.put("rows", orders.getPaginator().getLimit());
+		result.put("totalCount", orders.getPaginator().getTotalCount());
+		result.put("orders", orders.getPageList());
+		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "查询预订单", result);
 	}
 
 	/**
@@ -289,12 +334,9 @@ public class OrdersController {
 	}
 
 	@ApiOperation(value = "配送", httpMethod = "POST", notes = "订单变为已配送并赠送会员积分")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "id", value = "订单id", required = true, dataType = "String", paramType = "form"),
-			})
 	@RequestMapping(value = "/updateDistribution", method = RequestMethod.POST)
 	public JSONObject updateDistribution(HttpServletRequest request,
-			HttpServletResponse response, String id) {
+			HttpServletResponse response, @ApiParam @RequestBody Orders order) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -302,8 +344,10 @@ public class OrdersController {
 		}
 
 		try {
-			Orders orders = ordersService.getById(id);
-			orders.setStatus(2);	//	(0：待处理;1：已处理;2：已完成;3：退款中;4：已评价;5：配送中;9：作废;)
+			Orders orders = ordersService.getById(order.getId().toString());
+			orders.setStatus(3);	//	1 待支付。2 待发货。  3 待收货 4 待评价  5 已完成  6退款/售后
+			orders.setIsDistribution(1);
+			orders.setDistributionDate(new Date());
 			return ordersService.updateDistribution(orders);
 		} catch (Exception e) {
 			e.printStackTrace();

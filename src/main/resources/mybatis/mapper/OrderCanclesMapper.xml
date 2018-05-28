@@ -4,15 +4,16 @@
 	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.OrderCancles">
 		<id column="id" property="id" jdbcType="INTEGER" />
 		<result column="order_id" property="orderId" jdbcType="INTEGER" />
+		<result column="refund_no" property="refundNo" jdbcType="VARCHAR" />
 		<result column="size" property="size" jdbcType="INTEGER" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
-		<result column="total_price" property="totalPrice" jdbcType="DOUBLE" />
-		<result column="created_at" property="createdAt" jdbcType="DATE" />
-		<result column="oper_at" property="operAt" jdbcType="DATE" />
+		<result column="total_price" property="totalPrice" jdbcType="DECIMAL" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+		<result column="oper_at" property="operAt" jdbcType="TIMESTAMP" />
 		<result column="oper_man" property="operMan" jdbcType="INTEGER" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		id,order_id,size,name,
+		id,order_id,refund_no,size,name,
 		total_price,created_at,oper_at,oper_man
 	</sql>
 
@@ -33,13 +34,13 @@
 	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.OrderCanclesDto"
 		resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List" />
-		from tb_order_cancles 
-		where 1=1 
-		<if test="orderNo != null and orderNo != ''">
-			and order_no = #{orderNo,jdbcType=VARCHAR}
+		oc.* 
+		from tb_order_cancles oc,tb_orders o 
+		where oc.order_id=o.id 
+		<if test="merchantId != null and merchantId != ''">
+			and o.merchant_id = #{merchantId,jdbcType=VARCHAR}
 		</if>
-		order by id desc
+		order by oc.id desc
 	</select>
 	
 	<insert id="save" parameterType="com.takeaway.modular.dao.model.OrderCancles">
@@ -48,12 +49,12 @@
 			LAST_INSERT_ID()
 		</selectKey>
 		insert into tb_order_cancles (
-		order_id,size,name,total_price,created_at
+		order_id,refund_no,size,name,total_price,created_at
 		)
 		values
 		(
-		#{orderId,jdbcType=INTEGER},#{size,jdbcType=INTEGER},
-		#{name,jdbcType=VARCHAR},#{totalPrice,jdbcType=DOUBLE},#{createdAt,jdbcType=TIMESTAMP}
+		#{orderId,jdbcType=INTEGER},#{refundNo,jdbcType=VARCHAR},#{size,jdbcType=INTEGER},
+		#{name,jdbcType=VARCHAR},#{totalPrice,jdbcType=DECIMAL},#{createdAt,jdbcType=TIMESTAMP}
 		)
 	</insert>
 

@@ -20,10 +20,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
+import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.utils.DateUtil;
+import com.takeaway.commons.utils.OrderUtils;
 import com.takeaway.commons.utils.RandomSequence;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.core.websocket.WebSocketServer;
@@ -66,17 +69,23 @@ public class OrdersApiController {
 	private UsersService usersService;
 
 	@ApiOperation(value = "列表", httpMethod = "GET", notes = "获取用户所有订单")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "openid", value = "openid", required = false, dataType = "String", paramType = "query") })
+	@ApiImplicitParams({ 
+		@ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer", paramType = "query"),
+		@ApiImplicitParam(name = "openid", value = "openid", required = false, dataType = "String", paramType = "query") })
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public JSONObject list(HttpServletRequest request,
-			HttpServletResponse response, String openid) {
+			HttpServletResponse response, 
+			@RequestParam(value = "page", defaultValue = "1") int page,
+			String openid) {
+		PageBounds bounds = new PageBounds(page, 10);
+		
 		Users user=usersService.getByOpenid(openid);
 		String userId=user.getId().toString();
-		List<Orders> orders = ordersService.getAllByUserId(userId); // 所有订单
-		List<Orders> payOrders = ordersService.getAllByPay(userId); // 待付款
-		List<Orders> shipOrders = ordersService.getAllByShip(userId); // 待收货
-		List<Orders> appraisesOrders = ordersService.getAllByAppraises(userId); // 待收货
-		List<Orders> refundOrders = ordersService.getAllByRefund(userId); // 退款/售后
+		List<Orders> orders = ordersService.getAllByUserId(bounds,userId); // 所有订单
+		List<Orders> payOrders = ordersService.getAllByPay(bounds,userId); // 待付款
+		List<Orders> shipOrders = ordersService.getAllByShip(bounds,userId); // 待收货
+		List<Orders> appraisesOrders = ordersService.getAllByAppraises(bounds,userId); // 待点评
+		List<Orders> refundOrders = ordersService.getAllByRefund(bounds,userId); // 退款/售后
 		JSONObject result = new JSONObject();
 		result.put("orders", orders);
 		result.put("payOrders", payOrders);
@@ -136,7 +145,6 @@ public class OrdersApiController {
 	@RequestMapping(value = "/reminderOrder", method = RequestMethod.GET)
 	public JSONObject reminderOrder(HttpServletRequest request,
 			HttpServletResponse response, String orderNo) {
-		try {
 			Orders orders = ordersService.getByOrderNo(orderNo);
 			if (orders == null) {
 				return ErrorEnums.getResult(ErrorEnums.ERROR, "订单不存在,催单申请",
@@ -146,10 +154,17 @@ public class OrdersApiController {
 			orders.setIsReminder(1);
 			orders.setReminderDate(new Date());
 			JSONObject result = ordersService.update(orders);
-			WebSocketServer.sendInfo(orders.getMerchantId().toString(),orders.toString());
+			
+			JSONObject json = new JSONObject();
+			json.put("code", 200);
+			json.put("type", 3);
+			json.put("order", orders);
+			log.info("开始发送websocket消息........"+json.toJSONString());
+		try {
+				WebSocketServer.sendInfo(orders.getMerchantId().toString(),json.toJSONString());
 			return result;
 		} catch (Exception e) {
-			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增", null);
+			return result;
 		}
 
 	}
@@ -187,13 +202,13 @@ public class OrdersApiController {
 			orderReserves.setTotalPrice(totalPrice);
 			orderReserves.setCreatedAt(new Date());
 			orderReserves.setOperAt(new Date());
-			orderReservesService.save(orderReserves); // 保存申请预定单
+			JSONObject result=orderReservesService.save(orderReserves); // 保存申请预定单
 			
 			orders.setIsReservation(1);
 			orders.setReservationDate(new Date());
 			ordersService.update(orders);	//修改订单状态为预定状态
 
-			return orderReservesService.save(orderReserves);
+			return result;
 		} catch (Exception e) {
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增", null);
 		}
@@ -202,36 +217,57 @@ public class OrdersApiController {
 
 	@ApiOperation(value = "退款申请", httpMethod = "GET", notes = "新增会员订单退款申请")
 	@ApiImplicitParams({
-			@ApiImplicitParam(name = "orderNo", value = "订单号", required = true, dataType = "String", paramType = "query"),
-			@ApiImplicitParam(name = "size", value = "数量", required = false, dataType = "Integer", paramType = "query"),
-			@ApiImplicitParam(name = "name", value = "下单人名称", required = false, dataType = "String", paramType = "query"),
-			@ApiImplicitParam(name = "totalPrice", value = "订单总金额", required = true, dataType = "Double", paramType = "query") })
+			@ApiImplicitParam(name = "orderNo", value = "订单号", required = true, dataType = "String", paramType = "query")
+			})
 	@RequestMapping(value = "/cancleOrder", method = RequestMethod.GET)
 	public JSONObject saveCancleOrder(HttpServletRequest request,
-			HttpServletResponse response, String orderNo, Integer size,
-			String name, Double totalPrice) {
-		try {
+			HttpServletResponse response, String orderNo) {
+
 			Orders orders = ordersService.getByOrderNo(orderNo);
 			if (orders == null) {
 				return ErrorEnums.getResult(ErrorEnums.ERROR, "订单不存在,退款申请",
 						null);
 			}
 
-			String refundNo = RandomSequence.getSixteenRandomVal(); // 退单编号
+			String refundNo = OrderUtils.generateTradeNo(); // 退单编号
 			OrderCancles orderCancles = new OrderCancles();
 			orderCancles.setOrderId(orders.getId());
 			orderCancles.setRefundNo(refundNo);
-			orderCancles.setSize(size);
-			orderCancles.setName(name);
-			orderCancles.setTotalPrice(totalPrice);
 			orderCancles.setCreatedAt(new Date());
 			orderCancles.setOperAt(new Date());
-			orderCanclesService.save(orderCancles); // 保存申请退款单
-
-			return orderCanclesService.save(orderCancles);
 			
+			JSONObject result=orderCanclesService.save(orderCancles);	// 保存申请退款单
+			
+			JSONObject json = new JSONObject();
+			json.put("code", 200);
+			json.put("type", 2);
+			json.put("order", orderCancles);
+		try {
+			WebSocketServer.sendInfo(orders.getMerchantId().toString(),json.toJSONString());
+			return result;
 		} catch (Exception e) {
-			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增", null);
+			return result;
+		}
+
+	}
+	
+	@ApiOperation(value = "确认收货", httpMethod = "GET", notes = "会员订单确认收货")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "orderNo", value = "订单号", required = true, dataType = "String", paramType = "query")
+			})
+	@RequestMapping(value = "/confirmReceipt", method = RequestMethod.GET)
+	public JSONObject confirmReceipt(HttpServletRequest request,
+			HttpServletResponse response, String orderNo) {
+
+		try {
+			Orders orders = ordersService.getByOrderNo(orderNo);
+			orders.setStatus(4);	//	1 待支付。2 待发货。  3 待收货 4 待评价  5 已完成  6退款/售后
+			orders.setIsReceipt(1);	// 0：未收货;1：已收货;
+			orders.setReceiptDate(new Date());	// 收货时间
+			return ordersService.update(orders);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "更新", null);
 		}
 
 	}

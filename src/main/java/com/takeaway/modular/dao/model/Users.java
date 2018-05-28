@@ -56,6 +56,7 @@ public class Users {
 	@ApiModelProperty(value = "支付密码", required = false)
 	private String payPwd;
 
+	private String userRank;
 	public Integer getId() {
 		return id;
 	}
@@ -270,6 +271,14 @@ public class Users {
 
 	public void setPayPwd(String payPwd) {
 		this.payPwd = payPwd;
+	}
+
+	public String getUserRank() {
+		return userRank;
+	}
+
+	public void setUserRank(String userRank) {
+		this.userRank = userRank;
 	}
 
 }

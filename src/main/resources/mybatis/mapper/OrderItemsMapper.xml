@@ -9,7 +9,7 @@
 		<result column="targetId" property="targetId" jdbcType="INTEGER" />
 		<result column="targetName" property="targetName" jdbcType="VARCHAR" />
 		<result column="item_nums" property="itemNums" jdbcType="INTEGER" />
-		<result column="item_price" property="itemPrice" jdbcType="DOUBLE" />
+		<result column="item_price" property="itemPrice" jdbcType="DECIMAL" />
 		<result column="item_type" property="itemType" jdbcType="INTEGER" />
 		<result column="item_type_name" property="itemTypeName" jdbcType="VARCHAR" />
 		<result column="item_name" property="itemName" jdbcType="VARCHAR" />
@@ -26,10 +26,13 @@
 		oi.item_name as itemName,
 		oi.item_price as itemPrice,
 		sum(oi.item_nums) as totalNums,
-		sum(o.total_price) as totalPrice
+		sum(o.realTotalMoney) as totalPrice
 		from tb_order_items oi,tb_orders o where oi.order_id=o.id and o.is_pay=1 
 		<if test="merchantId != null and merchantId != ''">
 			and o.merchant_id = #{merchantId,jdbcType=VARCHAR} 
+		</if>
+		<if test="itemName != null and itemName != ''">
+			and oi.item_name = #{itemName,jdbcType=VARCHAR} 
 		</if>
 		group by oi.item_id,oi.item_name,oi.item_price
 		order by sum(o.total_price) desc
@@ -55,13 +58,15 @@
 			LAST_INSERT_ID()
 		</selectKey>
 		insert into tb_order_items (
-		order_id,item_id,item_nums,item_price,item_type,item_type_name,item_name
+		order_id,item_id,targetId,targetName,item_nums,item_price,item_type,item_type_name,item_name
 		)
 		values (
 		#{orderId,jdbcType=INTEGER},
 		#{itemId,jdbcType=INTEGER},
+		#{targetId,jdbcType=INTEGER},
+		#{targetName,jdbcType=VARCHAR},
 		#{itemNums,jdbcType=INTEGER},
-		#{itemPrice,jdbcType=DOUBLE},
+		#{itemPrice,jdbcType=DECIMAL},
 		#{itemType,jdbcType=INTEGER},
 		#{itemTypeName,jdbcType=VARCHAR},
 		#{itemName,jdbcType=VARCHAR}

@@ -7,7 +7,7 @@
 		<result column="name" property="name" jdbcType="INTEGER" />
 		<result column="phone" property="phone" jdbcType="INTEGER" />
 		<result column="address" property="address" jdbcType="INTEGER" />
-		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		id, user_id,name,phone, address,created_at

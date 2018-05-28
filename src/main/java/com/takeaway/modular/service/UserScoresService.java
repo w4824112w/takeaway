@@ -17,6 +17,8 @@ import com.takeaway.commons.utils.MD5Util;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.UserScoresDto;
 import com.takeaway.modular.dao.mapper.UserScoresMapper;
+import com.takeaway.modular.dao.mapper.UsersMapper;
+import com.takeaway.modular.dao.model.UserRanks;
 import com.takeaway.modular.dao.model.UserScores;
 
 /**
@@ -29,7 +31,10 @@ import com.takeaway.modular.dao.model.UserScores;
 public class UserScoresService {
 	@Autowired
 	private UserScoresMapper userScoresMapper;
-
+	
+	@Autowired
+	private UsersMapper usersMapper;
+	
 	public PageResult<UserScores> findPage(PageBounds bounds, UserScoresDto dto) {
 		PageList<UserScores> userScores = userScoresMapper.findPage(bounds, dto);
 		return new PageResult<UserScores>(userScores);
@@ -63,7 +68,11 @@ public class UserScoresService {
 	}
 
 	public List<UserScores> getByUserId(String userId) {
-		return userScoresMapper.getByUserId(userId);
+		List<UserScores> userScores=userScoresMapper.getByUserId(userId);
+		for(UserScores userScore:userScores){
+			userScore.setUsers(usersMapper.getById(userScore.getUserId().toString()));
+		}
+		return userScores;
 	}
 	
 	@Transactional

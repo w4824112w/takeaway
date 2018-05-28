@@ -28,6 +28,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 
+
 public class HttpsRequest{
 
     private static final Logger logger = Logger.getLogger(HttpsRequest.class);
@@ -48,8 +49,8 @@ public class HttpsRequest{
     private CloseableHttpClient httpClient;
 
     public HttpsRequest() throws UnrecoverableKeyException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException {
-    //	init();
-    	noCert();
+        init();
+    //	noCert();
     }
 
     private void noCert()throws IOException, KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyManagementException {
@@ -186,4 +187,12 @@ public class HttpsRequest{
     public void setRequestConfig(RequestConfig requestConfig) {
         this.requestConfig = requestConfig;
     }
+    
+    public static void main(String args[])throws Exception{
+    //	HttpsRequest httpsRequest = new HttpsRequest();
+    	String str="<xml><appid>wx49abba5920cc5f4d</appid><mch_id>1501745051</mch_id><nonce_str>4062A41E77CaAE6ACUe6CuFc5uu04089</nonce_str><sign>9ED9708E710F560A87BF840826166248</sign><out_trade_no>MWA9z2G88BK59JZO</out_trade_no><out_refund_no>jXqc54b9276u4057</out_refund_no><total_fee>3</total_fee><refund_fee>3</refund_fee><notify_url>https://pandax.mofasion.com/takeaway/api/weixin/callback</notify_url></xml>";
+    	String temp=str.replace(str.substring(str.indexOf("<notify_url>"), str.indexOf("</notify_url>")), "").replace("<notify_url>", "").replace("</notify_url>", "");
+    	System.out.println("temp---"+temp);
+    }
+    
 }

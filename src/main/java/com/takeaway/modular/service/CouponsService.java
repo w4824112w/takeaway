@@ -172,8 +172,8 @@ public class CouponsService {
 		return coupons;
 	}
 	
-	public List<CouponsDto> getIndexAll() {
-		List<CouponsDto> coupons = couponsMapper.getIndexAll();
+	public List<CouponsDto> getIndexAll(String userId) {
+		List<CouponsDto> coupons = couponsMapper.getIndexAll(userId);
 		for (CouponsDto coupon : coupons) {
 			List<CouponPicturesDto> pictures = couponPicturesMapper.getByCouponId(coupon
 					.getId().toString());

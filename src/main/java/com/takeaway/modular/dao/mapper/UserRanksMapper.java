@@ -12,6 +12,8 @@ public interface UserRanksMapper {
 	
 	UserRanks getById(String id);
 	
+	UserRanks getCurrentUserRanks(UserRanksDto dto);
+	
 	PageList<UserRanks> findPage(PageBounds bounds,UserRanksDto dto);
 	
 	List<UserRanks> getAll();

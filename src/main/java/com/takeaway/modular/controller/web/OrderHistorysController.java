@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -56,13 +57,14 @@ public class OrderHistorysController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer", paramType = "query"),
 			@ApiImplicitParam(name = "rows", value = "页数", required = true, dataType = "Integer", paramType = "query"),
-			@ApiImplicitParam(name = "orderNo", value = "订单历史编号", required = false, dataType = "String", paramType = "query") })
+			@ApiImplicitParam(name = "orderNo", value = "订单历史编号", required = false, dataType = "String", paramType = "query"),
+			@ApiImplicitParam(name = "merchantId", value = "店铺id", required = false, dataType = "String", paramType = "query")})
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public JSONObject page(HttpServletRequest request,
 			HttpServletResponse response,
 			@RequestParam(value = "page", defaultValue = "1") int page,
 			@RequestParam(value = "rows", defaultValue = "10") int rows,
-			String orderNo) {
+			String orderNo,String merchantId) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -70,6 +72,11 @@ public class OrderHistorysController {
 		}
 
 		OrderHistorysDto dto = new OrderHistorysDto();
+		if (u.getType() != 1) {
+			dto.setMerchantId(u.getMerchantId().toString());
+		}else{
+			dto.setMerchantId(merchantId);
+		}
 		dto.setOrderNo(orderNo);
 		PageBounds bounds = new PageBounds(page, rows);
 		PageResult<OrderHistorys> orders = orderHistorysService.findPage(bounds, dto);
@@ -144,11 +151,7 @@ public class OrderHistorysController {
 			orders.setMerchantId(merchantId);
 			orders.setUserId(userId);
 			orders.setOrderType(orderType);
-			orders.setSize(size);
 			orders.setTotalPrice(totalPrice);
-			orders.setItemId(itemId);
-			orders.setItemName(itemName);
-			orders.setItemPrice(itemPrice);
 			orders.setMerchantType(merchantType);
 			orders.setRemark(remark);
 			orders.setPayType(payType);

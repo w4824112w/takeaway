@@ -7,10 +7,10 @@
 		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="code" property="code" jdbcType="VARCHAR" />
 		<result column="label" property="label" jdbcType="VARCHAR" />
-		<result column="origin_price" property="originPrice" jdbcType="DOUBLE" />
-		<result column="cost_price" property="costPrice" jdbcType="DOUBLE" />
-		<result column="price" property="price" jdbcType="DOUBLE" />
-		<result column="packingCharge" property="packingCharge" jdbcType="DOUBLE" />
+		<result column="origin_price" property="originPrice" jdbcType="DECIMAL" />
+		<result column="cost_price" property="costPrice" jdbcType="DECIMAL" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="packingCharge" property="packingCharge" jdbcType="DECIMAL" />
 		<result column="unit" property="unit" jdbcType="VARCHAR" />
 		<result column="sales_volume" property="salesVolume" jdbcType="INTEGER" />
 		<result column="tips" property="tips" jdbcType="VARCHAR" />
@@ -19,8 +19,8 @@
 		<result column="stock_status" property="stockStatus" jdbcType="INTEGER" />
 		<result column="description" property="description" jdbcType="VARCHAR" />
 		<result column="status" property="status" jdbcType="INTEGER" />
-		<result column="created_at" property="createdAt" jdbcType="DATE" />
-		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+		<result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
 		<result column="city_id" property="cityId" jdbcType="INTEGER" />
 		<result column="origin" property="origin" jdbcType="VARCHAR" />
 	</resultMap>
@@ -53,8 +53,8 @@
 		i.created_at as createdAt,i.updated_at as updatedAt,i.city_id as cityId,i.origin,
 		(select count(0) from tb_orders o,tb_order_items oi where o.id=oi.order_id and month(o.created_at)
 		= month(now()) and o.merchant_id=im.merchant_id and oi.item_id=i.id ) as monthOrder
-		from  tb_items i,tb_item_merchants im
-		where i.id=im.item_id 
+		from  tb_items i,tb_item_merchants im 
+		where i.id=im.item_id and im.is_puton=1 
 		<if test="merchantId != null and merchantId != ''">
 			and im.merchant_id = #{merchantId,jdbcType=VARCHAR}
 		</if>
@@ -67,7 +67,13 @@
 		resultType="com.takeaway.modular.dao.dto.ItemsDto">
 		select  
  		distinct i.id,i.`name`,i.`code`,i.unit,i.price,i.packingCharge,it.`name` as itemTypeName,
- 		i.label,i.sales_volume as salesVolume,i.stock_status as stockStatus,
+ 		i.label,
+ 		(select count(0) from tb_order_items oi,tb_orders o where oi.order_id=o.id and 
+		oi.item_id=i.id and  o.is_pay=1 and o.status in(4,5) and o.is_refund=0  
+ 		<if test="merchantId != null and merchantId != ''">
+			and o.merchant_id = #{merchantId,jdbcType=VARCHAR} 
+		</if>
+ 		 ) as salesVolume,i.stock_status as stockStatus,
  		i.stock,i.`status`,im.is_puton as isPuton
  		<!-- ,m.`name` as merchantName,m.id as  merchantId -->
 		from tb_items i,tb_item_types it,tb_merchants m,tb_item_merchants im
@@ -100,8 +106,8 @@
 		)
 		values
 		(#{itemType,jdbcType=INTEGER},#{name,jdbcType=VARCHAR},#{code,jdbcType=VARCHAR},
-		#{label,jdbcType=VARCHAR},#{originPrice,jdbcType=DOUBLE},#{costPrice,jdbcType=DOUBLE},
-		#{price,jdbcType=DOUBLE},#{packingCharge,jdbcType=DOUBLE},#{unit,jdbcType=VARCHAR},#{salesVolume,jdbcType=INTEGER},
+		#{label,jdbcType=VARCHAR},#{originPrice,jdbcType=DECIMAL},#{costPrice,jdbcType=DECIMAL},
+		#{price,jdbcType=DECIMAL},#{packingCharge,jdbcType=DECIMAL},#{unit,jdbcType=VARCHAR},#{salesVolume,jdbcType=INTEGER},
 		#{tips,jdbcType=VARCHAR},#{remain,jdbcType=VARCHAR},#{stock,jdbcType=INTEGER},
 		#{stockStatus,jdbcType=INTEGER},#{description,jdbcType=VARCHAR},#{cityId,jdbcType=INTEGER},
 		#{origin,jdbcType=VARCHAR},#{status,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP}
@@ -115,10 +121,10 @@
 		name = #{name,jdbcType=VARCHAR},
 		code=#{code,jdbcType=VARCHAR},
 		label = #{label,jdbcType=VARCHAR},
-		origin_price=#{originPrice,jdbcType=DOUBLE},
-		cost_price=#{costPrice,jdbcType=DOUBLE},
-		price=#{price,jdbcType=DOUBLE},
-		packingCharge=#{packingCharge,jdbcType=DOUBLE},
+		origin_price=#{originPrice,jdbcType=DECIMAL},
+		cost_price=#{costPrice,jdbcType=DECIMAL},
+		price=#{price,jdbcType=DECIMAL},
+		packingCharge=#{packingCharge,jdbcType=DECIMAL},
 		unit=#{unit,jdbcType=VARCHAR},
 		sales_volume=#{salesVolume,jdbcType=INTEGER},
 		tips=#{tips,jdbcType=VARCHAR},

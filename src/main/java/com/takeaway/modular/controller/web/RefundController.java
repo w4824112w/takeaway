@@ -16,7 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,12 +36,15 @@ import com.takeaway.core.netpay.wxpay.bean.PrePayInfo;
 import com.takeaway.core.netpay.wxpay.utils.Configure;
 import com.takeaway.core.netpay.wxpay.utils.MapUtil;
 import com.takeaway.core.netpay.wxpay.utils.Signature;
+import com.takeaway.core.websocket.WebSocketServer;
 import com.takeaway.modular.dao.model.Managers;
 import com.takeaway.modular.dao.model.OrderCancles;
+import com.takeaway.modular.dao.model.OrderHistorys;
 import com.takeaway.modular.dao.model.Orders;
 import com.takeaway.modular.dao.model.Users;
 import com.takeaway.modular.dao.model.WxPayNotifys;
 import com.takeaway.modular.service.OrderCanclesService;
+import com.takeaway.modular.service.OrderHistorysService;
 import com.takeaway.modular.service.OrdersService;
 import com.takeaway.modular.service.PayRequestsService;
 import com.takeaway.modular.service.UsersService;
@@ -66,6 +71,9 @@ public class RefundController {
 	
 	@Autowired
 	private WxPayNotifysService wxPayNotifysService;
+	
+	@Autowired
+	private OrderHistorysService orderHistorysService;
 	
 	@RequestMapping(value = "/callback", method = RequestMethod.POST)
 	public void callback(HttpServletRequest request,
@@ -106,10 +114,18 @@ public class RefundController {
 				wxPayNotifys.setVerifyDate(new Date());
 				wxPayNotifysService.save(wxPayNotifys);
 				
+				order.setStatus(6);	// 1 待支付。2 待发货。  3 待收货 4 待评价  5 已完成  6退款/售后
 				order.setIsRefund(1);	// 0：未退款;1：已退款;
 				order.setRefundDate(new Date());
 				order.setRefundMoney(Double.parseDouble(refundFee));
 				ordersService.update(order);
+				
+				JSONObject json = new JSONObject();
+				json.put("code", 200);
+				json.put("type", 1);
+				json.put("order", order);
+				log.info("开始发送websocket消息........"+json.toJSONString());
+				WebSocketServer.sendInfo(order.getMerchantId().toString(),json.toJSONString());
 				response.getWriter().write(PayUtils.generatePaySuccessReplyXML());
 			}else{
 				response.getWriter().write(PayUtils.generateReplyXML("FAIL", "退款结果失败"));
@@ -120,18 +136,23 @@ public class RefundController {
 		
 	}
 	
+	/**
+	 * @param request
+	 * @param response
+	 * @param orderCancles
+	 * @return
+	 */
 	@ApiOperation(value = "退款", httpMethod = "POST", notes = "微信申请退款")
-	@ApiImplicitParams({
+/*	@ApiImplicitParams({
 			@ApiImplicitParam(name = "orderNo", value = "订单号", required = true, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "refundNo", value = "退款单号", required = true, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "openid", value = "openid", required = true, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "totalFee", value = "订单总金额(单位：元)", required = true, dataType = "String", paramType = "form"),
 			@ApiImplicitParam(name = "refundFee", value = "退款总金额(单位：元)", required = true, dataType = "String", paramType = "form"),
-			@ApiImplicitParam(name = "num", value = "数量", required = true, dataType = "String", paramType = "form")
-	})
+	})*/
 	@RequestMapping(value = "/wxrefund", method = RequestMethod.POST)
 	public JSONObject callbackForWxpay(HttpServletRequest request,
-			HttpServletResponse response,String orderNo,String refundNo,String openid,String totalFee,String refundFee,String num) {
+			HttpServletResponse response,@RequestBody OrderCancles orderCancles) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -139,14 +160,19 @@ public class RefundController {
 					null);
 		}
 		
-		Orders orders=ordersService.getByOrderNo(orderNo);
+		Orders orders=ordersService.getById(orderCancles.getOrderId().toString());
 		
-		if(orders==null){
-			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "用户已超时，请退出登录",
-					null);
+		if(orders.getIsRefund()==1){
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "该订单已经退款", null);
 		}
 		
-		Users users=usersService.getByOpenid(openid);
+		Users users=usersService.getById(orders.getUserId().toString());
+		String openid=users.getOpenId();
+		
+		if(orders==null){
+			return ErrorEnums.getResult(ErrorEnums.OVERTIME, "订单不存在",
+					null);
+		}
 		
 /*				String refundNo = RandomSequence.getSixteenRandomVal(); // 退单编号
 		OrderCancles orderCancles=new OrderCancles();
@@ -160,23 +186,26 @@ public class RefundController {
 		orderCancles.setOperMan(u.getId());
 		orderCanclesService.save(orderCancles);	// 保存申请退款单
 */		
-		OrderCancles orderCancles=orderCanclesService.getByRefundNo(refundNo);
+	//	OrderCancles orderCancles=orderCanclesService.getByRefundNo(refundNo);
 		
-		totalFee=new BigDecimal(totalFee).multiply(new BigDecimal(100)).intValue()+"";	//订单总金额元转分
+/*		totalFee=new BigDecimal(totalFee).multiply(new BigDecimal(100)).intValue()+"";	//订单总金额元转分
 		refundFee=new BigDecimal(refundFee).multiply(new BigDecimal(100)).intValue()+"";	//退款总金额元转分
-
+*/
+		String orderNo=orders.getOrderNo();
+		String refundNo=orderCancles.getRefundNo();
+		String totalFee=(int)(orders.getRealTotalMoney()*100)+"";	//元转分
+		String refundFee=(int)(orderCancles.getTotalPrice()*100)+"";	//元转分
 		payRequestsService.save(null, PaymentType.refund.getName(), refundNo, "退款", refundFee, Configure.getRefundNotifyCallbackUrl(), null);
 		
 		PayPackage payPackage = new PayPackage();
 		payPackage.setAppid(Configure.getAppid());
 		payPackage.setMch_id(Configure.getMchid());
-		payPackage.setNotify_url(Configure.getRefundNotifyCallbackUrl());
+		payPackage.setNonce_str(PayUtils.random_str());
 		payPackage.setOut_trade_no(orderNo);
 		payPackage.setOut_refund_no(refundNo);
 		payPackage.setTotal_fee(totalFee);
 		payPackage.setRefund_fee(refundFee);
-		payPackage.setNonce_str(PayUtils.random_str());
-		String back = PayUtils.generatePayNativeReplyXML(payPackage);
+		String back = PayUtils.generateRefundNativeReplyXML(payPackage);
 		log.info("申请退款后返回:"+back);
 		XmlMapper xmlMapper = new XmlMapper();
 		try {
@@ -184,16 +213,28 @@ public class RefundController {
 			log.info("转换成实体:"+JSONObject.toJSONString(prePayInfo));
 			if(prePayInfo.getReturn_code().equals("SUCCESS")){//通信标识，非交易标识
 				if(prePayInfo.getResult_code().equals("SUCCESS")){//业务结果
-					Map<String, String> map = PayUtils.generateAppPay(prePayInfo);
-					log.info("成功:"+map.toString());
-					return ErrorEnums.getResult(ErrorEnums.SUCCESS, "微信申请退款", map);
+					log.info("成功:"+JSONObject.toJSONString(prePayInfo));
+					orders.setRefundSrcStatus(orders.getStatus());	// 退款前状态
+					orders.setStatus(7);	//  1 待支付。2 待发货。  3 待收货 4 待评价  5 已完成  6退款/售后 7 已退款
+					orders.setIsRefund(1);	//	0：未退款;1：已退款;
+					orders.setRefundDate(new Date());
+					orders.setRefundMoney(orderCancles.getTotalPrice());
+					ordersService.update(orders);
+					
+			    	OrderHistorys orderHistorys=new OrderHistorys();
+			    	BeanUtils.copyProperties(orders, orderHistorys);
+			    	orderHistorysService.save(orderHistorys);
+					
+					JSONObject result = new JSONObject();
+					result.put("data", prePayInfo);
+					return ErrorEnums.getResult(ErrorEnums.SUCCESS, "微信申请退款", result);
 				}else{
 					log.info("失败:"+prePayInfo.getErr_code_des());
-					return ErrorEnums.getResult(ErrorEnums.ERROR, "微信申请退款", prePayInfo.getErr_code_des());
+					return ErrorEnums.getResult(ErrorEnums.ERROR,prePayInfo.getErr_code_des()+",微信申请退款",null );
 				}
 			}else{
 				log.info("失败:"+prePayInfo.getReturn_msg());
-				return ErrorEnums.getResult(ErrorEnums.ERROR, "微信申请退款", prePayInfo.getReturn_msg());
+				return ErrorEnums.getResult(ErrorEnums.ERROR, prePayInfo.getReturn_msg()+",微信申请退款",null );
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -50,7 +50,7 @@ public class PayPackage {
 	private String openid; // 用户标识 openid
 
 	private String product_id; // product_id
-
+	
 	public String getAppid() {
 		return Configure.getAppid();
 	}
@@ -220,6 +220,8 @@ public class PayPackage {
 	public void setRefund_fee(String refund_fee) {
 		this.refund_fee = refund_fee;
 	}
-	
+
+
+
 	
 }

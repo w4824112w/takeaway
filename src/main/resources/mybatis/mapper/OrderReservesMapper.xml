@@ -7,12 +7,12 @@
 		<result column="reserve_no" property="reserveNo" jdbcType="VARCHAR" />
 		<result column="size" property="size" jdbcType="INTEGER" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
-		<result column="start_delivery_time" property="startDeliveryTime" jdbcType="DATE" />
-		<result column="hope_delivery_time" property="hopeDeliveryTime" jdbcType="DATE" />
-		<result column="limit_delivery_time" property="limitDeliveryTime" jdbcType="DATE" />
-		<result column="total_price" property="totalPrice" jdbcType="DOUBLE" />
-		<result column="created_at" property="createdAt" jdbcType="DATE" />
-		<result column="oper_at" property="operAt" jdbcType="DATE" />
+		<result column="start_delivery_time" property="startDeliveryTime" jdbcType="TIMESTAMP" />
+		<result column="hope_delivery_time" property="hopeDeliveryTime" jdbcType="TIMESTAMP" />
+		<result column="limit_delivery_time" property="limitDeliveryTime" jdbcType="TIMESTAMP" />
+		<result column="total_price" property="totalPrice" jdbcType="DECIMAL" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+		<result column="oper_at" property="operAt" jdbcType="TIMESTAMP" />
 		<result column="oper_man" property="operMan" jdbcType="INTEGER" />
 	</resultMap>
 	<sql id="Base_Column_List">
@@ -54,7 +54,7 @@
 		#{orderId,jdbcType=INTEGER},#{reserveNo,jdbcType=VARCHAR},#{size,jdbcType=INTEGER},
 		#{name,jdbcType=VARCHAR},#{startDeliveryTime,jdbcType=TIMESTAMP},
 		#{hopeDeliveryTime,jdbcType=TIMESTAMP},#{limitDeliveryTime,jdbcType=TIMESTAMP},
-		#{totalPrice,jdbcType=DOUBLE},#{createdAt,jdbcType=TIMESTAMP}
+		#{totalPrice,jdbcType=DECIMAL},#{createdAt,jdbcType=TIMESTAMP}
 		)
 	</insert>
 

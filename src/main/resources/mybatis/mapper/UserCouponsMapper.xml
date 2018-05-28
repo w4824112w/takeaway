@@ -11,9 +11,9 @@
 		<result column="status" property="status" jdbcType="INTEGER" />
 		<result column="is_flag" property="isFlag" jdbcType="INTEGER" />
 		<result column="type" property="type" jdbcType="INTEGER" />
-		<result column="start_date" property="startDate" jdbcType="DATE" />
-		<result column="end_date" property="endDate" jdbcType="DATE" />
-		<result column="gain_time" property="gainTime" jdbcType="DATE" />
+		<result column="start_date" property="startDate" jdbcType="TIMESTAMP" />
+		<result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
+		<result column="gain_time" property="gainTime" jdbcType="TIMESTAMP" />
 		<result column="coupon_name" property="couponName" jdbcType="INTEGER" />
 	</resultMap>
 	<sql id="Base_Column_List">
@@ -49,10 +49,27 @@
 		where user_id = #{userId,jdbcType=VARCHAR}
 	</select>
 	
+	<select id="getByUserIdAndCouponSendType" parameterType="com.takeaway.modular.dao.dto.UserCouponsDto" resultMap="BaseResultMap">
+		select 
+		uc.* 
+		from tb_user_coupons uc,tb_coupons c
+		where uc.coupon_id=c.id 
+		<if test="userId != null and userId != ''">
+			and uc.user_id = #{userId,jdbcType=VARCHAR} 
+		</if>
+		<if test="couponId != null and couponId != ''">
+			and uc.coupon_id = #{couponId,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="couponSendType != null and couponSendType != ''">
+			and c.couponSendType = #{couponSendType,jdbcType=VARCHAR} 
+		</if>
+	</select>
+	
 	<select id="getCoupons" parameterType="com.takeaway.modular.dao.dto.UserCouponsDto" resultType="com.takeaway.modular.dao.dto.UserCouponsDto">
 		select
-		uc.id,uc.coupon_id as couponId,uc.start_date as startDate,uc.end_date as endDate,
-		c.`name` as couponName,c.couponMoney,c.spendMoney,
+		uc.id,uc.coupon_id as couponId,uc.start_date as startDate,uc.end_date as endDate,uc.is_flag as isFlag,
+		c.`name` as couponName,c.couponMoney,c.spendMoney,c.status,
 		c.description,c.sendNum,c.receiveNum,c.sendStartTime,c.sendEndTime,c.couponSendType
 		from tb_user_coupons uc,tb_coupons c
 		where uc.coupon_id=c.id 

@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSONObject;
 import com.takeaway.modular.dao.model.Managers;
 
 @ServerEndpoint(value = "/websocket/{merchantId}")
@@ -126,7 +127,10 @@ public class WebSocketServer {
 			addOnlineCount(); // 在线数加1
 			log.info("有新连接加入！当前在线人数为" + getOnlineCount());
 			try {
-				sendMessage(session, "连接成功");
+				JSONObject result = new JSONObject();
+		        result.put("code", 200);
+		        result.put("msg", "连接成功");
+		        sendMessage(session, result.toJSONString());
 			} catch (IOException e) {
 				log.error("websocket IO异常");
 			}
@@ -190,11 +194,11 @@ public class WebSocketServer {
 	@OnError
 	public void onError(Session session, Throwable error) {
 		log.error("发生错误");
-		if (StringUtils.isNotBlank(merchantId)) {
+/*		if (StringUtils.isNotBlank(merchantId)) {
 			this.webSocketSet.remove(merchantId); // 从map中删除
 			subOnlineCount(); // 在线数减1
 			log.info("有一连接关闭！当前在线人数为" + getOnlineCount());
-		}
+		}*/
 		error.printStackTrace();
 	}
 
@@ -208,19 +212,26 @@ public class WebSocketServer {
 	 * 群发自定义消息
 	 * */
 	public static void sendInfo(String merchantId,String message) throws IOException {
-		log.info(message);
+		log.info("merchantId:"+merchantId+"  message:"+message);
 		if (StringUtils.isBlank(merchantId)) {
 			return;
 		}
 
+		log.info("获取接收消息列表start");
 		List<Session> sessionList = webSocketSet.get(merchantId);
-		for (Session session : sessionList) {
-			try {
-				sendMessage(session, message);
-			} catch (IOException e) {
-				continue;
+		log.info("获取接收消息列表end");
+		if(sessionList!=null&&sessionList.size()>0){
+			for (Session session : sessionList) {
+				log.info("开始每个发送消息:"+message);
+				try {
+					sendMessage(session, message);
+				} catch (IOException e) {
+					log.info("消息发送异常:"+message);
+					continue;
+				}
 			}
 		}
+
 	}
 
 	public static synchronized int getOnlineCount() {

@@ -32,7 +32,8 @@ public class MerchantsDto {
 	private String startingPrice;
 	private String fullFreeDistribution;
 	private String distributionFee;
-	private String distributionScope;
+	private String distributionScope;	//	店铺范围
+	private String distance;	//两个坐标点间的距离
 	private String deliveryTime;
 	private String isOnline;
 	private String createdAt;
@@ -405,6 +406,14 @@ public class MerchantsDto {
 
 	public void setDeliveryTime(String deliveryTime) {
 		this.deliveryTime = deliveryTime;
+	}
+
+	public String getDistance() {
+		return distance;
+	}
+
+	public void setDistance(String distance) {
+		this.distance = distance;
 	}
 
 }

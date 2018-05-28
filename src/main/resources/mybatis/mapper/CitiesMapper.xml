@@ -6,7 +6,7 @@
 		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="province_id" property="provicesId" jdbcType="INTEGER" />
 		<result column="status" property="status" jdbcType="INTEGER" />
-		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
 	</resultMap>
 
 	<sql id="Base_Column_List">

@@ -18,6 +18,8 @@ public class UserScores {
 	@ApiModelProperty(value = "积分标识(1:收入;2：支出;)", required = false)
 	private Integer scoreType;
 	private Date createdAt;
+	
+	private Users users;
 
 	public Integer getId() {
 		return id;
@@ -73,6 +75,14 @@ public class UserScores {
 
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public Users getUsers() {
+		return users;
+	}
+
+	public void setUsers(Users users) {
+		this.users = users;
 	}
 
 }

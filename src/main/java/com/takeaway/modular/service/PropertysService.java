@@ -12,7 +12,9 @@ import com.takeaway.commons.page.PageList;
 import com.takeaway.commons.page.PageResult;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.PropertysDto;
+import com.takeaway.modular.dao.mapper.ItemPropertysMapper;
 import com.takeaway.modular.dao.mapper.PropertysMapper;
+import com.takeaway.modular.dao.model.ItemPropertys;
 import com.takeaway.modular.dao.model.Propertys;
 
 /**
@@ -25,6 +27,9 @@ import com.takeaway.modular.dao.model.Propertys;
 public class PropertysService {
 	@Autowired
 	private PropertysMapper propertysMapper;
+	
+	@Autowired
+	private ItemPropertysMapper itemPropertysMapper;
 
 	public PageResult<Propertys> findPage(PageBounds bounds, PropertysDto dto) {
 		PageList<Propertys> propertys = propertysMapper.findPage(bounds, dto);
@@ -101,8 +106,20 @@ public class PropertysService {
 	}
 
 	@Transactional
-	public int delete(String id) {
-		return propertysMapper.delete(id);
+	public JSONObject delete(String id) {
+		int result;
+		List<Propertys> propertys=propertysMapper.getByPid(id);
+		for(Propertys property:propertys){
+			ItemPropertys dto=new ItemPropertys();
+			dto.setPropertyId(property.getId());
+			List<ItemPropertys> itemPropertys=itemPropertysMapper.getByPropertyId(dto);
+			if(itemPropertys.size()>0){
+				result=0;
+				return ErrorEnums.getResult(ErrorEnums.ERROR, "已有商品配置该规格属性，删除商品规格", result);
+			}
+		}
+		result=propertysMapper.delete(id);
+		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "删除商品规格", result);
 	}
 
 	public List<Propertys> getAll() {

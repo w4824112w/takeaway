@@ -7,6 +7,7 @@ public class ReportDto {
 	private String couponMoney; // 优惠券金额
 	private String activityMoney; // 满减送金额
 	private String realTotalMoney; // 实际支付金额
+	private String totalRefundMoney; // 实际支付金额
 	private String platformServiceFee; // 平台服务费
 	private String realIncome; // 实际收入
 	private String wxProcedures; // 微信手续费
@@ -118,6 +119,14 @@ public class ReportDto {
 
 	public void setMerchantId(String merchantId) {
 		this.merchantId = merchantId;
+	}
+
+	public String getTotalRefundMoney() {
+		return totalRefundMoney;
+	}
+
+	public void setTotalRefundMoney(String totalRefundMoney) {
+		this.totalRefundMoney = totalRefundMoney;
 	}
 
 }

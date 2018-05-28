@@ -8,7 +8,7 @@
 		<result column="dataSrc" property="dataSrc" jdbcType="INTEGER" />
 		<result column="dataRemarks" property="dataRemarks" jdbcType="VARCHAR" />
 		<result column="scoreType" property="scoreType" jdbcType="INTEGER" />
-		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		id, user_id,score,dataSrc,dataRemarks,scoreType,created_at

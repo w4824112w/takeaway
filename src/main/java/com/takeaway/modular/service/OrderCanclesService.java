@@ -51,6 +51,11 @@ public class OrderCanclesService {
 	public JSONObject save(OrderCancles orderCancles) {
 		int result;
 
+		Orders orders=ordersMapper.getById(orderCancles.getOrderId().toString());
+		orders.setStatus(6);// 1 待支付。2 待发货。  3 待收货 4 待评价  5 已完成  6退款/售后 7 已退款 8 超时未支付作废
+		orders.setRefundApplyDate(new Date());
+		ordersMapper.update(orders);
+		
 		orderCancles.setCreatedAt(new Date());
 		result = OrderCanclesMapper.save(orderCancles);
 		if (result > 0) {

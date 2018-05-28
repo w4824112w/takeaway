@@ -7,6 +7,8 @@ public class UserRanksDto {
 	private String endScore;
 	private String rebate;
 	private String createdAt;
+	
+	private String userScore;
 
 	public String getId() {
 		return id;
@@ -54,6 +56,14 @@ public class UserRanksDto {
 
 	public void setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public String getUserScore() {
+		return userScore;
+	}
+
+	public void setUserScore(String userScore) {
+		this.userScore = userScore;
 	}
 
 }

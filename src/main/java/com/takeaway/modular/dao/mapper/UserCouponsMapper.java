@@ -15,6 +15,8 @@ public interface UserCouponsMapper {
 	
 	PageList<UserCoupons> findPage(PageBounds bounds,UserCouponsDto dto);
 	
+	List<UserCoupons> getByUserIdAndCouponSendType(UserCouponsDto dto);
+	
 	List<UserCoupons> getAll();
 	
 	List<UserCoupons> getByUserId(String userId);

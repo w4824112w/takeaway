@@ -20,6 +20,8 @@ public interface FeedbacksMapper {
 	
 	List<Feedbacks> getByUserId(String userId);
 	
+	List<Feedbacks> getByPid(String pid);
+	
 	List<Feedbacks> getByMerchantId(String merchantId);
 	
 	int save(Feedbacks feedbacks);

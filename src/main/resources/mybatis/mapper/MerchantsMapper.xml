@@ -16,7 +16,7 @@
 			jdbcType="VARCHAR" />
 		<result column="description" property="description" jdbcType="VARCHAR" />
 		<result column="platform_commission" property="platformCommission"
-			jdbcType="DOUBLE" />
+			jdbcType="DECIMAL" />
 		<result column="tel" property="tel" jdbcType="VARCHAR" />
 		<result column="lat" property="lat" jdbcType="VARCHAR" />
 		<result column="lng" property="lng" jdbcType="VARCHAR" />
@@ -27,18 +27,18 @@
 		<result column="distribution_info" property="distributionInfo"
 			jdbcType="VARCHAR" />
 		<result column="starting_price" property="startingPrice"
-			jdbcType="DOUBLE" />
+			jdbcType="DECIMAL" />
 		<result column="full_free_distribution" property="fullFreeDistribution"
-			jdbcType="DOUBLE" />
+			jdbcType="DECIMAL" />
 		<result column="distribution_fee" property="distributionFee"
-			jdbcType="DOUBLE" />
+			jdbcType="DECIMAL" />
 		<result column="distribution_scope" property="distributionScope"
 			jdbcType="VARCHAR" />
 		<result column="deliveryTime" property="deliveryTime" jdbcType="VARCHAR" />
 		<result column="is_online" property="isOnline" jdbcType="INTEGER" />
 		<result column="status" property="status" jdbcType="INTEGER" />
-		<result column="created_at" property="createdAt" jdbcType="DATE" />
-		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+		<result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		id,type_id,name,code,short_name,province_id,city_id,address,star,manager_name,manager_phone,
@@ -87,15 +87,15 @@
 		pendingOrder,sum(refundingOrder) as refundingOrder
 		from (
 		select
-		(select sum(o.total_price) from tb_orders o where
-		date(created_at) = curdate() and o.merchant_id=m.id ) as dayPrice,
-		(select count(0) from tb_orders o where date(o.created_at) = curdate()
-		and o.merchant_id=m.id ) as dayOrder,
+		(select sum(o.realTotalMoney) from tb_orders o where o.is_pay=1 and o.status in(4,5) and is_refund=0 and 
+		date(o.created_at) = curdate() and o.merchant_id=m.id ) as dayPrice,
+		(select count(0) from tb_orders o where date(o.created_at) = curdate() and o.is_pay=1 and o.status in(4,5) and is_refund=0
+		and o.merchant_id=m.id  ) as dayOrder,
 		(select count(0) from tb_orders o
-		where status=0 and date(o.created_at) = curdate() and
+		where status=2 and date(o.created_at) = curdate() and
 		o.merchant_id=m.id ) as pendingOrder,
 		(select count(0) from tb_orders o
-		where status=3 and date(o.created_at) = curdate() and
+		where status=6 and date(o.created_at) = curdate() and
 		o.merchant_id=m.id ) as refundingOrder
 		from tb_merchants m where status=1
 		<if test="id != null and id != ''">
@@ -107,7 +107,7 @@
 	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.MerchantsDto"
 		resultType="com.takeaway.modular.dao.dto.MerchantsDto">
 		select
-		m.id,m.`name`,m.type_id as typeId,m.`code`,mt.`name` as
+		m.id,m.is_online as isOnline,m.`name`,m.type_id as typeId,m.`code`,mt.`name` as
 		typeName,m.tel,m.address,
 		(select sum(o.total_price) from tb_orders o
 		where month(created_at) = month(now()) and o.merchant_id=m.id ) as
@@ -155,11 +155,11 @@
 		#{name,jdbcType=VARCHAR},#{code,jdbcType=VARCHAR},
 		#{provinceId,jdbcType=INTEGER},#{cityId,jdbcType=INTEGER},#{address,jdbcType=VARCHAR},
 		#{star,jdbcType=INTEGER},#{managerName,jdbcType=VARCHAR},#{managerPhone,jdbcType=VARCHAR},
-		#{description,jdbcType=VARCHAR},#{platformCommission,jdbcType=DOUBLE},#{tel,jdbcType=VARCHAR},
+		#{description,jdbcType=VARCHAR},#{platformCommission,jdbcType=DECIMAL},#{tel,jdbcType=VARCHAR},
 		#{lat,jdbcType=VARCHAR},#{lng,jdbcType=VARCHAR},#{logo,jdbcType=VARCHAR},
 		#{notice,jdbcType=VARCHAR},#{startDate,jdbcType=TIMESTAMP},#{endDate,jdbcType=TIMESTAMP},
-		#{distributionInfo,jdbcType=VARCHAR},#{startingPrice,jdbcType=DOUBLE},#{fullFreeDistribution,jdbcType=DOUBLE},
-		#{distributionFee,jdbcType=DOUBLE},#{distributionScope,jdbcType=VARCHAR},#{deliveryTime,jdbcType=VARCHAR},
+		#{distributionInfo,jdbcType=VARCHAR},#{startingPrice,jdbcType=DECIMAL},#{fullFreeDistribution,jdbcType=DECIMAL},
+		#{distributionFee,jdbcType=DECIMAL},#{distributionScope,jdbcType=VARCHAR},#{deliveryTime,jdbcType=VARCHAR},
 		#{isOnline,jdbcType=INTEGER},#{status,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP}
 		)
 	</insert>
@@ -183,7 +183,7 @@
 		description =
 		#{description,jdbcType=VARCHAR},
 		platform_commission =
-		#{platformCommission,jdbcType=DOUBLE},
+		#{platformCommission,jdbcType=DECIMAL},
 		tel =
 		#{tel,jdbcType=VARCHAR},
 		lat = #{lat,jdbcType=VARCHAR},
@@ -200,11 +200,11 @@
 		distribution_info =
 		#{distributionInfo,jdbcType=VARCHAR},
 		starting_price =
-		#{startingPrice,jdbcType=DOUBLE},
+		#{startingPrice,jdbcType=DECIMAL},
 		full_free_distribution =
-		#{fullFreeDistribution,jdbcType=DOUBLE},
+		#{fullFreeDistribution,jdbcType=DECIMAL},
 		distribution_fee =
-		#{distributionFee,jdbcType=DOUBLE},
+		#{distributionFee,jdbcType=DECIMAL},
 		distribution_scope =
 		#{distributionScope,jdbcType=VARCHAR},
 		deliveryTime =

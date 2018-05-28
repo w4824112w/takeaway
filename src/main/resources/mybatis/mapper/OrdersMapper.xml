@@ -7,58 +7,62 @@
 		<result column="merchant_id" property="merchantId" jdbcType="INTEGER" />
 		<result column="user_id" property="userId" jdbcType="INTEGER" />
 		<result column="order_type" property="orderType" jdbcType="INTEGER" />
-		<result column="total_price" property="totalPrice" jdbcType="DOUBLE" />
-		<result column="packingCharge" property="packingCharge" jdbcType="DOUBLE" />
-		<result column="deliverMoney" property="deliverMoney" jdbcType="DOUBLE" />
+		<result column="meals" property="meals" jdbcType="INTEGER" />
+		<result column="total_price" property="totalPrice" jdbcType="DECIMAL" />
+		<result column="packingCharge" property="packingCharge" jdbcType="DECIMAL" />
+		<result column="deliverMoney" property="deliverMoney" jdbcType="DECIMAL" />
 		<result column="status" property="status" jdbcType="INTEGER" />
-		<result column="created_at" property="createdAt" jdbcType="DATE" />
-		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+		<result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
 		<result column="is_pay" property="isPay" jdbcType="INTEGER" />
-		<result column="pay_date" property="payDate" jdbcType="DATE" />
+		<result column="pay_date" property="payDate" jdbcType="TIMESTAMP" />
 		<result column="pay_sno" property="paySno" jdbcType="VARCHAR" />
-		<result column="realTotalMoney" property="realTotalMoney" jdbcType="DOUBLE" />	
+		<result column="realTotalMoney" property="realTotalMoney" jdbcType="DECIMAL" />	
 		<result column="is_ship" property="isShip" jdbcType="INTEGER" />		
-		<result column="ship_date" property="shipDate" jdbcType="DATE" />	
+		<result column="ship_date" property="shipDate" jdbcType="TIMESTAMP" />	
 		<result column="is_receipt" property="isReceipt" jdbcType="INTEGER" />		
-		<result column="receipt_date" property="receiptDate" jdbcType="DATE" />	
+		<result column="receipt_date" property="receiptDate" jdbcType="TIMESTAMP" />	
 		<result column="is_received" property="isReceived" jdbcType="INTEGER" />		
-		<result column="received_date" property="receivedDate" jdbcType="DATE" />	
+		<result column="received_date" property="receivedDate" jdbcType="TIMESTAMP" />	
+		<result column="refund_apply_date" property="refundApplyDate" jdbcType="TIMESTAMP" />
 		<result column="is_refund" property="isRefund" jdbcType="INTEGER" />		
-		<result column="refund_date" property="refundDate" jdbcType="DATE" />
-		<result column="refund_money" property="refundMoney" jdbcType="DOUBLE" />
+		<result column="refund_date" property="refundDate" jdbcType="TIMESTAMP" />
+		<result column="refund_money" property="refundMoney" jdbcType="DECIMAL" />
 		<result column="refundSrcStatus" property="refundSrcStatus" jdbcType="INTEGER" />		
 		<result column="is_reservation" property="isReservation" jdbcType="INTEGER" />		
-		<result column="reservation_date" property="reservationDate" jdbcType="DATE" />	
+		<result column="reservation_date" property="reservationDate" jdbcType="TIMESTAMP" />	
 		<result column="is_reminder" property="isReminder" jdbcType="INTEGER" />		
-		<result column="reminder_date" property="reminderDate" jdbcType="DATE" />		
+		<result column="reminder_date" property="reminderDate" jdbcType="TIMESTAMP" />		
 		<result column="is_distribution" property="isDistribution" jdbcType="INTEGER" />	
+		<result column="distribution_date" property="distributionDate" jdbcType="TIMESTAMP" />	
 		<result column="merchant_type" property="merchantType" jdbcType="INTEGER" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />		
 		<result column="pay_type" property="payType" jdbcType="INTEGER" />
 		<result column="is_invoice" property="isInvoice" jdbcType="INTEGER" />
 		<result column="invoiceClient" property="invoiceClient" jdbcType="VARCHAR" />
 		<result column="is_appraises" property="isAppraises" jdbcType="INTEGER" />
+		<result column="appraises_date" property="appraisesDate" jdbcType="TIMESTAMP" />	
 		<result column="userName" property="userName" jdbcType="VARCHAR" />
 		<result column="userPhone" property="userPhone" jdbcType="VARCHAR" />
 		<result column="userAddress" property="userAddress" jdbcType="VARCHAR" />
-		<result column="platform_commission" property="platformCommission" jdbcType="DOUBLE" />	
+		<result column="platform_commission" property="platformCommission" jdbcType="DECIMAL" />	
 		<result column="orderScore" property="orderScore" jdbcType="INTEGER" />		
-		<result column="couponMoney" property="couponMoney" jdbcType="DOUBLE" />	
-		<result column="activityMoney" property="activityMoney" jdbcType="DOUBLE" />	
+		<result column="couponMoney" property="couponMoney" jdbcType="DECIMAL" />	
+		<result column="activityMoney" property="activityMoney" jdbcType="DECIMAL" />	
 	</resultMap>
 	<sql id="Base_Column_List">
-		id,order_no,merchant_id,user_id,order_type,total_price,packingCharge,deliverMoney,
+		id,order_no,merchant_id,user_id,order_type,meals,total_price,packingCharge,deliverMoney,
 		status,created_at,updated_at,is_pay,pay_date,pay_sno,realTotalMoney,is_ship,ship_date,is_receipt,receipt_date,
-		is_received,received_date,is_refund,refund_date,refund_money,refundSrcStatus,is_reservation,reservation_date,is_reminder,
-		reminder_date,is_distribution,merchant_type,remark,pay_type,is_invoice,invoiceClient,is_appraises,userName,userPhone,
+		is_received,received_date,refund_apply_date,is_refund,refund_date,refund_money,refundSrcStatus,is_reservation,reservation_date,is_reminder,
+		reminder_date,is_distribution,distribution_date,merchant_type,remark,pay_type,is_invoice,invoiceClient,is_appraises,appraises_date,userName,userPhone,
 		userAddress,platform_commission,orderScore,couponMoney,activityMoney
 	</sql>
 
 	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List" />
-		from tb_orders 
-		where id = #{id,jdbcType=VARCHAR}
+		o.*,m.name as merchantName,m.tel as merchantTel  
+		from tb_orders o,tb_merchants m 
+		where o.merchant_id=m.id and  o.id = #{id,jdbcType=VARCHAR}
 	</select>
 	
 	<select id="getByOrderNo" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -69,38 +73,59 @@
 	</select>
 	
 	<select id="getByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select
+		select 
 		<include refid="Base_Column_List" />
 		from tb_orders 
-		where user_id = #{userId,jdbcType=VARCHAR}
+		where user_id = #{userId,jdbcType=VARCHAR} 
+		order by created_at desc
 	</select>
 	
 	<select id="getByPay" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from tb_orders 
-		where is_pay=0 and user_id = #{userId,jdbcType=VARCHAR}
+		where is_pay=0 and user_id = #{userId,jdbcType=VARCHAR} 
+		order by created_at desc
 	</select>
 	
 	<select id="getByShip" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from tb_orders 
-		where is_ship=1 and user_id = #{userId,jdbcType=VARCHAR}
+		where status=3 and user_id = #{userId,jdbcType=VARCHAR} 
+		order by created_at desc
 	</select>
 	
 	<select id="getByAppraises" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from tb_orders 
-		where is_appraises=0 and user_id = #{userId,jdbcType=VARCHAR}
+		where status=4 and user_id = #{userId,jdbcType=VARCHAR} 
+		order by created_at desc
+	</select>
+	
+	<select id="getByNotAppraises"  resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List" />
+		from tb_orders 
+		where is_appraises=0 and status=4 
+		order by created_at desc
+	</select>
+	
+	<select id="getByNotPay"  resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List" />
+		from tb_orders 
+		where is_pay=0 and status=1 
+		order by created_at desc
 	</select>
 	
 	<select id="getByRefund" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from tb_orders 
-		where is_refund=1 and user_id = #{userId,jdbcType=VARCHAR}
+		where status=6 and user_id = #{userId,jdbcType=VARCHAR} 
+		order by created_at desc
 	</select>
 
 	<select id="getProcessing" resultType="java.lang.Integer" >
@@ -127,17 +152,17 @@
 	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.OrdersDto"
 		resultType="com.takeaway.modular.dao.dto.OrdersDto">
 		select
-		o.id,o.order_no as orderNo,o.merchant_id as merchantId,o.user_id as userId,o.order_type as orderType,
+		distinct o.id,o.order_no as orderNo,o.merchant_id as merchantId,o.user_id as userId,o.order_type as orderType,o.meals,
 		o.total_price as totalPrice,o.packingCharge,o.deliverMoney,o.status,o.created_at as createdAt,
 		o.updated_at as updatedAt,o.is_pay as isPay,o.pay_date as payDate,o.pay_sno as paySno,o.realTotalMoney,
 		o.is_ship as isShip,o.ship_date as shipDate,o.is_receipt as isReceipt,o.receipt_date as receiptDate,o.is_received as isReceived,
-		o.received_date as receivedDate,o.is_refund as isRefund,o.refund_date as refundDate,o.refund_money as refundMoney,o.refundSrcStatus,
+		o.received_date as receivedDate,o.refund_apply_date as refundApplyDate,o.is_refund as isRefund,o.refund_date as refundDate,o.refund_money as refundMoney,o.refundSrcStatus,
 		o.is_reservation as isReservation,o.reservation_date as reservationDate,o.is_reminder as isReminder,o.reminder_date as reminderDate,
-		o.is_distribution as isDistribution,o.merchant_type as merchantType,o.remark,o.pay_type as payType,o.is_invoice as isInvoice,o.invoiceClient,
-		o.is_appraises as isAppraises,o.userName,o.userPhone,o.userAddress,o.platform_commission as platformCommission,o.orderScore,
+		o.is_distribution as isDistribution,o.distribution_date as distributionDate,o.merchant_type as merchantType,o.remark,o.pay_type as payType,o.is_invoice as isInvoice,o.invoiceClient,
+		o.is_appraises as isAppraises,o.appraises_date as appraisesDate,o.userName,o.userPhone,o.userAddress,o.platform_commission as platformCommission,o.orderScore,
 		o.couponMoney,o.activityMoney,m.name as merchantName,oi.targetName as targetName
 		from tb_orders o,tb_merchants m,tb_order_items oi 
-		where o.merchant_id=m.id and o.id=oi.order_id 
+		where o.merchant_id=m.id and o.id=oi.order_id and o.status not in(1,8) 
 		<if test="userId != null and userId != ''">
 			and o.user_id = #{userId,jdbcType=VARCHAR}
 		</if>
@@ -158,10 +183,11 @@
 		sum(o.couponMoney) as totalCouponMoney,
 		sum(o.activityMoney) as totalActivityMoney,
 		sum(o.realTotalMoney) as totalRealTotalMoney,
+		sum(o.refund_money) as totalRefundMoney,
 		(sum(o.realTotalMoney)-sum(o.platform_commission)) as realIncome,
 		(sum(o.realTotalMoney)-sum(o.platform_commission))*0.006 as wxProcedures,
 		(sum(o.realTotalMoney)-sum(o.platform_commission)-(sum(o.realTotalMoney)-sum(o.platform_commission))*0.006) as settleMoney
-		from tb_merchants m,tb_orders o where m.id=o.merchant_id and o.is_pay=1 
+		from tb_merchants m,tb_orders o where m.id=o.merchant_id and o.is_pay=1 and o.status in(4,5) and o.is_refund=0 
 		<if test="startTime != null and startTime != ''">
 			and o.pay_date &gt;= #{startTime,jdbcType=VARCHAR}
 		</if>
@@ -177,16 +203,16 @@
 	<select id="businessReport" parameterType="com.takeaway.modular.dao.dto.BusinessReportDto"
 		resultType="com.takeaway.modular.dao.dto.BusinessReportDto">
 		select DATE_FORMAT(o.pay_date,'%Y-%m-%d') as settlTime,
-		sum(o.total_price) as totalPrice,
-		(select count(0) from tb_orders ) as allCount,
-		(select count(0) from tb_orders where is_pay=1) as successCount,
-		(select count(0) from tb_orders where is_refund=1) as refundCount,
+		sum(o.realTotalMoney) as totalPrice,
+		(select count(0) from tb_orders where is_pay=1) as allCount,
+		(select count(0) from tb_orders where is_pay=1 and status in(4,5) and is_refund=0 ) as successCount,
+		(select count(0) from tb_orders where is_pay=1 and is_refund=1) as refundCount,
 		(select sum(refund_money) from tb_orders where is_refund=1) as refundTotalMoney,
    		sum(o.packingCharge) as totalPackingCharge,
 		sum(o.deliverMoney) as totalDeliverMoney,
 		sum(o.couponMoney) as totalCouponMoney,
 		sum(o.activityMoney) as totalActivityMoney
-		from tb_orders o where o.is_pay=1 
+		from tb_orders o where o.is_pay=1  and o.status in(4,5) and o.is_refund=0 
 		<if test="startTime != null and startTime != ''">
 			and o.pay_date &gt;= #{startTime,jdbcType=VARCHAR}
 		</if>
@@ -196,7 +222,8 @@
 		<if test="merchantId != null and merchantId != ''">
 			and o.merchant_id = #{merchantId,jdbcType=VARCHAR} 
 		</if>
-		group by DATE_FORMAT(o.pay_date,'%Y-%m-%d')
+		group by DATE_FORMAT(o.pay_date,'%Y-%m-%d') 
+		order by DATE_FORMAT(o.pay_date,'%Y-%m-%d') desc
 	</select>
 	
  	<select id="bossReport" parameterType="com.takeaway.modular.dao.dto.BossReportDto"
@@ -234,7 +261,7 @@
 		(sum(o.realTotalMoney)-sum(o.platform_commission)) as realIncome,
 		(sum(o.realTotalMoney)-sum(o.platform_commission))*0.006 as wxProcedures,
 		(sum(o.realTotalMoney)-sum(o.platform_commission)-(sum(o.realTotalMoney)-sum(o.platform_commission))*0.006) as settleMoney
-		from tb_merchants m,tb_orders o where m.id=o.merchant_id and o.is_pay=1 
+		from tb_merchants m,tb_orders o where m.id=o.merchant_id and o.is_pay=1 and o.status in(4,5) and o.is_refund=0 
 		<if test="startTime != null and startTime != ''">
 			and o.pay_date &gt;= #{startTime,jdbcType=VARCHAR}
 		</if>
@@ -252,7 +279,19 @@
 		select
 		<include refid="Base_Column_List" />
 		from tb_orders 
-		where 1=1 and is_reminder=1 
+		where 1=1 and is_reminder=1 and status=2 
+		<if test="orderNo != null and orderNo != ''">
+			and order_no = #{orderNo,jdbcType=VARCHAR}
+		</if>
+		order by id desc
+	</select>
+
+	<select id="findReservesPage" parameterType="com.takeaway.modular.dao.dto.OrdersDto"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_orders 
+		where 1=1 and is_reservation=1 and status=2 
 		<if test="orderNo != null and orderNo != ''">
 			and order_no = #{orderNo,jdbcType=VARCHAR}
 		</if>
@@ -272,28 +311,28 @@
 		</selectKey>
 		insert into tb_orders (
 		order_no,merchant_id,user_id,
-		total_price,packingCharge,
+		meals,total_price,packingCharge,
 		deliverMoney,status,created_at,
 		is_pay,realTotalMoney,is_ship,
 		is_receipt,is_received,is_refund,
-		is_reservation,
+		is_reservation,reservation_date,
 		is_reminder,is_distribution,
 		remark,is_invoice,is_appraises,userName,
 		userPhone,userAddress,platform_commission,
 		couponMoney,activityMoney
 		)
 		values
-		(#{orderNo,jdbcType=VARCHAR},#{merchantId,jdbcType=INTEGER},#{userId,jdbcType=INTEGER},
-		#{totalPrice,jdbcType=DOUBLE},#{packingCharge,jdbcType=DOUBLE},
-		#{deliverMoney,jdbcType=DOUBLE},#{status,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP},
-		#{isPay,jdbcType=INTEGER},#{realTotalMoney,jdbcType=DOUBLE},#{isShip,jdbcType=INTEGER},
+		(#{orderNo,jdbcType=VARCHAR},#{merchantId,jdbcType=INTEGER},#{userId,jdbcType=INTEGER},#{meals,jdbcType=INTEGER},
+		#{totalPrice,jdbcType=DECIMAL},#{packingCharge,jdbcType=DECIMAL},
+		#{deliverMoney,jdbcType=DECIMAL},#{status,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP},
+		#{isPay,jdbcType=INTEGER},#{realTotalMoney,jdbcType=DECIMAL},#{isShip,jdbcType=INTEGER},
 		#{isReceipt,jdbcType=INTEGER},#{isReceived,jdbcType=INTEGER},#{isRefund,jdbcType=INTEGER},
-		#{isReservation,jdbcType=INTEGER},
+		#{isReservation,jdbcType=INTEGER},#{reservationDate,jdbcType=TIMESTAMP},
 		#{isReminder,jdbcType=INTEGER},#{isDistribution,jdbcType=INTEGER},
 		#{remark,jdbcType=VARCHAR},#{isInvoice,jdbcType=INTEGER},
 		#{isAppraises,jdbcType=INTEGER},#{userName,jdbcType=VARCHAR},
-		#{userPhone,jdbcType=VARCHAR},#{userAddress,jdbcType=VARCHAR},#{platformCommission,jdbcType=DOUBLE},
-		#{couponMoney,jdbcType=DOUBLE},#{activityMoney,jdbcType=DOUBLE}
+		#{userPhone,jdbcType=VARCHAR},#{userAddress,jdbcType=VARCHAR},#{platformCommission,jdbcType=DECIMAL},
+		#{couponMoney,jdbcType=DECIMAL},#{activityMoney,jdbcType=DECIMAL}
 		)
 	</insert>
 
@@ -333,6 +372,9 @@
 		<if test="receivedDate != null">
 			received_date = #{receivedDate,jdbcType=TIMESTAMP},
 		</if>
+		<if test="refundApplyDate != null">
+			refund_apply_date = #{refundApplyDate,jdbcType=TIMESTAMP},
+		</if>
 		<if test="isRefund != null">
 			is_refund = #{isRefund,jdbcType=INTEGER},
 		</if>
@@ -340,7 +382,7 @@
 			refund_date = #{refundDate,jdbcType=TIMESTAMP},
 		</if>
 		<if test="refundMoney != null">
-			refund_money = #{refundMoney,jdbcType=DOUBLE},
+			refund_money = #{refundMoney,jdbcType=DECIMAL},
 		</if>
 		<if test="isReservation != null">
 			is_reservation = #{isReservation,jdbcType=INTEGER},
@@ -357,11 +399,17 @@
 		<if test="isDistribution != null">
 			is_distribution = #{isDistribution,jdbcType=INTEGER},
 		</if>
+		<if test="distributionDate != null">
+			distribution_date = #{distributionDate,jdbcType=TIMESTAMP},
+		</if>
 		<if test="isInvoice != null">
 			is_invoice = #{isInvoice,jdbcType=INTEGER},
 		</if>
 		<if test="isAppraises != null">
-			is_appraises = #{isAppraises,jdbcType=INTEGER}
+			is_appraises = #{isAppraises,jdbcType=INTEGER},
+		</if>
+		<if test="appraisesDate != null">
+			appraises_date = #{appraisesDate,jdbcType=TIMESTAMP} 
 		</if>
     </set>
     where id = #{id,jdbcType=INTEGER}

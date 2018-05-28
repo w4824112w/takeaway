@@ -6,7 +6,7 @@
 		<result column="user_id" property="userId" jdbcType="INTEGER" />
 		<result column="favorite_type" property="favoriteType" jdbcType="INTEGER" />
 		<result column="targetId" property="targetId" jdbcType="INTEGER" />
-		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		id, user_id,favorite_type,targetId,created_at

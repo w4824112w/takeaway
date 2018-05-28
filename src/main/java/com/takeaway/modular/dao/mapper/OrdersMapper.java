@@ -25,15 +25,19 @@ public interface OrdersMapper {
 	
 	int getMonthOrdersByMerchantId(String merchantId);
 
-	List<Orders> getByUserId(String userId);
+	PageList<Orders> getByUserId(PageBounds bounds,String userId);
 	
-	List<Orders> getByPay(String userId);
+	List<Orders> getByPay(PageBounds bounds,String userId);
 	
-	List<Orders> getByShip(String userId);
+	List<Orders> getByShip(PageBounds bounds,String userId);
 	
-	List<Orders> getByAppraises(String userId);
+	List<Orders> getByAppraises(PageBounds bounds,String userId);
 	
-	List<Orders> getByRefund(String userId);
+	List<Orders> getByNotAppraises();
+	
+	List<Orders> getByNotPay();
+	
+	List<Orders> getByRefund(PageBounds bounds,String userId);
 	
 	PageList<OrdersDto> findPage(PageBounds bounds, OrdersDto dto);
 	
@@ -46,6 +50,8 @@ public interface OrdersMapper {
 	List<ReportDto> reportExport(ReportDto dto);
 	
 	PageList<Orders> findReminderPage(PageBounds bounds, OrdersDto dto);
+	
+	PageList<Orders> findReservesPage(PageBounds bounds, OrdersDto dto);
 
 	int save(Orders orders);
 

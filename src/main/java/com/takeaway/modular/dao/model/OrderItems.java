@@ -16,6 +16,8 @@ public class OrderItems {
 
 	private List<ItemPropertys> itemPropertys;
 	
+	private List<OrderItemPropertys> orderItemPropertys;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -102,6 +104,14 @@ public class OrderItems {
 
 	public void setItemPropertys(List<ItemPropertys> itemPropertys) {
 		this.itemPropertys = itemPropertys;
+	}
+
+	public List<OrderItemPropertys> getOrderItemPropertys() {
+		return orderItemPropertys;
+	}
+
+	public void setOrderItemPropertys(List<OrderItemPropertys> orderItemPropertys) {
+		this.orderItemPropertys = orderItemPropertys;
 	}
 
 }

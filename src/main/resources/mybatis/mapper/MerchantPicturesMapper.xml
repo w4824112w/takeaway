@@ -6,7 +6,7 @@
 		<id column="id" property="id" jdbcType="INTEGER" />
 		<result column="url" property="url" jdbcType="VARCHAR" />
 		<result column="merchant_id" property="merchantId" jdbcType="INTEGER" />
-		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
 	</resultMap>
 
 	<sql id="Base_Column_List">

@@ -335,7 +335,6 @@ public class PropertysController {
 	 * @return
 	 */
 	@ApiOperation(value = "删除", httpMethod = "POST", notes = "删除商品属性信息")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "商品属性id", required = true, dataType = "String", paramType = "form") })
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public JSONObject delete(HttpServletRequest request,
 			HttpServletResponse response, @ApiParam @RequestBody Propertys propertys) {
@@ -346,12 +345,7 @@ public class PropertysController {
 		}
 
 		try {
-			int result = propertysService.delete(propertys.getId().toString());
-			if (result > 0) {
-				return ErrorEnums.getResult(ErrorEnums.SUCCESS, "删除商品属性", null);
-			} else {
-				return ErrorEnums.getResult(ErrorEnums.ERROR, "删除商品属性", null);
-			}
+			return propertysService.delete(propertys.getId().toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "删除商品属性", null);

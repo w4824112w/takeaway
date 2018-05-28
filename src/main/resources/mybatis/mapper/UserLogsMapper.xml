@@ -4,7 +4,7 @@
 	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.UserLogs">
 		<id column="id" property="id" jdbcType="INTEGER" />
 		<result column="loginfo" property="loginfo" jdbcType="VARCHAR" />
-		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
 		<result column="user_id" property="userId" jdbcType="INTEGER" />
 		<result column="merchant_id" property="merchantId" jdbcType="INTEGER" />
 	</resultMap>
@@ -27,6 +27,7 @@
 			and ul.merchant_id = #{merchantId,jdbcType=VARCHAR}
 		</if>
 		group by DATE_FORMAT(ul.created_at,'%Y-%m-%d')
+		order by DATE_FORMAT(ul.created_at,'%Y-%m-%d') desc
 	</select>
 	
 	<insert id="save" parameterType="com.takeaway.modular.dao.model.UserLogs">
@@ -35,10 +36,10 @@
 			LAST_INSERT_ID()
 		</selectKey>
 		insert into tb_user_logs (
-		loginfo,created_at,user_id
+		loginfo,created_at,user_id,merchant_id
 		)
 		values
-		(#{loginfo,jdbcType=VARCHAR},#{createdAt,jdbcType=TIMESTAMP},#{userId,jdbcType=INTEGER}
+		(#{loginfo,jdbcType=VARCHAR},#{createdAt,jdbcType=TIMESTAMP},#{userId,jdbcType=INTEGER},#{merchantId,jdbcType=INTEGER}
 		)
 	</insert>
 

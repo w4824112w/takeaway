@@ -66,7 +66,7 @@ public class FeedbacksController {
 		}
 		
 		try {
-			return feedbacksService.save(feedbacks);
+			return feedbacksService.Reply(feedbacks);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "系统出现异常", null);

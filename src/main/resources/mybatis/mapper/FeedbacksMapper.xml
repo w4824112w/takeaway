@@ -12,7 +12,7 @@
 		<result column="goodsScore" property="goodsScore" jdbcType="INTEGER" />
 		<result column="foodScore" property="foodScore" jdbcType="INTEGER" />
 		<result column="distributionScore" property="distributionScore" jdbcType="INTEGER" />
-		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
 		<result column="content" property="content" jdbcType="INTEGER" />
 	</resultMap>
 	<sql id="Base_Column_List">
@@ -49,8 +49,15 @@
 	<select id="getByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from tb_feedbacks
-		where user_id = #{userId,jdbcType=VARCHAR}
+		from tb_feedbacks 
+		where pid is null and user_id = #{userId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getByPid" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_feedbacks 
+		where pid = #{pid,jdbcType=VARCHAR}
 	</select>
 	
 	<select id="getTotalByGoodsScore" parameterType="com.takeaway.modular.dao.dto.FeedbacksDto" resultType="java.lang.Integer">
@@ -70,7 +77,7 @@
 		select
 		<include refid="Base_Column_List" />
 		from tb_feedbacks
-		where merchant_id = #{merchantId,jdbcType=VARCHAR}
+		where pid is null and merchant_id = #{merchantId,jdbcType=VARCHAR}
 	</select>
 
 	<update id="delete" parameterType="java.lang.String">

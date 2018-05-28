@@ -2,6 +2,7 @@ package com.takeaway.modular.service;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import com.takeaway.modular.dao.mapper.OrderItemsMapper;
 import com.takeaway.modular.dao.mapper.OrdersMapper;
 import com.takeaway.modular.dao.model.OrderCancles;
 import com.takeaway.modular.dao.model.OrderHistorys;
+import com.takeaway.modular.dao.model.OrderItems;
+import com.takeaway.modular.dao.model.Orders;
 
 /**
  * 本地的
@@ -34,10 +37,15 @@ public class OrderHistorysService {
 	@Autowired
 	private OrderItemsMapper orderItemsMapper;
 	
+	@Autowired
+	private OrdersMapper ordersMapper;
+	
 	public PageResult<OrderHistorys> findPage(PageBounds bounds, OrderHistorysDto dto) {
 		PageList<OrderHistorys> orderHistorys = orderHistorysMapper.findPage(bounds, dto);
 		for(OrderHistorys orderHistory:orderHistorys){
-			orderHistory.setOrderItems(orderItemsMapper.getByOrderId(orderHistory.getId().toString()));
+			Orders orders=ordersMapper.getByOrderNo(orderHistory.getOrderNo().toString());
+			List<OrderItems> orderItems=orderItemsMapper.getByOrderId(orders.getId().toString());
+			orderHistory.setOrderItems(orderItems);
 		}
 		return new PageResult<OrderHistorys>(orderHistorys);
 	}

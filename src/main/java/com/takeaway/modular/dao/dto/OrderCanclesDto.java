@@ -12,6 +12,7 @@ public class OrderCanclesDto {
 	private String operMan;
 	
 	private String orderNo;
+	private String merchantId;
 
 	public String getId() {
 		return id;
@@ -91,6 +92,14 @@ public class OrderCanclesDto {
 
 	public void setRefundNo(String refundNo) {
 		this.refundNo = refundNo;
+	}
+
+	public String getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
 	}
 
 }

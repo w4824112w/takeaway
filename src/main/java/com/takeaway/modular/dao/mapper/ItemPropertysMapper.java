@@ -10,7 +10,11 @@ public interface ItemPropertysMapper {
 	
 	List<ItemPropertys> getByItemId(String itemId);
 	
+	ItemPropertys getById(String id);
+	
 	ItemPropertys getByItemIdAndPropertyId(ItemPropertys temPropertys);
+	
+	List<ItemPropertys> getByPropertyId(ItemPropertys temPropertys);
 	
 	int delByItemId(String itemId);
 	

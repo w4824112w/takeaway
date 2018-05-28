@@ -1,12 +1,14 @@
 package com.takeaway.modular.dao.model;
 
+import java.util.List;
+
 public class ItemPropertys {
 	private Integer id;
 	private Integer itemId;
 	private Integer propertyId;
 	private Double price;
 	private Integer isOpen;
-	
+
 	Propertys parentPropertys;
 
 	public Integer getId() {
@@ -56,6 +58,5 @@ public class ItemPropertys {
 	public void setParentPropertys(Propertys parentPropertys) {
 		this.parentPropertys = parentPropertys;
 	}
-
 
 }

@@ -9,7 +9,7 @@
 		<result column="url" property="url" jdbcType="VARCHAR" />
 		<result column="sort" property="sort" jdbcType="INTEGER" />
 		<result column="status" property="status" jdbcType="INTEGER" />
-		<result column="created_at" property="createdAt" jdbcType="DATE" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		id, type_id,name,image_url,url,sort,status,created_at
@@ -25,7 +25,7 @@
 	<select id="getAll" parameterType="com.takeaway.modular.dao.dto.AdvertisementsDto" resultMap="BaseResultMap">
 	     select 
 	     <include refid="Base_Column_List" />
-	     from tb_advertisements order by id desc
+	     from tb_advertisements where status=1 order by id desc
 	</select>
 	
 	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.AdvertisementsDto" resultMap="BaseResultMap">

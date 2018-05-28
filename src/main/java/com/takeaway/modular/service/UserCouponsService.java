@@ -36,6 +36,15 @@ public class UserCouponsService {
 	public JSONObject save(UserCoupons userCoupons) {
 		int result;
 		
+		UserCouponsDto dto=new UserCouponsDto();
+		dto.setUserId(userCoupons.getUserId().toString());
+		dto.setCouponId(userCoupons.getCouponId().toString());
+		dto.setCouponSendType("1"); // 优惠券发放类型(1:首页领取普通优惠券2:实付满多少送券3:后台操作送券4:首次点餐成功送券5:满多少直接减钱（就是上面的第二种）6:首次进入小程序送券（不重复）)
+		List<UserCoupons> old_userCoupons=userCouponsMapper.getByUserIdAndCouponSendType(dto);
+		if(old_userCoupons!=null&&old_userCoupons.size()>0){
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "已领取过首页优惠券,", null);
+		}
+		
 		userCoupons.setAmount(1);
 		userCoupons.setStartDate(new Date());
 		userCoupons.setGainTime(new Date());

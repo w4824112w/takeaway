@@ -11,6 +11,7 @@ public class OrdersDto {
 	private String merchantName;
 	private String userId;
 	private String orderType;
+	private String meals;
 	private String totalPrice;
 	private String packingCharge;
 	private String deliverMoney;
@@ -27,6 +28,7 @@ public class OrdersDto {
 	private String receiptDate;
 	private String isReceived;
 	private String receivedDate;
+	private String refundApplyDate;
 	private String isRefund;
 	private String refundDate;
 	private String refundMoney;
@@ -36,12 +38,14 @@ public class OrdersDto {
 	private String isReminder;
 	private String reminderDate;
 	private String isDistribution;
+	private String distributionDate;
 	private String merchantType;
 	private String remark;
 	private String payType;
 	private String isInvoice;
 	private String invoiceClient;
 	private String isAppraises;
+	private String appraisesDate;
 	private String userName;
 	private String userPhone;
 	private String userAddress;
@@ -49,6 +53,8 @@ public class OrdersDto {
 	private String orderScore;
 	private String couponMoney;
 	private String activityMoney;
+	
+	
 	private String targetName;	//	优惠券或活动名称
 
 	private String processing; // 未处理订单数
@@ -61,12 +67,46 @@ public class OrdersDto {
 	
 	private List<OrderItems> orderItems;
 
+	
+
 	public String getId() {
 		return id;
 	}
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getMeals() {
+		return meals;
+	}
+
+	public void setMeals(String meals) {
+		this.meals = meals;
+	}
+
+	public String getRefundApplyDate() {
+		return refundApplyDate;
+	}
+
+	public void setRefundApplyDate(String refundApplyDate) {
+		this.refundApplyDate = refundApplyDate;
+	}
+
+	public String getDistributionDate() {
+		return distributionDate;
+	}
+
+	public void setDistributionDate(String distributionDate) {
+		this.distributionDate = distributionDate;
+	}
+
+	public String getAppraisesDate() {
+		return appraisesDate;
+	}
+
+	public void setAppraisesDate(String appraisesDate) {
+		this.appraisesDate = appraisesDate;
 	}
 
 	public String getOrderNo() {

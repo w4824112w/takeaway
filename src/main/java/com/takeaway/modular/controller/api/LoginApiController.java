@@ -72,10 +72,13 @@ public class LoginApiController {
 	 */
 	@ApiOperation(value = "app用户登录", httpMethod = "GET", notes = "根据app会员账户、密码登录系统")
 	@ApiImplicitParams({
-			@ApiImplicitParam(name = "code", value = "小程序登录时获取的code", required = true, dataType = "String", paramType = "query") })
+			@ApiImplicitParam(name = "code", value = "小程序登录时获取的code", required = true, dataType = "String", paramType = "query"),
+			@ApiImplicitParam(name = "userName", value = "用户昵称", required = true, dataType = "String", paramType = "query"),
+			@ApiImplicitParam(name = "userPhoto", value = "用户头像", required = true, dataType = "String", paramType = "query")
+			})
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public JSONObject login(HttpServletRequest request,
-			HttpServletResponse response,String code) {
+			HttpServletResponse response,String code,String userName,String userPhoto) {
 
 		String url = "https://api.weixin.qq.com/sns/jscode2session?appid={appid}&secret={secret}&js_code={js_code}&grant_type={grant_type}";
 
@@ -110,7 +113,14 @@ public class LoginApiController {
 		if(user==null){
 			user = new Users();
 			user.setOpenId(openid);
+			user.setUserName(userName);
+			user.setUserPhoto(userPhoto);
+			user.setUserScore(0);
 			usersService.save(user);
+		}else{
+			user.setUserName(userName);
+			user.setUserPhoto(userPhoto);
+			usersService.update(user);
 		}
 
 
@@ -122,5 +132,63 @@ public class LoginApiController {
 		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "登录", result);
 	}
 
+	@ApiOperation(value = "获取", httpMethod = "GET", notes = "获取微信用户信息")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "openid", value = "openid", required = true, dataType = "String", paramType = "query") })
+	@RequestMapping(value = "/getWXUser", method = RequestMethod.GET)
+	public JSONObject getWXUser(HttpServletRequest request,
+			HttpServletResponse response,String openid) {
+		String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type={grant_type}&appid={appid}&secret={secret}";
+
+		Map<String, Object> parms = new HashMap<String, Object>();
+		parms.put("grant_type", "client_credential");
+		parms.put("appid", Configure.getAppid());
+		parms.put("secret", Configure.getSecret());
+
+		JSONObject json = null;
+		try {
+			json = restTemplate.getForObject(url, JSONObject.class, parms);
+		} catch (Exception e) {
+			log.error(e.toString());
+			return ErrorEnums.getResult(ErrorEnums.SERVER_ERROR, "获取微信用户信息,", null);
+		}
+		log.info("json----" + json);
+
+		String access_token="";
+		try {
+			if(json.get("access_token")!=null){
+				access_token= json.get("access_token").toString();
+			}
+			if(StringUtils.isBlank(openid)){
+				return ErrorEnums.getResult(ErrorEnums.SERVER_ERROR, "access_token为空,", json);
+			}
+		} catch (Exception e) {
+			return ErrorEnums.getResult(ErrorEnums.SERVER_ERROR, "超时,access_token失败,", json);
+		}
+		
+		
+		String user_info_url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token={access_token}&openid={openid}&lang={lang}";
+
+		Map<String, Object> user_info_parms = new HashMap<String, Object>();
+		user_info_parms.put("access_token", access_token);
+		user_info_parms.put("openid", openid);
+		user_info_parms.put("lang", "zh_CN");
+		
+		JSONObject user_info_json = null;
+		try {
+			user_info_json = restTemplate.getForObject(user_info_url, JSONObject.class, user_info_parms);
+		} catch (Exception e) {
+			log.error(e.toString());
+			return ErrorEnums.getResult(ErrorEnums.SERVER_ERROR, "获取微信用户信息,", null);
+		}
+		
+		log.info("user_info_json----" + user_info_json);
+		
+		JSONObject result = new JSONObject();
+		result.put("openid", openid);
+		result.put("access_token", access_token);
+		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "登录", result);
+	}
+	
 
 }

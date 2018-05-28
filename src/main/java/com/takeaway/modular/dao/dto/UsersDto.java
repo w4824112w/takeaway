@@ -57,6 +57,8 @@ public class UsersDto {
 	private String orderCount;
 	private String totalPrice;
 	
+	private String userRank;
+	
 	public String getId() {
 		return id;
 	}
@@ -230,6 +232,12 @@ public class UsersDto {
 	}
 	public void setTotalPrice(String totalPrice) {
 		this.totalPrice = totalPrice;
+	}
+	public String getUserRank() {
+		return userRank;
+	}
+	public void setUserRank(String userRank) {
+		this.userRank = userRank;
 	}
 
 

@@ -3,6 +3,7 @@ package com.takeaway.modular.dao.model;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
+import java.util.List;
 
 public class Feedbacks {
 	@ApiModelProperty(value = "ID(编辑时必填)", required = false)
@@ -13,7 +14,6 @@ public class Feedbacks {
 	private Integer orderId;
 	@ApiModelProperty(value = "店铺ID(必填)", required = true)
 	private Integer merchantId;
-	@ApiModelProperty(value = "商品ID(必填)", required = true)
 	private Integer itemId;
 	@ApiModelProperty(value = "评价id(有pid代表是评价下的回复)", required = true)
 	private Integer pid;
@@ -29,6 +29,14 @@ public class Feedbacks {
 	@ApiModelProperty(value = "评价内容", required = true)
 	private String content;
 
+	private String createdTime;
+	
+	private String userName;
+	private String userPhoto;
+	private String userRank;
+	
+	private List<Feedbacks> subFeedbacks;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -124,5 +132,46 @@ public class Feedbacks {
 	public void setPid(Integer pid) {
 		this.pid = pid;
 	}
+
+	public String getCreatedTime() {
+		return createdTime;
+	}
+
+	public void setCreatedTime(String createdTime) {
+		this.createdTime = createdTime;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserPhoto() {
+		return userPhoto;
+	}
+
+	public void setUserPhoto(String userPhoto) {
+		this.userPhoto = userPhoto;
+	}
+
+	public String getUserRank() {
+		return userRank;
+	}
+
+	public void setUserRank(String userRank) {
+		this.userRank = userRank;
+	}
+
+	public List<Feedbacks> getSubFeedbacks() {
+		return subFeedbacks;
+	}
+
+	public void setSubFeedbacks(List<Feedbacks> subFeedbacks) {
+		this.subFeedbacks = subFeedbacks;
+	}
+
 
 }

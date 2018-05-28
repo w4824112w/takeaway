@@ -14,8 +14,11 @@ import com.takeaway.commons.page.PageList;
 import com.takeaway.commons.page.PageResult;
 import com.takeaway.commons.utils.MD5Util;
 import com.takeaway.core.enums.ErrorEnums;
+import com.takeaway.modular.dao.dto.UserRanksDto;
 import com.takeaway.modular.dao.dto.UsersDto;
+import com.takeaway.modular.dao.mapper.UserRanksMapper;
 import com.takeaway.modular.dao.mapper.UsersMapper;
+import com.takeaway.modular.dao.model.UserRanks;
 import com.takeaway.modular.dao.model.Users;
 
 /**
@@ -28,6 +31,9 @@ import com.takeaway.modular.dao.model.Users;
 public class UsersService {
 	@Autowired
 	private UsersMapper usersMapper;
+	
+	@Autowired
+	private UserRanksMapper userRanksMapper;
 
 	public Users login(UsersDto dto) {
 		dto.setLoginPwd(MD5Util.MD5(dto.getLoginPwd()));
@@ -37,6 +43,18 @@ public class UsersService {
 
 	public PageResult<UsersDto> findPage(PageBounds bounds, UsersDto dto) {
 		PageList<UsersDto> users = usersMapper.findPage(bounds, dto);
+		
+		for(UsersDto user:users){
+			UserRanksDto query=new UserRanksDto();
+			dto.setUserScore(user.getUserScore());
+			UserRanks userRanks=userRanksMapper.getCurrentUserRanks(query);
+			if(userRanks!=null){
+				user.setUserRank(userRanks.getName());
+			}
+		}
+		
+
+		
 		return new PageResult<UsersDto>(users);
 	}
 
@@ -71,10 +89,24 @@ public class UsersService {
 	}
 
 	public Users getById(String id) {
-		return usersMapper.getById(id);
+		Users users=usersMapper.getById(id);
+		UserRanksDto dto=new UserRanksDto();
+		dto.setUserScore(users.getUserScore().toString());
+		UserRanks userRanks=userRanksMapper.getCurrentUserRanks(dto);
+		if(userRanks!=null){
+			users.setUserRank(userRanks.getName());
+		}
+		return users;
 	}
 	
 	public Users getByOpenid(String openid) {
+		Users users=usersMapper.getByOpenid(openid);
+		UserRanksDto dto=new UserRanksDto();
+		dto.setUserScore(users.getUserScore().toString());
+		UserRanks userRanks=userRanksMapper.getCurrentUserRanks(dto);
+		if(userRanks!=null){
+			users.setUserRank(userRanks.getName());
+		}
 		return usersMapper.getByOpenid(openid);
 	}
 

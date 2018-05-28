@@ -6,7 +6,7 @@
 			SELECT
 			LAST_INSERT_ID() as id
 		</selectKey>
-		insert into pay_requests (
+		insert into tb_pay_requests (
 		system_id,
 		pay_type_id,
 		order_no,
@@ -39,7 +39,7 @@
 	</insert>
 	
 	<update id="update" parameterType="com.takeaway.modular.dao.model.PayRequests" >
-	update pay_requests 
+	update tb_pay_requests 
 	set is_pay=#{isPay,jdbcType=INTEGER},
 	is_notify=#{isNotify,jdbcType=INTEGER},
 	success_time=#{successTime,jdbcType=VARCHAR},

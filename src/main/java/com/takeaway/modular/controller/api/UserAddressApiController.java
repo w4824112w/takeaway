@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.takeaway.core.enums.ErrorEnums;
+import com.takeaway.modular.dao.model.Activitys;
+import com.takeaway.modular.dao.model.Managers;
 import com.takeaway.modular.dao.model.UserAddress;
 import com.takeaway.modular.dao.model.UserCoupons;
+import com.takeaway.modular.dao.model.UserRanks;
 import com.takeaway.modular.dao.model.Users;
 import com.takeaway.modular.service.UserAddressService;
 import com.takeaway.modular.service.UsersService;
@@ -42,14 +46,15 @@ public class UserAddressApiController {
 
 	@Autowired
 	private UserAddressService userAddressService;
-	
+
 	@Autowired
 	private UsersService usersService;
 
-	@ApiOperation(value = "新增会员收货地址收货地址", httpMethod = "POST", notes = "新增会员收货地址信息")
+	@ApiOperation(value = "新增会员收货地址", httpMethod = "POST", notes = "新增会员收货地址信息")
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public JSONObject save(HttpServletRequest request,
-			HttpServletResponse response, @ApiParam @RequestBody UserAddress userAddress) {
+			HttpServletResponse response,
+			@ApiParam @RequestBody UserAddress userAddress) {
 		try {
 			return userAddressService.save(userAddress);
 		} catch (Exception e) {
@@ -64,8 +69,8 @@ public class UserAddressApiController {
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public JSONObject list(HttpServletRequest request,
 			HttpServletResponse response, String openid) {
-		Users user=usersService.getByOpenid(openid);
-		String userId=user.getId().toString();
+		Users user = usersService.getByOpenid(openid);
+		String userId = user.getId().toString();
 		List<UserAddress> userAddress = userAddressService.getByUserId(userId);
 		JSONObject result = new JSONObject();
 		result.put("userAddress", userAddress);
@@ -73,4 +78,55 @@ public class UserAddressApiController {
 		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "会员收货地址信息查询", result);
 
 	}
+
+	@ApiOperation(value = "编辑会员收货地址", httpMethod = "GET", notes = "编辑会员收货地址")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "会员收货地址id", required = true, dataType = "String", paramType = "query") })
+	@RequestMapping(value = "/edit", method = RequestMethod.GET)
+	public JSONObject edit(HttpServletRequest request,
+			HttpServletResponse response, String id) {
+
+		UserAddress userAddress = userAddressService.getById(id);
+
+		JSONObject result = new JSONObject();
+		result.put("userAddress", userAddress);
+		return ErrorEnums.getResult(ErrorEnums.SUCCESS, "编辑会员收货地址", result);
+	}
+
+	@ApiOperation(value = "更新", httpMethod = "POST", notes = "更新会员收货地址")
+	@RequestMapping(value = "/update", method = RequestMethod.POST)
+	public JSONObject update(HttpServletRequest request,
+			@ApiParam @RequestBody UserAddress userAddress) {
+		try {
+
+			log.info("id:"+userAddress.getId()+" userId:"+userAddress.getUserId()+"  name:"+userAddress.getName()+"  phone:"+userAddress.getPhone()+" address:"+userAddress.getAddress());
+			return userAddressService.update(userAddress);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "更新", null);
+		}
+
+	}
+
+	@ApiOperation(value = "删除", httpMethod = "GET", notes = "删除会员收货地址")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "会员收货地址id", required = true, dataType = "String", paramType = "query") })
+	@RequestMapping(value = "/delete", method = RequestMethod.GET)
+	public JSONObject delete(HttpServletRequest request,
+			HttpServletResponse response, String id) {
+		log.info("id:"+id);
+		try {
+			int result = userAddressService.delete(id);
+			if (result > 0) {
+				return ErrorEnums.getResult(ErrorEnums.SUCCESS, "删除会员收货地址",
+						null);
+			} else {
+				return ErrorEnums.getResult(ErrorEnums.ERROR, "删除会员收货地址", null);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "删除会员收货地址", null);
+		}
+
+	}
+
 }

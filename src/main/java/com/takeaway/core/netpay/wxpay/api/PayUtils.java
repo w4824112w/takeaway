@@ -120,6 +120,7 @@ public class PayUtils {
 			xmlMapper.setSerializationInclusion(Include.NON_EMPTY);
 
 			String xmlContent = xmlMapper.writeValueAsString(payPackage);
+			xmlContent=xmlContent.replace(xmlContent.substring(xmlContent.indexOf("<notify_url>"), xmlContent.indexOf("</notify_url>")), "").replace("<notify_url>", "").replace("</notify_url>", "");
 			
 		//	System.out.println("xml------"+xmlContent);
 
@@ -161,7 +162,19 @@ public class PayUtils {
 		
 		signMap.remove("package");
 		signMap.put("packageName", "Sign=WXPay");
-		return signMap;
+		
+		// 小程序二次签名
+		Map<String, String> signMap_again = new HashMap<String, String>();
+		signMap_again.put("appId", info.getAppid());
+		signMap_again.put("nonceStr", PayUtils.random_str());
+		signMap_again.put("package", "prepay_id="+info.getPrepay_id());
+		signMap_again.put("signType", "MD5");
+		signMap_again.put("timeStamp",
+				Long.toString(new Date().getTime()).substring(0, 10));
+		String sign_again = Signature.getSign4Map(signMap_again);
+		logger.info("二次签名内容:"+signMap_again.toString());
+		signMap_again.put("paySign", sign_again);
+		return signMap_again;
 	}
 
 	public static PayCallbackNotify payCallbackNotify(InputStream inputStream) {

@@ -4,13 +4,13 @@
 	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.Activitys">
 		<id column="id" property="id" jdbcType="INTEGER" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
-		<result column="fullMoney" property="fullMoney" jdbcType="DOUBLE" />
-		<result column="reduceMoney" property="reduceMoney" jdbcType="DOUBLE" />
+		<result column="fullMoney" property="fullMoney" jdbcType="DECIMAL" />
+		<result column="reduceMoney" property="reduceMoney" jdbcType="DECIMAL" />
 		<result column="description" property="description" jdbcType="VARCHAR" />
-		<result column="startDate" property="startDate" jdbcType="DATE" />
-		<result column="endDate" property="endDate" jdbcType="DATE" />
-		<result column="created_at" property="createdAt" jdbcType="DATE" />
-		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
+		<result column="startDate" property="startDate" jdbcType="TIMESTAMP" />
+		<result column="endDate" property="endDate" jdbcType="TIMESTAMP" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+		<result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
 		<result column="status" property="status" jdbcType="INTEGER" />
 	</resultMap>
 
@@ -30,7 +30,7 @@
 		select
 		c.*
 		from tb_activitys c,tb_coupon_merchants cm
-		where c.id=cm.targetId  and cm.merchant_id = #{merchantId,jdbcType=VARCHAR}
+		where c.id=cm.targetId and c.status=1 and cm.merchant_id = #{merchantId,jdbcType=VARCHAR}
 	</select>
 
 	<select id="getAll" resultMap="BaseResultMap">
@@ -69,8 +69,8 @@
 		values
 		(
 		#{name,jdbcType=VARCHAR},
-		#{fullMoney,jdbcType=DOUBLE},
-		#{reduceMoney,jdbcType=DOUBLE},
+		#{fullMoney,jdbcType=DECIMAL},
+		#{reduceMoney,jdbcType=DECIMAL},
 		#{description,jdbcType=VARCHAR},
 		#{startDate,jdbcType=TIMESTAMP},
 		#{endDate,jdbcType=TIMESTAMP},
@@ -83,8 +83,8 @@
 		update tb_activitys
 		set
 		name= #{name,jdbcType=VARCHAR},
-		fullMoney= #{fullMoney,jdbcType=DOUBLE},
-		reduceMoney= #{reduceMoney,jdbcType=DOUBLE},
+		fullMoney= #{fullMoney,jdbcType=DECIMAL},
+		reduceMoney= #{reduceMoney,jdbcType=DECIMAL},
 		description= #{description,jdbcType=VARCHAR},
 		startDate= #{startDate,jdbcType=TIMESTAMP},
 		endDate= #{endDate,jdbcType=TIMESTAMP},

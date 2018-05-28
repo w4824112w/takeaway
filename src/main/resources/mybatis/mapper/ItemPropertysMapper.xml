@@ -6,13 +6,20 @@
 		<id column="id" property="id" jdbcType="INTEGER" />
 		<result column="item_id" property="itemId" jdbcType="INTEGER" />
 		<result column="property_id" property="propertyId" jdbcType="INTEGER" />
-		<result column="price" property="price" jdbcType="DOUBLE" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
 		<result column="is_open" property="isOpen" jdbcType="INTEGER" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
 		id,item_id,property_id,price,is_open
 	</sql>
+
+	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List" /> 
+		from tb_item_propertys  
+		where id = #{id,jdbcType=VARCHAR} 
+	</select>
 
 	<select id="getByItemId" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
@@ -35,6 +42,16 @@
 		</if>
 	</select>
 	
+	<select id="getByPropertyId" parameterType="com.takeaway.modular.dao.model.ItemPropertys" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_item_propertys ip 
+		where 1=1 
+		<if test="propertyId != null and propertyId != ''">
+			and ip.property_id = #{propertyId,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
 	<delete id="delByItemId" parameterType="java.lang.String">
 		delete from
 		tb_item_propertys where item_id =
@@ -52,7 +69,7 @@
 		values (
 		#{itemId,jdbcType=INTEGER},
 		#{propertyId,jdbcType=INTEGER},
-		#{price,jdbcType=DOUBLE},
+		#{price,jdbcType=DECIMAL},
 		#{isOpen,jdbcType=INTEGER}
 		)
 	</insert>

@@ -15,18 +15,18 @@
 		<result column="userScore" property="userScore" jdbcType="INTEGER" />
 		<result column="userPhoto" property="userPhoto" jdbcType="VARCHAR" />
 		<result column="userTotalScore" property="userTotalScore" jdbcType="INTEGER" />
-		<result column="created_at" property="createdAt" jdbcType="DATE" />
-		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+		<result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
 		<result column="status" property="status" jdbcType="INTEGER" />
 		<result column="is_flag" property="isFlag" jdbcType="INTEGER" />
 		<result column="lastIP" property="lastIP" jdbcType="VARCHAR" />
-		<result column="lastTime" property="lastTime" jdbcType="DATE" />
+		<result column="lastTime" property="lastTime" jdbcType="TIMESTAMP" />
 		<result column="userFrom" property="userFrom" jdbcType="VARCHAR" />
 		<result column="openId" property="openId" jdbcType="VARCHAR" />
 		<result column="wxOpenId" property="wxOpenId" jdbcType="VARCHAR" />
-		<result column="userMoney" property="userMoney" jdbcType="DOUBLE" />
-		<result column="lockMoney" property="lockMoney" jdbcType="DOUBLE" />
-		<result column="distributMoney" property="distributMoney" jdbcType="DOUBLE" />
+		<result column="userMoney" property="userMoney" jdbcType="DECIMAL" />
+		<result column="lockMoney" property="lockMoney" jdbcType="DECIMAL" />
+		<result column="distributMoney" property="distributMoney" jdbcType="DECIMAL" />
 		<result column="is_buyer" property="isFlag" jdbcType="INTEGER" />
 		<result column="payPwd" property="payPwd" jdbcType="VARCHAR" />
 	</resultMap>
@@ -110,8 +110,8 @@
 		#{userScore,jdbcType=INTEGER},#{userPhoto,jdbcType=VARCHAR},#{userTotalScore,jdbcType=INTEGER},
 		#{createdAt,jdbcType=TIMESTAMP},#{status,jdbcType=INTEGER},#{isFlag,jdbcType=INTEGER},
 		#{lastIP,jdbcType=VARCHAR},#{lastTime,jdbcType=TIMESTAMP},#{userFrom,jdbcType=VARCHAR},
-		#{openId,jdbcType=VARCHAR},#{wxOpenId,jdbcType=VARCHAR},#{userMoney,jdbcType=DOUBLE},
-		#{lockMoney,jdbcType=DOUBLE},#{distributMoney,jdbcType=DOUBLE},#{isBuyer,jdbcType=INTEGER},
+		#{openId,jdbcType=VARCHAR},#{wxOpenId,jdbcType=VARCHAR},#{userMoney,jdbcType=DECIMAL},
+		#{lockMoney,jdbcType=DECIMAL},#{distributMoney,jdbcType=DECIMAL},#{isBuyer,jdbcType=INTEGER},
 		#{payPwd,jdbcType=VARCHAR}
 		)
 	</insert>
@@ -177,13 +177,13 @@
 			wxOpenId= #{wxOpenId,jdbcType=VARCHAR},
 		</if>
 		<if test="userMoney != null">
-			userMoney= #{userMoney,jdbcType=DOUBLE},
+			userMoney= #{userMoney,jdbcType=DECIMAL},
 		</if>
 		<if test="lockMoney != null">
-			lockMoney= #{lockMoney,jdbcType=DOUBLE},
+			lockMoney= #{lockMoney,jdbcType=DECIMAL},
 		</if>
 		<if test="distributMoney != null">
-			distributMoney= #{distributMoney,jdbcType=DOUBLE},
+			distributMoney= #{distributMoney,jdbcType=DECIMAL},
 		</if>
 		<if test="isBuyer != null">
 			is_buyer= #{isBuyer,jdbcType=INTEGER},

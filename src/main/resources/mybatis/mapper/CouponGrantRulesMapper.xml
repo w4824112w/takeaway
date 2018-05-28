@@ -6,8 +6,8 @@
 		<result column="coupon_id" property="couponId" jdbcType="INTEGER" />
 		<result column="send_type" property="sendType" jdbcType="INTEGER" />
 		<result column="status" property="status" jdbcType="INTEGER" />
-		<result column="created_at" property="createdAt" jdbcType="DATE" />
-		<result column="updated_at" property="updatedAt" jdbcType="DATE" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+		<result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
 		<result column="content" property="content" jdbcType="VARCHAR" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
 	</resultMap>

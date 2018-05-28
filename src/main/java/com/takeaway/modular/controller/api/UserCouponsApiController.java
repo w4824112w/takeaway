@@ -60,6 +60,7 @@ public class UserCouponsApiController {
 	public JSONObject save(HttpServletRequest request,
 			HttpServletResponse response, @RequestBody UserCoupons userCoupons) {
 		try {
+			log.info("couponId:"+userCoupons.getCouponId()+" userId:"+userCoupons.getUserId());
 			return userCouponsService.save(userCoupons);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -69,11 +70,13 @@ public class UserCouponsApiController {
 	}
 
 	@ApiOperation(value = "查询所有优惠卷列表", httpMethod = "GET", notes = "查询所有优惠卷列表信息")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "openid", value = "openid", required = false, dataType = "String", paramType = "query") })
 	@RequestMapping(value = "/all", method = RequestMethod.GET)
 	public JSONObject all(HttpServletRequest request,
-			HttpServletResponse response) {
-
-		List<CouponsDto> coupons = couponsService.getIndexAll();
+			HttpServletResponse response,String openid) {
+		Users user=usersService.getByOpenid(openid);
+		String userId=user.getId().toString();
+		List<CouponsDto> coupons = couponsService.getIndexAll(userId);
 
 		JSONObject result = new JSONObject();
 		result.put("coupons", coupons);

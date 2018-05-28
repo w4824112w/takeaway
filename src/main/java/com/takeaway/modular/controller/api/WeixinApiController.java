@@ -8,12 +8,16 @@ import io.swagger.annotations.ApiOperation;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,10 +25,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.takeaway.commons.utils.DateUtil;
 import com.takeaway.commons.utils.HttpUtil;
+import com.takeaway.commons.utils.OrderUtils;
 import com.takeaway.commons.utils.RandomSequence;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.core.enums.PaymentType;
@@ -35,6 +41,7 @@ import com.takeaway.core.netpay.wxpay.utils.Configure;
 import com.takeaway.core.netpay.wxpay.utils.MapUtil;
 import com.takeaway.core.netpay.wxpay.utils.Signature;
 import com.takeaway.core.websocket.WebSocketServer;
+import com.takeaway.modular.dao.mapper.OrderItemsMapper;
 import com.takeaway.modular.dao.model.Orders;
 import com.takeaway.modular.dao.model.Users;
 import com.takeaway.modular.dao.model.WxPayNotifys;
@@ -55,6 +62,9 @@ public class WeixinApiController {
 	
 	@Autowired
 	private UsersService usersService;
+	
+	@Autowired
+	private OrderItemsMapper orderItemsMapper;
 	
 	@Autowired
 	private PayRequestsService payRequestsService;
@@ -100,7 +110,16 @@ public class WeixinApiController {
 				
 				order.setIsPay(1);	// 0：未支付;1：已支付;
 				order.setPayDate(new Date());
+				order.setStatus(2); 	// 1 待支付。2 待发货。  3 待收货 4 待评价  5 已完成  6退款/售后
 				ordersService.update(order);
+				
+				JSONObject json = new JSONObject();
+				json.put("code", 200);
+				json.put("type", 1);
+				json.put("order", order);
+				
+				log.info("开始发送websocket消息........"+json.toJSONString());
+				WebSocketServer.sendInfo(order.getMerchantId().toString(),json.toJSONString());
 				response.getWriter().write(PayUtils.generatePaySuccessReplyXML());
 			}else{
 				response.getWriter().write(PayUtils.generateReplyXML("FAIL", "支付结果失败"));
@@ -115,6 +134,15 @@ public class WeixinApiController {
 	@RequestMapping(value = "/wxpay", method = RequestMethod.POST)
 	public JSONObject callbackForWxpay(HttpServletRequest request,
 			HttpServletResponse response,@RequestBody Orders orders) {
+		if(StringUtils.isNotBlank(orders.getReservationTime())){
+			String reservationTime=orders.getReservationTime();
+			DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			 try {
+				 orders.setReservationDate(format.parse(reservationTime));
+			} catch (ParseException e1) {
+				log.info("格式化预定时间错误");
+			}
+		}
 		log.info("开始计算价格....orders:"+orders.toString());
 		Map money = ordersService.computePrice(orders);
 		log.info("开始计算价格结束...."+money.toString());
@@ -128,13 +156,27 @@ public class WeixinApiController {
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "下单", null);
 		}
 		
-		String orderNo = RandomSequence.getSixteenRandomVal(); // 订单编号
-		orders.setOrderNo(orderNo);
-		
 		String openid=orders.getOpenid();
 		Users users=usersService.getByOpenid(openid);
-		orders.setUserId(users.getId());
-		ordersService.save(orders);
+		
+		Orders old_orders=ordersService.getByOrderNo(orders.getOrderNo());
+		
+
+		
+		String orderNo;
+		if(old_orders!=null){
+			orderNo=orders.getOrderNo();
+			
+			if(old_orders.getIsPay()==1){
+				return ErrorEnums.getResult(ErrorEnums.ERROR, "该订单已经付款", null);
+			}
+		}else{
+			orderNo = OrderUtils.generateTradeNo(); // 订单编号
+			orders.setOrderNo(orderNo);
+			orders.setUserId(users.getId());
+			ordersService.save(orders);
+			orderNo=orders.getOrderNo();
+		}
 		
 		String itemName="紫竹林外卖"+orderNo;
 		String amount=(int)(realPayMoney*100)+"";	//元转分
@@ -162,7 +204,6 @@ public class WeixinApiController {
 				if(prePayInfo.getResult_code().equals("SUCCESS")){//业务结果
 					Map<String, String> map = PayUtils.generateAppPay(prePayInfo);
 					log.info("成功:"+map.toString());
-				//	WebSocketServer.sendInfo(orders.getMerchantId().toString(),orders.toString());
 					return ErrorEnums.getResult(ErrorEnums.SUCCESS, "微信支付", map);
 				}else{
 					log.info("失败:"+prePayInfo.getErr_code_des());
@@ -198,5 +239,6 @@ public class WeixinApiController {
 				try {br.close();} catch (IOException e) {e.printStackTrace();}
 		}
 	}
+	
 	
 }

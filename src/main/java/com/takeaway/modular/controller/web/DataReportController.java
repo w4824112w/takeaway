@@ -113,6 +113,7 @@ public class DataReportController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer", paramType = "query"),
 			@ApiImplicitParam(name = "rows", value = "页数", required = true, dataType = "Integer", paramType = "query"),
+			@ApiImplicitParam(name = "itemName", value = "商品名称", required = false, dataType = "String", paramType = "query"),
 			@ApiImplicitParam(name = "merchantId", value = "店铺id", required = false, dataType = "String", paramType = "query")
 			})
 	@RequestMapping(value = "/salesPage", method = RequestMethod.GET)
@@ -120,7 +121,7 @@ public class DataReportController {
 			HttpServletResponse response,
 			@RequestParam(value = "page", defaultValue = "1") int page,
 			@RequestParam(value = "rows", defaultValue = "10") int rows,
-			String merchantId) {
+			String itemName,String merchantId) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -134,6 +135,7 @@ public class DataReportController {
 		}else{
 			dto.setMerchantId(merchantId);
 		}
+		dto.setItemName(itemName);
 		PageBounds bounds = new PageBounds(page, rows);
 		PageResult<OrderItemsDto> report = ordersService.salesReportQuery(
 				bounds, dto);

@@ -35,6 +35,8 @@ public class WxPayNotifys implements Serializable {
 	private Date verifyDate;
 	private String tradeState;
 	
+	private String attach;
+	
 	public static WxPayNotifys setWxPayNotify(Map<String, Object> map) {
 		WxPayNotifys wxPayNotify = new WxPayNotifys();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -49,7 +51,7 @@ public class WxPayNotifys implements Serializable {
 		wxPayNotify.setNonceStr(map.get("nonce_str").toString());
 		wxPayNotify.setOpenid(map.get("openid").toString());
 		wxPayNotify.setIsVerify(0);
-
+		
 		return wxPayNotify;
 	}
 
@@ -179,6 +181,14 @@ public class WxPayNotifys implements Serializable {
 
 	public void setTradeState(String tradeState) {
 		this.tradeState = tradeState;
+	}
+
+	public String getAttach() {
+		return attach;
+	}
+
+	public void setAttach(String attach) {
+		this.attach = attach;
 	}
 
 }

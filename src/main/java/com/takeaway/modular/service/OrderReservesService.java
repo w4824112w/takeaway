@@ -40,7 +40,8 @@ public class OrderReservesService {
 	public PageResult<OrderReserves> findPage(PageBounds bounds, OrderReservesDto dto) {
 		PageList<OrderReserves> orderReserves = orderReservesMapper.findPage(bounds, dto);
 		for(OrderReserves orderReserve:orderReserves){
-			orderReserve.setOrders(ordersMapper.getById(orderReserve.getOrderId().toString()));
+			Orders orders=ordersMapper.getById(orderReserve.getOrderId().toString());
+			orderReserve.setOrders(orders);
 			orderReserve.setOrderItems(orderItemsMapper.getByOrderId(orderReserve.getOrderId().toString()));
 		}
 		return new PageResult<OrderReserves>(orderReserves);

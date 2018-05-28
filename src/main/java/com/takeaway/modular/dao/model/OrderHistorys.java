@@ -1,42 +1,67 @@
 package com.takeaway.modular.dao.model;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Date;
 import java.util.List;
 
 public class OrderHistorys {
-	private Integer id;
-	private String orderNo;
-	private Integer merchantId;
-	private Integer userId;
+	private Integer id; // 主键id
+	private String orderNo; // 订单号
+	private Integer merchantId; // 店铺ID
+	private Integer userId; // 会员id
 	private Integer orderType;
-	private Integer size;
-	private Double totalPrice;
-	private Integer itemId;
-	private String itemName;
-	private Double itemPrice;
-	private Integer status;
-	private Date createdAt;
-	private Date updatedAt;
-	private Integer isPay;
-	private Date payDate;
-	private String paySno;
-	private Integer isShip;
-	private Integer isReceipt;
-	private Integer isReceived;
-	private Date receivedDate;
-	private Integer isRefund;
-	private Date refundDate;
-	private Integer isReservation;
-	private Date reservationDate;
-	private Integer isReminder;
-	private Date reminderDate;
-	private Integer isDistribution;
+	private Integer meals; // 用餐人数
+	private Double totalPrice; // 商品总金额(未进行任何折扣的总价格)
+	private Double packingCharge; // 打包费
+	private Double deliverMoney; // 运费
+	private Integer status; // (1 待支付。2 待发货。 3 待收货 4 待评价 5 已完成 6退款/售后)
+	private Date createdAt; // 创建时间
+	private Date updatedAt; // 更新时间
+	private Integer isPay; // (0：未支付;1：已支付;)
+	private Date payDate; // 付款时间
+	private String paySno; // 支付流水号
+	private Double realTotalMoney; // 实际订单总金额
+	private Integer isShip; // (0：未发货;1：已发货;)
+	private Date shipDate; // 发货时间
+	private Integer isReceipt; // (0：未收货;1：已收货;)
+	private Date receiptDate; // 收货时间
+	private Integer isReceived; // (0：未接单;1：已接单;)
+	private Date receivedDate; // 接单时间
+	private Date refundApplyDate; // 退款申请时间
+	private Integer isRefund; // (0：未退款;1：已退款;)
+	private Date refundDate; // 退款时间
+	private Double refundMoney; // 退款金额
+	private Integer refundSrcStatus; // 退款前订单状态
+	private Integer isReservation; // (0：未预定;1：已预定;)
+	private Date reservationDate; // 预定时间
+	private Integer isReminder; // (0：未催单;1：已催单;)
+	private Date reminderDate; // 催单时间
+	private Integer isDistribution; // (0：配送中;1：已配送;)
+	private Date distributionDate; // 配送时间
 	private Integer merchantType;
-	private String remark;
-	private Integer payType;
-	private Integer isInvoice;
-	private Integer isAppraises;
-	
+	private String remark; // 订单备注
+	private Integer payType; // 支付方式
+	private Integer isInvoice; // 是否需要发票(0：不需要;1：需要;)
+	private String invoiceClient; // 发票抬头
+	private Integer isAppraises; // 是否点评(0：未点评;1：已点评;)
+	private Date appraisesDate; // 评价时间
+	private String userName; // 收货人名称
+	private String userPhone; // 收货人手机
+	private String userAddress; // 收货人地址
+	private Double platformCommission;
+	private Integer orderScore; // 所得积分
+	private Double couponMoney; // 优惠券金额
+	private Double activityMoney; // 满减活动优惠金额
+
+	private String openid;
+
+	private String merchantName;
+	private String merchantTel;
+	private String merchantPicture;
+
+	private String createdTime; // 创建时间
+
 	private List<OrderItems> orderItems;
 
 	public Integer getId() {
@@ -79,12 +104,12 @@ public class OrderHistorys {
 		this.orderType = orderType;
 	}
 
-	public Integer getSize() {
-		return size;
+	public Integer getMeals() {
+		return meals;
 	}
 
-	public void setSize(Integer size) {
-		this.size = size;
+	public void setMeals(Integer meals) {
+		this.meals = meals;
 	}
 
 	public Double getTotalPrice() {
@@ -95,28 +120,20 @@ public class OrderHistorys {
 		this.totalPrice = totalPrice;
 	}
 
-	public Integer getItemId() {
-		return itemId;
+	public Double getPackingCharge() {
+		return packingCharge;
 	}
 
-	public void setItemId(Integer itemId) {
-		this.itemId = itemId;
+	public void setPackingCharge(Double packingCharge) {
+		this.packingCharge = packingCharge;
 	}
 
-	public String getItemName() {
-		return itemName;
+	public Double getDeliverMoney() {
+		return deliverMoney;
 	}
 
-	public void setItemName(String itemName) {
-		this.itemName = itemName;
-	}
-
-	public Double getItemPrice() {
-		return itemPrice;
-	}
-
-	public void setItemPrice(Double itemPrice) {
-		this.itemPrice = itemPrice;
+	public void setDeliverMoney(Double deliverMoney) {
+		this.deliverMoney = deliverMoney;
 	}
 
 	public Integer getStatus() {
@@ -133,6 +150,14 @@ public class OrderHistorys {
 
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 	public Integer getIsPay() {
@@ -159,6 +184,46 @@ public class OrderHistorys {
 		this.paySno = paySno;
 	}
 
+	public Double getRealTotalMoney() {
+		return realTotalMoney;
+	}
+
+	public void setRealTotalMoney(Double realTotalMoney) {
+		this.realTotalMoney = realTotalMoney;
+	}
+
+	public Integer getIsShip() {
+		return isShip;
+	}
+
+	public void setIsShip(Integer isShip) {
+		this.isShip = isShip;
+	}
+
+	public Date getShipDate() {
+		return shipDate;
+	}
+
+	public void setShipDate(Date shipDate) {
+		this.shipDate = shipDate;
+	}
+
+	public Integer getIsReceipt() {
+		return isReceipt;
+	}
+
+	public void setIsReceipt(Integer isReceipt) {
+		this.isReceipt = isReceipt;
+	}
+
+	public Date getReceiptDate() {
+		return receiptDate;
+	}
+
+	public void setReceiptDate(Date receiptDate) {
+		this.receiptDate = receiptDate;
+	}
+
 	public Integer getIsReceived() {
 		return isReceived;
 	}
@@ -175,6 +240,14 @@ public class OrderHistorys {
 		this.receivedDate = receivedDate;
 	}
 
+	public Date getRefundApplyDate() {
+		return refundApplyDate;
+	}
+
+	public void setRefundApplyDate(Date refundApplyDate) {
+		this.refundApplyDate = refundApplyDate;
+	}
+
 	public Integer getIsRefund() {
 		return isRefund;
 	}
@@ -189,6 +262,22 @@ public class OrderHistorys {
 
 	public void setRefundDate(Date refundDate) {
 		this.refundDate = refundDate;
+	}
+
+	public Double getRefundMoney() {
+		return refundMoney;
+	}
+
+	public void setRefundMoney(Double refundMoney) {
+		this.refundMoney = refundMoney;
+	}
+
+	public Integer getRefundSrcStatus() {
+		return refundSrcStatus;
+	}
+
+	public void setRefundSrcStatus(Integer refundSrcStatus) {
+		this.refundSrcStatus = refundSrcStatus;
 	}
 
 	public Integer getIsReservation() {
@@ -231,6 +320,14 @@ public class OrderHistorys {
 		this.isDistribution = isDistribution;
 	}
 
+	public Date getDistributionDate() {
+		return distributionDate;
+	}
+
+	public void setDistributionDate(Date distributionDate) {
+		this.distributionDate = distributionDate;
+	}
+
 	public Integer getMerchantType() {
 		return merchantType;
 	}
@@ -263,6 +360,14 @@ public class OrderHistorys {
 		this.isInvoice = isInvoice;
 	}
 
+	public String getInvoiceClient() {
+		return invoiceClient;
+	}
+
+	public void setInvoiceClient(String invoiceClient) {
+		this.invoiceClient = invoiceClient;
+	}
+
 	public Integer getIsAppraises() {
 		return isAppraises;
 	}
@@ -271,28 +376,108 @@ public class OrderHistorys {
 		this.isAppraises = isAppraises;
 	}
 
-	public Date getUpdatedAt() {
-		return updatedAt;
+	public Date getAppraisesDate() {
+		return appraisesDate;
 	}
 
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
+	public void setAppraisesDate(Date appraisesDate) {
+		this.appraisesDate = appraisesDate;
 	}
 
-	public Integer getIsShip() {
-		return isShip;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setIsShip(Integer isShip) {
-		this.isShip = isShip;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
-	public Integer getIsReceipt() {
-		return isReceipt;
+	public String getUserPhone() {
+		return userPhone;
 	}
 
-	public void setIsReceipt(Integer isReceipt) {
-		this.isReceipt = isReceipt;
+	public void setUserPhone(String userPhone) {
+		this.userPhone = userPhone;
+	}
+
+	public String getUserAddress() {
+		return userAddress;
+	}
+
+	public void setUserAddress(String userAddress) {
+		this.userAddress = userAddress;
+	}
+
+	public Double getPlatformCommission() {
+		return platformCommission;
+	}
+
+	public void setPlatformCommission(Double platformCommission) {
+		this.platformCommission = platformCommission;
+	}
+
+	public Integer getOrderScore() {
+		return orderScore;
+	}
+
+	public void setOrderScore(Integer orderScore) {
+		this.orderScore = orderScore;
+	}
+
+	public Double getCouponMoney() {
+		return couponMoney;
+	}
+
+	public void setCouponMoney(Double couponMoney) {
+		this.couponMoney = couponMoney;
+	}
+
+	public Double getActivityMoney() {
+		return activityMoney;
+	}
+
+	public void setActivityMoney(Double activityMoney) {
+		this.activityMoney = activityMoney;
+	}
+
+	public String getOpenid() {
+		return openid;
+	}
+
+	public void setOpenid(String openid) {
+		this.openid = openid;
+	}
+
+	public String getMerchantName() {
+		return merchantName;
+	}
+
+	public void setMerchantName(String merchantName) {
+		this.merchantName = merchantName;
+	}
+
+	public String getMerchantTel() {
+		return merchantTel;
+	}
+
+	public void setMerchantTel(String merchantTel) {
+		this.merchantTel = merchantTel;
+	}
+
+	public String getMerchantPicture() {
+		return merchantPicture;
+	}
+
+	public void setMerchantPicture(String merchantPicture) {
+		this.merchantPicture = merchantPicture;
+	}
+
+	public String getCreatedTime() {
+		return createdTime;
+	}
+
+	public void setCreatedTime(String createdTime) {
+		this.createdTime = createdTime;
 	}
 
 	public List<OrderItems> getOrderItems() {

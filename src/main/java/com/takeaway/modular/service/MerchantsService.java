@@ -205,7 +205,7 @@ public class MerchantsService {
 		List<MerchantsDto> merchants = merchantsMapper.appIndex();
 		for (MerchantsDto dto : merchants) {
 			if(StringUtils.isNotBlank(lat)&&StringUtils.isNotBlank(lng)&&StringUtils.isNotBlank(dto.getLat())&&StringUtils.isNotBlank(dto.getLng())){
-				dto.setDistributionScope(MapDistance.getDistance(lat, lng, dto.getLat(), dto.getLng()));
+				dto.setDistance(MapDistance.getDistance(lat, lng, dto.getLat(), dto.getLng()));
 			}
 			
 			String merchantId = dto.getId().toString();
