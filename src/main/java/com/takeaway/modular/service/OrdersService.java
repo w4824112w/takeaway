@@ -65,7 +65,7 @@ public class OrdersService {
 
 	@Autowired
 	private UsersMapper usersMapper;
-	
+
 	@Autowired
 	private ItemsMapper itemsMapper;
 
@@ -77,37 +77,51 @@ public class OrdersService {
 
 	@Autowired
 	private UserCouponsMapper userCouponsMapper;
-	
+
 	@Autowired
 	private MerchantsMapper merchantsMapper;
-	
+
 	@Autowired
 	private CouponMerchantsMapper couponMerchantsMapper;
-	
+
 	@Autowired
 	private ActivitysMapper activitysMapper;
-	
+
 	@Autowired
 	private ItemPropertysMapper itemPropertysMapper;
-	
+
 	@Autowired
 	private PropertysMapper propertysMapper;
-	
+
 	@Autowired
 	private MerchantPicturesMapper merchantPicturesMapper;
-	
+
 	@Autowired
 	private UserScoresMapper userScoresMapper;
-	
+
 	@Autowired
 	private OrderItemPropertysMapper orderItemPropertysMapper;
-	
-	
+
 	public PageResult<OrdersDto> findPage(PageBounds bounds, OrdersDto dto) {
 		PageList<OrdersDto> orders = ordersMapper.findPage(bounds, dto);
 		for (OrdersDto order : orders) {
-			order.setOrderItems(orderItemsMapper.getByOrderId(order.getId()
-					.toString()));
+			List<OrderItems> orderItems = orderItemsMapper.getByOrderId(order
+					.getId().toString());
+			for (OrderItems orderItem : orderItems) {
+				List<OrderItemPropertys> orderItemPropertys = orderItemPropertysMapper
+						.getByOrderItemId(orderItem.getId().toString());
+				for (OrderItemPropertys orderItemProperty : orderItemPropertys) {
+					ItemPropertys itemPropertys = itemPropertysMapper
+							.getById(orderItemProperty.getItemPropertyId()
+									.toString());
+					Propertys propertys = propertysMapper.getById(itemPropertys
+							.getPropertyId().toString());
+					orderItemProperty.setPrice(itemPropertys.getPrice());
+					orderItemProperty.setPropertyName(propertys.getName());
+				}
+				orderItem.setOrderItemPropertys(orderItemPropertys);
+			}
+			order.setOrderItems(orderItems);
 		}
 		return new PageResult<OrdersDto>(orders);
 	}
@@ -149,7 +163,7 @@ public class OrdersService {
 		}
 		return new PageResult<Orders>(orders);
 	}
-	
+
 	public PageResult<Orders> findReservesPage(PageBounds bounds, OrdersDto dto) {
 		PageList<Orders> orders = ordersMapper.findReservesPage(bounds, dto);
 		for (Orders order : orders) {
@@ -162,22 +176,21 @@ public class OrdersService {
 	@Transactional
 	public JSONObject save(Orders orders) {
 		int result;
-		
-		Merchants merchants=merchantsMapper.getById(orders.getMerchantId().toString());
-		
-		orders.setDeliverMoney(merchants.getDistributionFee());	// 运费
-		String orderNo = RandomSequence.getSixteenRandomVal(); // 订单编号
-		orders.setOrderNo(orderNo);
-		orders.setStatus(1); // 1 待支付。2 待发货。  3 待收货 4 待评价  5 已完成  6退款/售后
+
+		Merchants merchants = merchantsMapper.getById(orders.getMerchantId()
+				.toString());
+
+		orders.setDeliverMoney(merchants.getDistributionFee()); // 运费
+		orders.setStatus(1); // 1 待支付。2 待发货。 3 待收货 4 待评价 5 已完成 6退款/售后
 		orders.setIsPay(0); // 未支付
 		orders.setIsShip(0); // 未发货
 		orders.setIsReceipt(0); // 未收货
 		orders.setIsReceived(0); // 未接单
 		orders.setIsRefund(0); // 未退款
-		if(orders.getReservationDate()!=null){
+		if (orders.getReservationDate() != null) {
 			orders.setIsReservation(1); // 未预定
 			orders.setReservationDate(null);
-		}else{
+		} else {
 			orders.setIsReservation(0); // 未预定
 		}
 		orders.setIsReminder(0); // 未催单
@@ -185,33 +198,36 @@ public class OrdersService {
 		orders.setIsInvoice(0); // 是否需要发票
 		orders.setIsAppraises(0); // 是否点评
 		orders.setCreatedAt(new Date());
-		
+
 		orders.setPlatformCommission(0.0);
 
-		result = ordersMapper.save(orders);		
-		
+		result = ordersMapper.save(orders);
+
 		Integer orderId = orders.getId();
 		for (OrderItems orderItems : orders.getOrderItems()) {
-			ItemsDto items=itemsMapper.getById(orderItems.getItemId().toString());
+			ItemsDto items = itemsMapper.getById(orderItems.getItemId()
+					.toString());
 			orderItems.setOrderId(orderId);
 			orderItems.setItemPrice(Double.parseDouble(items.getPrice()));
 			orderItems.setItemType(Integer.parseInt(items.getItemType()));
 			orderItems.setItemTypeName(items.getItemTypeName());
 			orderItems.setItemName(items.getName());
-			
-			List<Coupons> coupons=orders.getCoupons();
-			if(coupons!=null&&coupons.size()>0){
+
+			List<Coupons> coupons = orders.getCoupons();
+			if (coupons != null && coupons.size() > 0) {
 				orderItems.setTargetId(coupons.get(0).getId());
 				orderItems.setTargetName(coupons.get(0).getName());
 			}
 			orderItemsMapper.save(orderItems);
-			
-			if(orderItems.getItemPropertys()!=null){
-				for(ItemPropertys ItemPropertys:orderItems.getItemPropertys()){
+
+			if (orderItems.getItemPropertys() != null) {
+				for (ItemPropertys ItemPropertys : orderItems
+						.getItemPropertys()) {
 					ItemPropertys.setItemId(Integer.parseInt(items.getId()));
-					ItemPropertys ItemProperty=itemPropertysMapper.getByItemIdAndPropertyId(ItemPropertys);	// 查询数据库对应属性
-					
-					OrderItemPropertys orderItemPropertys=new OrderItemPropertys();
+					ItemPropertys ItemProperty = itemPropertysMapper
+							.getByItemIdAndPropertyId(ItemPropertys); // 查询数据库对应属性
+
+					OrderItemPropertys orderItemPropertys = new OrderItemPropertys();
 					orderItemPropertys.setOrderItemId(orderItems.getId());
 					orderItemPropertys.setItemPropertyId(ItemProperty.getId());
 					orderItemPropertys.setCreatedAt(new Date());
@@ -221,10 +237,9 @@ public class OrdersService {
 
 		}
 
-	//	JSONObject ret = new JSONObject();
-	//	ret.put("orders", orders);
+		// JSONObject ret = new JSONObject();
+		// ret.put("orders", orders);
 
-		
 		if (result > 0) {
 			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "新增订单", null);
 		} else {
@@ -232,69 +247,92 @@ public class OrdersService {
 		}
 	}
 
-	public Map computePrice(Orders orders){
-		Map ret=new HashMap<String,Double>();
-		Double realTotalMoney=0.0;
-		Double packingCharge=0.0;
-		String merchantId=orders.getMerchantId().toString();
-		Merchants merchants=merchantsMapper.getById(merchantId);
+	public Map computePrice(Orders orders) {
+		Map ret = new HashMap<String, Double>();
+		Double realTotalMoney = 0.0;	// 实际付款金额
+		Double totalPrice = 0.0;	// 营业额
+		Double packingCharge = 0.0;	// 打包费
+		String merchantId = orders.getMerchantId().toString();
+		Merchants merchants = merchantsMapper.getById(merchantId);
 
-		for(OrderItems orderItem : orders.getOrderItems()){
-			ItemsDto items=itemsMapper.getById(orderItem.getItemId().toString());	// 查询数据库对应商品
-			realTotalMoney+=Double.parseDouble(items.getPrice())*orderItem.getItemNums();	//	增加商品价格*数量
-			if(orderItem.getItemPropertys()!=null){
-				for(ItemPropertys ItemPropertys:orderItem.getItemPropertys()){
+		for (OrderItems orderItem : orders.getOrderItems()) {
+			ItemsDto items = itemsMapper.getById(orderItem.getItemId()
+					.toString()); // 查询数据库对应商品
+			totalPrice += Double.parseDouble(items.getPrice())
+					* orderItem.getItemNums(); // 增加商品价格*数量
+			realTotalMoney += Double.parseDouble(items.getPrice())
+					* orderItem.getItemNums(); // 增加商品价格*数量
+			if (orderItem.getItemPropertys() != null) {
+				for (ItemPropertys ItemPropertys : orderItem.getItemPropertys()) {
 					ItemPropertys.setItemId(Integer.parseInt(items.getId()));
-					ItemPropertys ItemProperty=itemPropertysMapper.getByItemIdAndPropertyId(ItemPropertys);	// 查询数据库对应属性
-					realTotalMoney+=ItemProperty.getPrice()*orderItem.getItemNums();	// 增加商品属性价格*数量 
+					ItemPropertys ItemProperty = itemPropertysMapper
+							.getByItemIdAndPropertyId(ItemPropertys); // 查询数据库对应属性
+					totalPrice += ItemProperty.getPrice()
+							* orderItem.getItemNums(); // 增加商品属性价格*数量
+					realTotalMoney += ItemProperty.getPrice()
+							* orderItem.getItemNums(); // 增加商品属性价格*数量
 				}
 			}
-			packingCharge+=Double.parseDouble(items.getPackingCharge())*orderItem.getItemNums();	//	增加打包费*数量
+			packingCharge += Double.parseDouble(items.getPackingCharge())
+					* orderItem.getItemNums(); // 增加打包费*数量
 		}
-		
-		List<Activitys> activitys=activitysMapper.getByMerchantId(merchantId);
+
+		List<Activitys> activitys = activitysMapper.getByMerchantId(merchantId);
 		Double maxActivityMoney = 0.0;
-		String maxActivityName="";
-		for(Activitys activity:activitys){
-			if(realTotalMoney>=activity.getFullMoney()){
-			//	realTotalMoney-=activity.getReduceMoney();
-				maxActivityMoney= (maxActivityMoney > activity.getReduceMoney()) ? maxActivityMoney : activity.getReduceMoney();
-				if(maxActivityMoney==activity.getReduceMoney()){
-					maxActivityName=activity.getName();
+		String maxActivityName = "";
+		Integer maxActivityId = null;
+		for (Activitys activity : activitys) {
+			if (realTotalMoney >= activity.getFullMoney()) {
+				// realTotalMoney-=activity.getReduceMoney();
+				maxActivityMoney = (maxActivityMoney > activity
+						.getReduceMoney()) ? maxActivityMoney : activity
+						.getReduceMoney();
+				if (maxActivityMoney == activity.getReduceMoney()) {
+					maxActivityName = activity.getName();
+					maxActivityId = activity.getId();
 				}
 			}
 		}
-		realTotalMoney=realTotalMoney-maxActivityMoney;	// 扣减活动价
-		
+		realTotalMoney = realTotalMoney - maxActivityMoney; // 扣减活动价
+
 		Double maxCouponMoney = 0.0;
-		if(orders.getCoupons()!=null){
-			for(Coupons coupon:orders.getCoupons()){
-				CouponsDto couponsDto=couponsMapper.getById(coupon.getId().toString());	// 查询数据库对应优惠券
-				Double spendMoney=Double.parseDouble(couponsDto.getSpendMoney());	// 最低消费金额
-				if(realTotalMoney>=spendMoney){
-					maxCouponMoney+=Double.parseDouble(couponsDto.getCouponMoney());	// 优惠券实际面额
+		Integer maxCouponId = null;
+		if (orders.getCoupons() != null) {
+			for (Coupons coupon : orders.getCoupons()) {
+				CouponsDto couponsDto = couponsMapper.getById(coupon.getId()
+						.toString()); // 查询数据库对应优惠券
+				Double spendMoney = Double.parseDouble(couponsDto
+						.getSpendMoney()); // 最低消费金额
+				if (realTotalMoney >= spendMoney) {
+					maxCouponMoney += Double.parseDouble(couponsDto
+							.getCouponMoney()); // 优惠券实际面额
+					maxCouponId=Integer.parseInt(couponsDto.getId());
 				}
 			}
 		}
-		
-		realTotalMoney=realTotalMoney-maxCouponMoney;	// 扣减优惠券
-		
-	//	realTotalMoney=realTotalMoney+packingCharge;	//	打包费
-	//	Double distributionFee=merchants.getDistributionFee();	
-	//	realTotalMoney=realTotalMoney+distributionFee;	// 运费
-		
+
+		realTotalMoney = realTotalMoney - maxCouponMoney; // 扣减优惠券
+
+		// realTotalMoney=realTotalMoney+packingCharge; // 打包费
+		// Double distributionFee=merchants.getDistributionFee();
+		// realTotalMoney=realTotalMoney+distributionFee; // 运费
+
 		orders.setPackingCharge(packingCharge);
 		orders.setActivityMoney(maxActivityMoney);
+		orders.setActivityId(maxActivityId);
 		orders.setCouponMoney(maxCouponMoney);
-		
-		ret.put("realTotalMoney", realTotalMoney);
-		ret.put("distributionFee", merchants.getDistributionFee());	// 运费
-		ret.put("packingCharge", packingCharge);	//	打包费
-		ret.put("maxActivityMoney", maxActivityMoney);	//	活动最大减免费
-		ret.put("maxActivityName", maxActivityName);	//	活动最大减免费名称
+		orders.setCouponId(maxCouponId);
+		orders.setTotalPrice(totalPrice);
+
+		ret.put("totalPrice", totalPrice);	// 营业额
+		ret.put("realTotalMoney", realTotalMoney);	// 实际价格
+		ret.put("distributionFee", merchants.getDistributionFee()); // 运费
+		ret.put("packingCharge", packingCharge); // 打包费
+		ret.put("maxActivityMoney", maxActivityMoney); // 活动最大减免费
+		ret.put("maxActivityName", maxActivityName); // 活动最大减免费名称
 		return ret;
 	}
-	
+
 	@Transactional
 	public JSONObject update(Orders orders) {
 		int result;
@@ -317,14 +355,14 @@ public class OrdersService {
 		int userScore = orders.getRealTotalMoney().intValue();
 		users.setUserScore(users.getUserScore() + userScore);
 		usersMapper.update(users);
-		
-		//用户积分明细记录
-		UserScores userScores=new UserScores();
+
+		// 用户积分明细记录
+		UserScores userScores = new UserScores();
 		userScores.setUserId(userId);
 		userScores.setScore(userScore);
-		userScores.setDataSrc(2);	// 来源(1：系统赠送;2:订单消费;)
+		userScores.setDataSrc(2); // 来源(1：系统赠送;2:订单消费;)
 		userScores.setDataRemarks("配送订单成功后返送相应金额的积分");
-		userScores.setScoreType(1);	// 积分标识(1:收入;2：支出;)
+		userScores.setScoreType(1); // 积分标识(1:收入;2：支出;)
 		userScores.setCreatedAt(new Date());
 		userScoresMapper.update(userScores);
 
@@ -345,7 +383,6 @@ public class OrdersService {
 				userCouponsMapper.save(userCoupons);
 			}
 		}
-		
 
 		if (result > 0) {
 			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "更新订单", result);
@@ -356,12 +393,16 @@ public class OrdersService {
 
 	public Orders getById(String id) {
 		Orders orders = ordersMapper.getById(id);
-		List<OrderItems> orderItems=orderItemsMapper.getByOrderId(id);
-		for(OrderItems orderItem:orderItems){
-			List<OrderItemPropertys> orderItemPropertys=orderItemPropertysMapper.getByOrderItemId(orderItem.getId().toString());
-			for(OrderItemPropertys orderItemProperty:orderItemPropertys){
-				ItemPropertys itemPropertys=itemPropertysMapper.getById(orderItemProperty.getItemPropertyId().toString());
-				Propertys propertys=propertysMapper.getById(itemPropertys.getPropertyId().toString());
+		List<OrderItems> orderItems = orderItemsMapper.getByOrderId(id);
+		for (OrderItems orderItem : orderItems) {
+			List<OrderItemPropertys> orderItemPropertys = orderItemPropertysMapper
+					.getByOrderItemId(orderItem.getId().toString());
+			for (OrderItemPropertys orderItemProperty : orderItemPropertys) {
+				ItemPropertys itemPropertys = itemPropertysMapper
+						.getById(orderItemProperty.getItemPropertyId()
+								.toString());
+				Propertys propertys = propertysMapper.getById(itemPropertys
+						.getPropertyId().toString());
 				orderItemProperty.setPrice(itemPropertys.getPrice());
 				orderItemProperty.setPropertyName(propertys.getName());
 			}
@@ -372,14 +413,19 @@ public class OrdersService {
 	}
 
 	public Orders getByOrderNo(String orderNo) {
-		Orders orders=ordersMapper.getByOrderNo(orderNo);
-		if(orders!=null){
-			List<OrderItems> orderItems=orderItemsMapper.getByOrderId(orders.getId().toString());
-			for(OrderItems orderItem:orderItems){
-				List<OrderItemPropertys> orderItemPropertys=orderItemPropertysMapper.getByOrderItemId(orderItem.getId().toString());
-				for(OrderItemPropertys orderItemProperty:orderItemPropertys){
-					ItemPropertys itemPropertys=itemPropertysMapper.getById(orderItemProperty.getItemPropertyId().toString());
-					Propertys propertys=propertysMapper.getById(itemPropertys.getPropertyId().toString());
+		Orders orders = ordersMapper.getByOrderNo(orderNo);
+		if (orders != null) {
+			List<OrderItems> orderItems = orderItemsMapper.getByOrderId(orders
+					.getId().toString());
+			for (OrderItems orderItem : orderItems) {
+				List<OrderItemPropertys> orderItemPropertys = orderItemPropertysMapper
+						.getByOrderItemId(orderItem.getId().toString());
+				for (OrderItemPropertys orderItemProperty : orderItemPropertys) {
+					ItemPropertys itemPropertys = itemPropertysMapper
+							.getById(orderItemProperty.getItemPropertyId()
+									.toString());
+					Propertys propertys = propertysMapper.getById(itemPropertys
+							.getPropertyId().toString());
 					orderItemProperty.setPrice(itemPropertys.getPrice());
 					orderItemProperty.setPropertyName(propertys.getName());
 				}
@@ -390,99 +436,99 @@ public class OrdersService {
 		return orders;
 	}
 
-	public List<Orders> getAllByUserId(PageBounds bounds,String userId) {
-		PageList<Orders> orders=ordersMapper.getByUserId(bounds,userId);
-		for(Orders order:orders){
-			Merchants merchants=merchantsMapper.getById(order.getMerchantId().toString());
+	public PageResult<Orders> getAllByUserId(PageBounds bounds, String userId) {
+		PageList<Orders> orders = ordersMapper.getByUserId(bounds, userId);
+		for (Orders order : orders) {
+			Merchants merchants = merchantsMapper.getById(order.getMerchantId()
+					.toString());
 			List<MerchantPictures> oldPictures = merchantPicturesMapper
 					.getByMerchantId(merchants.getId().toString());
 			order.setMerchantName(merchants.getName());
-			if(oldPictures!=null&&oldPictures.size()>0){
+			if (oldPictures != null && oldPictures.size() > 0) {
 				order.setMerchantPicture(oldPictures.get(0).getUrl());
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat(
-					"yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			order.setCreatedTime(sdf.format(order.getCreatedAt()));
 		}
-		return orders;
+		return new PageResult<Orders>(orders);
 	}
 
-	public List<Orders> getAllByPay(PageBounds bounds,String userId) {
-		List<Orders> orders=ordersMapper.getByPay(bounds,userId);
-		for(Orders order:orders){
-			Merchants merchants=merchantsMapper.getById(order.getMerchantId().toString());
+	public PageResult<Orders> getAllByPay(PageBounds bounds, String userId) {
+		PageList<Orders> orders = ordersMapper.getByPay(bounds, userId);
+		for (Orders order : orders) {
+			Merchants merchants = merchantsMapper.getById(order.getMerchantId()
+					.toString());
 			List<MerchantPictures> oldPictures = merchantPicturesMapper
 					.getByMerchantId(merchants.getId().toString());
 			order.setMerchantName(merchants.getName());
-			if(oldPictures!=null&&oldPictures.size()>0){
+			if (oldPictures != null && oldPictures.size() > 0) {
 				order.setMerchantPicture(oldPictures.get(0).getUrl());
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat(
-					"yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			order.setCreatedTime(sdf.format(order.getCreatedAt()));
 		}
-		return orders;
+		return new PageResult<Orders>(orders);
 	}
 
-	public List<Orders> getAllByShip(PageBounds bounds,String userId) {
-		List<Orders> orders=ordersMapper.getByShip(bounds,userId);
-		for(Orders order:orders){
-			Merchants merchants=merchantsMapper.getById(order.getMerchantId().toString());
+	public PageResult<Orders> getAllByShip(PageBounds bounds, String userId) {
+		PageList<Orders> orders = ordersMapper.getByShip(bounds, userId);
+		for (Orders order : orders) {
+			Merchants merchants = merchantsMapper.getById(order.getMerchantId()
+					.toString());
 			List<MerchantPictures> oldPictures = merchantPicturesMapper
 					.getByMerchantId(merchants.getId().toString());
 			order.setMerchantName(merchants.getName());
-			if(oldPictures!=null&&oldPictures.size()>0){
+			if (oldPictures != null && oldPictures.size() > 0) {
 				order.setMerchantPicture(oldPictures.get(0).getUrl());
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat(
-					"yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			order.setCreatedTime(sdf.format(order.getCreatedAt()));
 		}
-		return orders;
+		return new PageResult<Orders>(orders);
 	}
 
-	public List<Orders> getAllByAppraises(PageBounds bounds,String userId) {
-		List<Orders> orders=ordersMapper.getByAppraises(bounds,userId);
-		for(Orders order:orders){
-			Merchants merchants=merchantsMapper.getById(order.getMerchantId().toString());
+	public PageResult<Orders> getAllByAppraises(PageBounds bounds, String userId) {
+		PageList<Orders> orders = ordersMapper.getByAppraises(bounds, userId);
+		for (Orders order : orders) {
+			Merchants merchants = merchantsMapper.getById(order.getMerchantId()
+					.toString());
 			List<MerchantPictures> oldPictures = merchantPicturesMapper
 					.getByMerchantId(merchants.getId().toString());
 			order.setMerchantName(merchants.getName());
-			if(oldPictures!=null&&oldPictures.size()>0){
+			if (oldPictures != null && oldPictures.size() > 0) {
 				order.setMerchantPicture(oldPictures.get(0).getUrl());
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat(
-					"yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			order.setCreatedTime(sdf.format(order.getCreatedAt()));
 		}
-		return orders;
+		return new PageResult<Orders>(orders);
 	}
 
 	public List<Orders> getAllByNotAppraises() {
-		List<Orders> orders=ordersMapper.getByNotAppraises();
+		List<Orders> orders = ordersMapper.getByNotAppraises();
 		return orders;
 	}
-	
+
 	public List<Orders> getAllByNotPay() {
-		List<Orders> orders=ordersMapper.getByNotPay();
+		List<Orders> orders = ordersMapper.getByNotPay();
 		return orders;
 	}
-	
-	public List<Orders> getAllByRefund(PageBounds bounds,String userId) {
-		List<Orders> orders=ordersMapper.getByRefund(bounds,userId);
-		for(Orders order:orders){
-			Merchants merchants=merchantsMapper.getById(order.getMerchantId().toString());
+
+	public PageResult<Orders> getAllByRefund(PageBounds bounds, String userId) {
+		PageList<Orders> orders = ordersMapper.getByRefund(bounds, userId);
+		for (Orders order : orders) {
+			Merchants merchants = merchantsMapper.getById(order.getMerchantId()
+					.toString());
 			List<MerchantPictures> oldPictures = merchantPicturesMapper
 					.getByMerchantId(merchants.getId().toString());
 			order.setMerchantName(merchants.getName());
-			if(oldPictures!=null&&oldPictures.size()>0){
+			if (oldPictures != null && oldPictures.size() > 0) {
 				order.setMerchantPicture(oldPictures.get(0).getUrl());
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat(
-					"yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			order.setCreatedTime(sdf.format(order.getCreatedAt()));
 		}
-		return orders;
+		return new PageResult<Orders>(orders);
 	}
 
 	public List<OrderItems> getByOrderId(String orderId) {

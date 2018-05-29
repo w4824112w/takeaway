@@ -95,6 +95,7 @@ public class UsersService {
 		UserRanks userRanks=userRanksMapper.getCurrentUserRanks(dto);
 		if(userRanks!=null){
 			users.setUserRank(userRanks.getName());
+			users.setNextRankScore(userRanks.getEndScore()-users.getUserScore()+"");
 		}
 		return users;
 	}
@@ -106,8 +107,9 @@ public class UsersService {
 		UserRanks userRanks=userRanksMapper.getCurrentUserRanks(dto);
 		if(userRanks!=null){
 			users.setUserRank(userRanks.getName());
+			users.setNextRankScore(userRanks.getEndScore()-users.getUserScore()+"");
 		}
-		return usersMapper.getByOpenid(openid);
+		return users;
 	}
 
 	@Transactional

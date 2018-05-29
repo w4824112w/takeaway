@@ -3,6 +3,7 @@
 <mapper namespace="com.takeaway.modular.dao.mapper.ActivitysMapper">
 	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.Activitys">
 		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="activity_no" property="activityNo" jdbcType="VARCHAR" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="fullMoney" property="fullMoney" jdbcType="DECIMAL" />
 		<result column="reduceMoney" property="reduceMoney" jdbcType="DECIMAL" />
@@ -15,7 +16,7 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		id,name,fullMoney,reduceMoney,description,
+		id,activity_no,name,fullMoney,reduceMoney,description,
 		startDate,endDate,created_at,updated_at,status
 	</sql>
 
@@ -28,7 +29,7 @@
 	
 	<select id="getByMerchantId" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
-		c.*
+		distinct c.*
 		from tb_activitys c,tb_coupon_merchants cm
 		where c.id=cm.targetId and c.status=1 and cm.merchant_id = #{merchantId,jdbcType=VARCHAR}
 	</select>
@@ -39,15 +40,28 @@
 		from tb_activitys where status=1 order by id desc
 	</select>
 
-	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.ActivitysDto"
+	<select id="findPage" parameterType="com.takeaway.modular.dao.dto.ActivitysDto" 
 		resultMap="BaseResultMap">
-		select
+		select 
 		<include refid="Base_Column_List" />
-		from tb_activitys where status=1 
+		from tb_activitys  where status=1 
 		<if test="name != null and name != ''">
 			and name like "%"#{name,jdbcType=VARCHAR}"%"
 		</if>
-		order by id desc
+		order by id desc;
+
+	</select>
+	
+	<select id="getTotalCount" parameterType="java.lang.String" resultType="java.lang.String" >
+		select count(o.id) as totalCount from tb_orders o where 
+  		o.is_pay=1 and o.`status` in(4,5)   
+  		and o.activity_id=#{activityId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getTotalPrice" parameterType="java.lang.String" resultType="java.lang.String" >
+		select sum(o.activityMoney) as totalPrice from tb_orders o where 
+  		o.is_pay=1 and o.`status` in(4,5)   
+  		and o.activity_id=#{activityId,jdbcType=VARCHAR}
 	</select>
 
 	<delete id="delete" parameterType="java.lang.String">
@@ -63,11 +77,12 @@
 			LAST_INSERT_ID()
 		</selectKey>
 		insert into tb_activitys (
-		name,fullMoney,reduceMoney,description,
+		activity_no,name,fullMoney,reduceMoney,description,
 		startDate,endDate,created_at,status
 		)
 		values
 		(
+		#{activityNo,jdbcType=VARCHAR},
 		#{name,jdbcType=VARCHAR},
 		#{fullMoney,jdbcType=DECIMAL},
 		#{reduceMoney,jdbcType=DECIMAL},

@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageList;
 import com.takeaway.commons.page.PageResult;
+import com.takeaway.commons.utils.OrderUtils;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.ActivitysDto;
 import com.takeaway.modular.dao.mapper.ActivitysMapper;
@@ -38,12 +39,19 @@ public class ActivitysService {
 	
 	public PageResult<Activitys> findPage(PageBounds bounds, ActivitysDto dto) {
 		PageList<Activitys> activitys = activitysMapper.findPage(bounds, dto);
+		for(Activitys activity:activitys){
+			activity.setTotalCount(activitysMapper.getTotalCount(activity.getId().toString()));
+			activity.setTotalPrice(activitysMapper.getTotalPrice(activity.getId().toString()));
+		}
 		return new PageResult<Activitys>(activitys);
 	}
 
 	@Transactional
 	public JSONObject save(Activitys activitys) {
 		int result;
+		String activityNo = OrderUtils.generateActivityNo(); // 订单编号
+		activitys.setActivityNo(activityNo);
+		
 		activitys.setStatus(1);
 		activitys.setCreatedAt(new Date());
 		result = activitysMapper.save(activitys);

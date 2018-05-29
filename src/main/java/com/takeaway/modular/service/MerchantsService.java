@@ -69,6 +69,12 @@ public class MerchantsService {
 	public PageResult<MerchantsDto> findPage(PageBounds bounds, MerchantsDto dto) {
 		PageList<MerchantsDto> merchants = merchantsMapper
 				.findPage(bounds, dto);
+		for(MerchantsDto merchant:merchants){
+			FeedbacksDto query=new FeedbacksDto();
+			query.setMerchantId(merchant.getId());
+			String score=feedbacksMapper.getTotalScoreByMerchantId(query);
+			merchant.setScore(score);
+		}
 		return new PageResult<MerchantsDto>(merchants);
 	}
 
@@ -224,6 +230,11 @@ public class MerchantsService {
 			}
 			dto.setCoupons(couponsMapper.getByMerchantId(merchantId));
 			dto.setActivitys(activitysMapper.getByMerchantId(merchantId));
+			
+			FeedbacksDto query_score=new FeedbacksDto();
+			query_score.setMerchantId(dto.getId());
+			String score=feedbacksMapper.getTotalScoreByMerchantId(query_score);
+			dto.setScore(score);
 		}
 		return merchants;
 	}

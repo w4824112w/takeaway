@@ -54,6 +54,8 @@ public class MerchantsDto {
 	private List<Coupons> coupons; // 优惠卷
 	private List<Activitys> activitys; // 满减活动
 	
+	private String score;	//评分
+	
 	private List<MerchantPictures> pictures;
 
 	public String getId() {
@@ -415,5 +417,14 @@ public class MerchantsDto {
 	public void setDistance(String distance) {
 		this.distance = distance;
 	}
+
+	public String getScore() {
+		return score;
+	}
+
+	public void setScore(String score) {
+		this.score = score;
+	}
+
 
 }

@@ -56,7 +56,9 @@ public class Users {
 	@ApiModelProperty(value = "支付密码", required = false)
 	private String payPwd;
 
-	private String userRank;
+	private String userRank;	// 用户当前等级
+	
+	private String nextRankScore;	// 用户距离下一等级还差多少积分
 	public Integer getId() {
 		return id;
 	}
@@ -279,6 +281,14 @@ public class Users {
 
 	public void setUserRank(String userRank) {
 		this.userRank = userRank;
+	}
+
+	public String getNextRankScore() {
+		return nextRankScore;
+	}
+
+	public void setNextRankScore(String nextRankScore) {
+		this.nextRankScore = nextRankScore;
 	}
 
 }

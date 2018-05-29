@@ -54,6 +54,9 @@ public class OrdersDto {
 	private String couponMoney;
 	private String activityMoney;
 	
+	private String activityId;
+	private String couponId;
+	
 	
 	private String targetName;	//	优惠券或活动名称
 
@@ -515,6 +518,22 @@ public class OrdersDto {
 
 	public void setOrderItems(List<OrderItems> orderItems) {
 		this.orderItems = orderItems;
+	}
+
+	public String getActivityId() {
+		return activityId;
+	}
+
+	public void setActivityId(String activityId) {
+		this.activityId = activityId;
+	}
+
+	public String getCouponId() {
+		return couponId;
+	}
+
+	public void setCouponId(String couponId) {
+		this.couponId = couponId;
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageList;
+import com.takeaway.commons.page.PageResult;
 import com.takeaway.modular.dao.dto.BossReportDto;
 import com.takeaway.modular.dao.dto.BusinessReportDto;
 import com.takeaway.modular.dao.dto.OrdersDto;
@@ -27,17 +28,17 @@ public interface OrdersMapper {
 
 	PageList<Orders> getByUserId(PageBounds bounds,String userId);
 	
-	List<Orders> getByPay(PageBounds bounds,String userId);
+	PageList<Orders> getByPay(PageBounds bounds,String userId);
 	
-	List<Orders> getByShip(PageBounds bounds,String userId);
+	PageList<Orders> getByShip(PageBounds bounds,String userId);
 	
-	List<Orders> getByAppraises(PageBounds bounds,String userId);
+	PageList<Orders> getByAppraises(PageBounds bounds,String userId);
 	
 	List<Orders> getByNotAppraises();
 	
 	List<Orders> getByNotPay();
 	
-	List<Orders> getByRefund(PageBounds bounds,String userId);
+	PageList<Orders> getByRefund(PageBounds bounds,String userId);
 	
 	PageList<OrdersDto> findPage(PageBounds bounds, OrdersDto dto);
 	

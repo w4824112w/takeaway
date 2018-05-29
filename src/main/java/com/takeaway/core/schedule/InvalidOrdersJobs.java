@@ -27,7 +27,7 @@ public class InvalidOrdersJobs {
 	@Autowired
 	private OrdersService ordersService;
 	
-	//每天4点开始获取短信发送列表并发送短信
+	//超时未支付
 	@Scheduled(cron = "0 0/30 * * * ?")
 	public void cronJob() {
 		  List<Orders> orders=ordersService.getAllByNotPay();

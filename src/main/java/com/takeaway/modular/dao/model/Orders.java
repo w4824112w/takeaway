@@ -69,6 +69,9 @@ public class Orders {
 
 	@ApiModelProperty(value = "openid", required = false)
 	private String openid;
+	
+	private Integer activityId;
+	private Integer couponId;
 
 	private String merchantName;
 	private String merchantTel;
@@ -548,6 +551,22 @@ public class Orders {
 
 	public void setReservationTime(String reservationTime) {
 		this.reservationTime = reservationTime;
+	}
+
+	public Integer getActivityId() {
+		return activityId;
+	}
+
+	public void setActivityId(Integer activityId) {
+		this.activityId = activityId;
+	}
+
+	public Integer getCouponId() {
+		return couponId;
+	}
+
+	public void setCouponId(Integer couponId) {
+		this.couponId = couponId;
 	}
 
 }

@@ -26,8 +26,8 @@
 		oi.item_name as itemName,
 		oi.item_price as itemPrice,
 		sum(oi.item_nums) as totalNums,
-		sum(o.realTotalMoney) as totalPrice
-		from tb_order_items oi,tb_orders o where oi.order_id=o.id and o.is_pay=1 
+		sum(o.total_price) as totalPrice
+		from tb_order_items oi,tb_orders o where oi.order_id=o.id and o.is_pay=1 and o.`status` in(4,5) and o.is_refund=0 
 		<if test="merchantId != null and merchantId != ''">
 			and o.merchant_id = #{merchantId,jdbcType=VARCHAR} 
 		</if>
@@ -35,7 +35,7 @@
 			and oi.item_name = #{itemName,jdbcType=VARCHAR} 
 		</if>
 		group by oi.item_id,oi.item_name,oi.item_price
-		order by sum(o.total_price) desc
+		order by sum(o.realTotalMoney) desc
 	</select>
 
 	<select id="getByOrderId" parameterType="java.lang.String" resultMap="BaseResultMap">

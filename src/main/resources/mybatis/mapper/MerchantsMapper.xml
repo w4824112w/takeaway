@@ -87,7 +87,7 @@
 		pendingOrder,sum(refundingOrder) as refundingOrder
 		from (
 		select
-		(select sum(o.realTotalMoney) from tb_orders o where o.is_pay=1 and o.status in(4,5) and is_refund=0 and 
+		(select sum(o.total_price) from tb_orders o where o.is_pay=1 and o.status in(4,5) and is_refund=0 and 
 		date(o.created_at) = curdate() and o.merchant_id=m.id ) as dayPrice,
 		(select count(0) from tb_orders o where date(o.created_at) = curdate() and o.is_pay=1 and o.status in(4,5) and is_refund=0
 		and o.merchant_id=m.id  ) as dayOrder,
@@ -123,7 +123,7 @@
 		where im.item_id=i.id and im.merchant_id=m.id and i.item_type=it.id ) as
 		itemTypeCount,
 		(select count(0) from tb_coupon_merchants cm
-		where cm.merchant_id=m.id) as activityCount
+		where cm.merchant_id=m.id and type=0) as activityCount
 		from tb_merchants
 		m,tb_merchant_types mt
 		where m.type_id=mt.id and m.status=1

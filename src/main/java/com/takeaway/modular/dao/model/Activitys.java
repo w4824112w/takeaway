@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Activitys {
 	private Integer id;
+	private String activityNo;
 	private String name;
 	private Double fullMoney;
 	private Double reduceMoney;
@@ -14,6 +15,9 @@ public class Activitys {
 	private Date endDate;
 	private Date updatedAt;
 	private Integer status;
+	
+	private String totalCount;	//	活动核销数
+	private String totalPrice;	//	活动核销金额
 
 	private List<CouponMerchants> merchants;
 	
@@ -103,6 +107,30 @@ public class Activitys {
 
 	public void setMerchants(List<CouponMerchants> merchants) {
 		this.merchants = merchants;
+	}
+
+	public String getActivityNo() {
+		return activityNo;
+	}
+
+	public void setActivityNo(String activityNo) {
+		this.activityNo = activityNo;
+	}
+
+	public String getTotalCount() {
+		return totalCount;
+	}
+
+	public void setTotalCount(String totalCount) {
+		this.totalCount = totalCount;
+	}
+
+	public String getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(String totalPrice) {
+		this.totalPrice = totalPrice;
 	}
 
 }

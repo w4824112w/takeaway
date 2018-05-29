@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.takeaway.commons.page.PageBounds;
+import com.takeaway.commons.page.PageResult;
 import com.takeaway.commons.utils.DateUtil;
 import com.takeaway.commons.utils.OrderUtils;
 import com.takeaway.commons.utils.RandomSequence;
@@ -70,22 +71,24 @@ public class OrdersApiController {
 
 	@ApiOperation(value = "列表", httpMethod = "GET", notes = "获取用户所有订单")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer", paramType = "query"),
+		@ApiImplicitParam(name = "page", value = "页码(第几页)", required = true, dataType = "Integer", paramType = "query"),
+		@ApiImplicitParam(name = "rows", value = "页数(每页显示多少条)", required = true, dataType = "Integer", paramType = "query"),
 		@ApiImplicitParam(name = "openid", value = "openid", required = false, dataType = "String", paramType = "query") })
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public JSONObject list(HttpServletRequest request,
 			HttpServletResponse response, 
 			@RequestParam(value = "page", defaultValue = "1") int page,
+			@RequestParam(value = "rows", defaultValue = "10") int rows,
 			String openid) {
-		PageBounds bounds = new PageBounds(page, 10);
+		PageBounds bounds = new PageBounds(page, rows);
 		
 		Users user=usersService.getByOpenid(openid);
 		String userId=user.getId().toString();
-		List<Orders> orders = ordersService.getAllByUserId(bounds,userId); // 所有订单
-		List<Orders> payOrders = ordersService.getAllByPay(bounds,userId); // 待付款
-		List<Orders> shipOrders = ordersService.getAllByShip(bounds,userId); // 待收货
-		List<Orders> appraisesOrders = ordersService.getAllByAppraises(bounds,userId); // 待点评
-		List<Orders> refundOrders = ordersService.getAllByRefund(bounds,userId); // 退款/售后
+		PageResult<Orders>  orders = ordersService.getAllByUserId(bounds,userId); // 所有订单
+		PageResult<Orders> payOrders = ordersService.getAllByPay(bounds,userId); // 待付款
+		PageResult<Orders> shipOrders = ordersService.getAllByShip(bounds,userId); // 待收货
+		PageResult<Orders> appraisesOrders = ordersService.getAllByAppraises(bounds,userId); // 待点评
+		PageResult<Orders> refundOrders = ordersService.getAllByRefund(bounds,userId); // 退款/售后
 		JSONObject result = new JSONObject();
 		result.put("orders", orders);
 		result.put("payOrders", payOrders);

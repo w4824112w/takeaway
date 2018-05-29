@@ -98,13 +98,14 @@ public class FeedbacksController {
 	@ApiImplicitParams({ 
 		@ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer", paramType = "query"),
 		@ApiImplicitParam(name = "rows", value = "页数", required = true, dataType = "Integer", paramType = "query"),
+		@ApiImplicitParam(name = "evaluate", value = "评价(1~3)1:差评;2:一般;3:好评;", required = true, dataType = "String", paramType = "query"),
 		@ApiImplicitParam(name = "merchantId", value = "店铺id", required = false, dataType = "String", paramType = "query") })
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public JSONObject page(HttpServletRequest request,
 			HttpServletResponse response, 
 			@RequestParam(value = "page", defaultValue = "1") int page,
 			@RequestParam(value = "rows", defaultValue = "10") int rows,
-			String merchantId) {
+			String evaluate,String merchantId) {
 		HttpSession session = request.getSession();
 		Managers u = (Managers) session.getAttribute("s_user");
 		if (u == null) {
@@ -119,6 +120,7 @@ public class FeedbacksController {
 		}else{
 			dto.setMerchantId(merchantId);
 		}
+		dto.setEvaluate(evaluate);
 		PageResult<FeedbacksDto> feedbacks = feedbacksService.findPage(bounds,dto);
 		JSONObject result = new JSONObject();
 		result.put("merchantId", merchantId);

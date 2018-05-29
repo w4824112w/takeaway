@@ -2,6 +2,7 @@ package com.takeaway.modular.dao.dto;
 
 public class ActivitysDto {
 	private String id;
+	private String activityNo;
 	private String name;
 	private String fullMoney;
 	private String reduceMoney;
@@ -90,6 +91,14 @@ public class ActivitysDto {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getActivityNo() {
+		return activityNo;
+	}
+
+	public void setActivityNo(String activityNo) {
+		this.activityNo = activityNo;
 	}
 
 }

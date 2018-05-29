@@ -18,6 +18,10 @@ public interface ActivitysMapper {
 	
 	List<Activitys> getByMerchantId(String merchantId);
 	
+	String getTotalCount(String activityId);
+	
+	String getTotalPrice(String activityId);
+	
 	int save(Activitys activitys);
 	
 	int update(Activitys activitys);

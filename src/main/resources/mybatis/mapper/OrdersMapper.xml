@@ -49,13 +49,15 @@
 		<result column="orderScore" property="orderScore" jdbcType="INTEGER" />		
 		<result column="couponMoney" property="couponMoney" jdbcType="DECIMAL" />	
 		<result column="activityMoney" property="activityMoney" jdbcType="DECIMAL" />	
+		<result column="activity_id" property="activityId" jdbcType="INTEGER" />
+		<result column="coupon_id" property="couponId" jdbcType="INTEGER" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		id,order_no,merchant_id,user_id,order_type,meals,total_price,packingCharge,deliverMoney,
 		status,created_at,updated_at,is_pay,pay_date,pay_sno,realTotalMoney,is_ship,ship_date,is_receipt,receipt_date,
 		is_received,received_date,refund_apply_date,is_refund,refund_date,refund_money,refundSrcStatus,is_reservation,reservation_date,is_reminder,
 		reminder_date,is_distribution,distribution_date,merchant_type,remark,pay_type,is_invoice,invoiceClient,is_appraises,appraises_date,userName,userPhone,
-		userAddress,platform_commission,orderScore,couponMoney,activityMoney
+		userAddress,platform_commission,orderScore,couponMoney,activityMoney,activity_id,coupon_id
 	</sql>
 
 	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -203,7 +205,7 @@
 	<select id="businessReport" parameterType="com.takeaway.modular.dao.dto.BusinessReportDto"
 		resultType="com.takeaway.modular.dao.dto.BusinessReportDto">
 		select DATE_FORMAT(o.pay_date,'%Y-%m-%d') as settlTime,
-		sum(o.realTotalMoney) as totalPrice,
+		sum(o.total_price) as totalPrice,
 		(select count(0) from tb_orders where is_pay=1) as allCount,
 		(select count(0) from tb_orders where is_pay=1 and status in(4,5) and is_refund=0 ) as successCount,
 		(select count(0) from tb_orders where is_pay=1 and is_refund=1) as refundCount,
@@ -240,7 +242,7 @@
 		</if>
 		) as accessTimes,
 		sum(o.realTotalMoney) as realTotalMoney
-		from tb_orders o where o.is_pay=1 
+		from tb_orders o where o.is_pay=1 and o.`status` in(4,5) and o.is_refund=0 
 		<if test="reportTime != null and reportTime != ''">
 			and DATE_FORMAT(o.pay_date,'%Y-%m-%d') = #{reportTime,jdbcType=VARCHAR}
 		</if>
@@ -319,7 +321,7 @@
 		is_reminder,is_distribution,
 		remark,is_invoice,is_appraises,userName,
 		userPhone,userAddress,platform_commission,
-		couponMoney,activityMoney
+		couponMoney,activityMoney,coupon_id,activity_id
 		)
 		values
 		(#{orderNo,jdbcType=VARCHAR},#{merchantId,jdbcType=INTEGER},#{userId,jdbcType=INTEGER},#{meals,jdbcType=INTEGER},
@@ -332,7 +334,7 @@
 		#{remark,jdbcType=VARCHAR},#{isInvoice,jdbcType=INTEGER},
 		#{isAppraises,jdbcType=INTEGER},#{userName,jdbcType=VARCHAR},
 		#{userPhone,jdbcType=VARCHAR},#{userAddress,jdbcType=VARCHAR},#{platformCommission,jdbcType=DECIMAL},
-		#{couponMoney,jdbcType=DECIMAL},#{activityMoney,jdbcType=DECIMAL}
+		#{couponMoney,jdbcType=DECIMAL},#{activityMoney,jdbcType=DECIMAL},#{couponId,jdbcType=INTEGER},#{activityId,jdbcType=INTEGER}
 		)
 	</insert>
 

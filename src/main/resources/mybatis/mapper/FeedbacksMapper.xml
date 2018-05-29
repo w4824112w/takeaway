@@ -35,7 +35,10 @@
 		from tb_feedbacks f 
 		where 1=1 
 		<if test="merchantId != null and merchantId != ''">
-			and f.merchant_id = #{merchantId,jdbcType=VARCHAR}
+			and f.merchant_id = #{merchantId,jdbcType=VARCHAR} 
+		</if>
+		<if test="evaluate != null and evaluate != ''">
+			and f.evaluate = #{evaluate,jdbcType=VARCHAR} 
 		</if>
 		order by f.id desc
 	</select>
@@ -60,16 +63,16 @@
 		where pid = #{pid,jdbcType=VARCHAR}
 	</select>
 	
-	<select id="getTotalByGoodsScore" parameterType="com.takeaway.modular.dao.dto.FeedbacksDto" resultType="java.lang.Integer">
-		select sum(goodsScore)/count(0) as totalScore
+	<select id="getTotalScoreByMerchantId" parameterType="com.takeaway.modular.dao.dto.FeedbacksDto" resultType="java.lang.String">
+		select sum(goodsScore)+sum(foodScore)+sum(distributionScore)/count(0) as totalScore
 		from  tb_feedbacks f
  		where 1=1 
 		<if test="merchantId != null and merchantId != ''">
 			and f.merchant_id = #{merchantId,jdbcType=VARCHAR}
 		</if>
- 		<if test="goodsScore != null and goodsScore != ''">
+ 		<!-- <if test="goodsScore != null and goodsScore != ''">
 			and f.goodsScore = #{goodsScore,jdbcType=VARCHAR}
-		</if>
+		</if> -->
 		group by f.merchant_id
 	</select>
 	

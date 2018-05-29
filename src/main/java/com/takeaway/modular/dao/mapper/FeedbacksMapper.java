@@ -16,7 +16,7 @@ public interface FeedbacksMapper {
 	
 	List<Feedbacks> getAll();
 	
-	int getTotalByGoodsScore(FeedbacksDto dto);
+	String getTotalScoreByMerchantId(FeedbacksDto dto);
 	
 	List<Feedbacks> getByUserId(String userId);
 	
