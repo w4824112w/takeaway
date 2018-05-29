@@ -146,7 +146,6 @@ public class WeixinApiController {
 		log.info("开始计算价格....orders:"+orders.toString());
 		Map money = ordersService.computePrice(orders);
 		log.info("开始计算价格结束...."+money.toString());
-	//	return ErrorEnums.getResult(ErrorEnums.SUCCESS, "微信支付", money);
 		
 		log.info("开始判断价格是否正确.....");
 		Double realPayMoney=Double.parseDouble(money.get("realTotalMoney").toString())+Double.parseDouble(money.get("distributionFee").toString())+Double.parseDouble(money.get("packingCharge").toString());

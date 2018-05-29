@@ -54,13 +54,13 @@
 	
 	<select id="getTotalCount" parameterType="java.lang.String" resultType="java.lang.String" >
 		select count(o.id) as totalCount from tb_orders o where 
-  		o.is_pay=1 and o.`status` in(4,5)   
+  		o.is_pay=1 and o.`status` in(4,5,7)   
   		and o.activity_id=#{activityId,jdbcType=VARCHAR}
 	</select>
 	
 	<select id="getTotalPrice" parameterType="java.lang.String" resultType="java.lang.String" >
 		select sum(o.activityMoney) as totalPrice from tb_orders o where 
-  		o.is_pay=1 and o.`status` in(4,5)   
+  		o.is_pay=1 and o.`status` in(4,5,7)   
   		and o.activity_id=#{activityId,jdbcType=VARCHAR}
 	</select>
 
