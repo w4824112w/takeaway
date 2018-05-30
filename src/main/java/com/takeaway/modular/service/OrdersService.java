@@ -364,7 +364,7 @@ public class OrdersService {
 		userScores.setDataRemarks("配送订单成功后返送相应金额的积分");
 		userScores.setScoreType(1); // 积分标识(1:收入;2：支出;)
 		userScores.setCreatedAt(new Date());
-		userScoresMapper.update(userScores);
+		userScoresMapper.save(userScores);
 
 		CouponsDto couponsDto = new CouponsDto();
 		couponsDto.setMerchantId(orders.getMerchantId().toString());
