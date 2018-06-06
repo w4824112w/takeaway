@@ -33,7 +33,7 @@
 		f.item_id as itemId,f.pid ,f.evaluate,f.goodsScore,f.foodScore,
   		f.distributionScore,f.created_at as createdAt,f.content  
 		from tb_feedbacks f 
-		where 1=1 
+		where f.pid is null 
 		<if test="merchantId != null and merchantId != ''">
 			and f.merchant_id = #{merchantId,jdbcType=VARCHAR} 
 		</if>

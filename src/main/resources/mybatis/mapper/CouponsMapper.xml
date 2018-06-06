@@ -13,6 +13,7 @@
 		<result column="sendStartTime" property="sendStartTime" jdbcType="TIMESTAMP" />
 		<result column="sendEndTime" property="sendEndTime" jdbcType="TIMESTAMP" />
 		<result column="couponSendType" property="couponSendType" jdbcType="INTEGER" />
+		<result column="effectiveTime" property="effectiveTime" jdbcType="INTEGER" />
 		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
 		<result column="startDate" property="startDate" jdbcType="TIMESTAMP" />
 		<result column="endDate" property="endDate" jdbcType="TIMESTAMP" />
@@ -22,13 +23,13 @@
 
 	<sql id="Base_Column_List">
 		id,name,fullMoney,couponMoney,spendMoney,description,sendNum,receiveNum,sendStartTime,sendEndTime,
-		couponSendType,created_at,startDate,endDate,updated_at,status
+		couponSendType,effectiveTime,created_at,startDate,endDate,updated_at,status
 	</sql>
 
 	<select id="getById" parameterType="java.lang.String" resultType="com.takeaway.modular.dao.dto.CouponsDto">
 		select
 		c.id,c.name,c.fullMoney,c.couponMoney,c.spendMoney,c.description,c.sendNum,c.receiveNum,
-		c.sendStartTime,c.sendEndTime,c.couponSendType,c.created_at as createdAt,
+		c.sendStartTime,c.sendEndTime,c.couponSendType,c.effectiveTime,c.created_at as createdAt,
 		c.startDate,c.endDate,c.updated_at as updatedAt,c.status
 		from tb_coupons c
 		where c.id = #{id,jdbcType=VARCHAR}
@@ -63,8 +64,8 @@
 	<select id="getIndexAll" parameterType="java.lang.String" resultType="com.takeaway.modular.dao.dto.CouponsDto">
 		select
 		distinct  c.id,c.name,c.fullMoney,c.couponMoney,c.spendMoney,c.description,c.sendNum,c.receiveNum,
-		c.sendStartTime,c.sendEndTime,c.couponSendType,c.created_at as createdAt,
-		c.startDate,c.endDate,c.updated_at as updatedAt,c.status,cst.`name` as couponSendTypeName
+		c.sendStartTime,c.sendEndTime,c.couponSendType,c.effectiveTime,c.created_at as createdAt,
+		c.startDate,c.endDate,c.updated_at as updatedAt,c.status,cst.`name` as couponSendTypeName,c.effectiveTime 
 		from tb_coupons c LEFT JOIN tb_coupon_send_types cst ON c.couponSendType=cst.id 
 		 where c.status=1 and c.couponSendType=1 
 		and c.id not in(select distinct coupon_id from tb_user_coupons where user_id=#{userId,jdbcType=VARCHAR} 
@@ -82,7 +83,7 @@
 		resultType="com.takeaway.modular.dao.dto.CouponsDto">
 		select
 		c.id,c.name,c.fullMoney,c.couponMoney,c.spendMoney,c.description,c.sendNum,c.receiveNum,
-		c.sendStartTime,c.sendEndTime,c.couponSendType,c.created_at as createdAt,
+		c.sendStartTime,c.sendEndTime,c.couponSendType,c.effectiveTime,c.created_at as createdAt,
 		c.startDate,c.endDate,c.updated_at as updatedAt,c.status
 		from tb_coupons c where status=1 
 		<if test="name != null and name != ''">
@@ -105,7 +106,7 @@
 		</selectKey>
 		insert into tb_coupons (
 		name,fullMoney,couponMoney,spendMoney,description,sendNum,receiveNum,sendStartTime,sendEndTime,
-		couponSendType,startDate,endDate,created_at,status
+		couponSendType,effectiveTime,startDate,endDate,created_at,status
 		)
 		values
 		(
@@ -119,6 +120,7 @@
 		#{sendStartTime,jdbcType=TIMESTAMP},
 		#{sendEndTime,jdbcType=TIMESTAMP},
 		#{couponSendType,jdbcType=INTEGER},
+		#{effectiveTime,jdbcType=INTEGER},
 		#{startDate,jdbcType=TIMESTAMP},
 		#{endDate,jdbcType=TIMESTAMP},
 		#{createdAt,jdbcType=TIMESTAMP},
@@ -139,6 +141,7 @@
 		sendStartTime= #{sendStartTime,jdbcType=TIMESTAMP},
 		sendEndTime= #{sendEndTime,jdbcType=TIMESTAMP},
 		couponSendType= #{couponSendType,jdbcType=INTEGER},
+		effectiveTime= #{effectiveTime,jdbcType=INTEGER},
 		startDate= #{startDate,jdbcType=TIMESTAMP},
 		endDate= #{endDate,jdbcType=TIMESTAMP},
 		updated_at = #{updatedAt,jdbcType=TIMESTAMP},

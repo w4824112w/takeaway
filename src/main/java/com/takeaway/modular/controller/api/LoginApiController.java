@@ -116,7 +116,7 @@ public class LoginApiController {
 			user.setUserName(userName);
 			user.setUserPhoto(userPhoto);
 			user.setUserScore(0);
-			usersService.save(user);
+			usersService.saveApp(user);
 		}else{
 			user.setUserName(userName);
 			user.setUserPhoto(userPhoto);

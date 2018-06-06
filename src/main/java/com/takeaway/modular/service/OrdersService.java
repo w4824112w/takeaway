@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageList;
 import com.takeaway.commons.page.PageResult;
+import com.takeaway.commons.utils.DateUtil;
+import com.takeaway.commons.utils.PreciseCompute;
 import com.takeaway.commons.utils.RandomSequence;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.core.websocket.WebSocketServer;
@@ -140,6 +143,16 @@ public class OrdersService {
 
 	public BossReportDto bossReport(BossReportDto dto) {
 		BossReportDto report = ordersMapper.bossReport(dto);
+		if(report==null){
+			dto.setSettlTime(dto.getReportTime());
+			dto.setTotalPrice("0");
+			dto.setSuccessCount("0");
+			dto.setMaxMoney("0");
+			dto.setMinMoney("0");
+			dto.setAccessTimes("0");
+			dto.setRealTotalMoney("0");
+			return dto;
+		}
 		return report;
 	}
 
@@ -167,8 +180,23 @@ public class OrdersService {
 	public PageResult<Orders> findReservesPage(PageBounds bounds, OrdersDto dto) {
 		PageList<Orders> orders = ordersMapper.findReservesPage(bounds, dto);
 		for (Orders order : orders) {
-			order.setOrderItems(orderItemsMapper.getByOrderId(order.getId()
-					.toString()));
+			List<OrderItems> orderItems = orderItemsMapper.getByOrderId(order
+					.getId().toString());
+			for (OrderItems orderItem : orderItems) {
+				List<OrderItemPropertys> orderItemPropertys = orderItemPropertysMapper
+						.getByOrderItemId(orderItem.getId().toString());
+				for (OrderItemPropertys orderItemProperty : orderItemPropertys) {
+					ItemPropertys itemPropertys = itemPropertysMapper
+							.getById(orderItemProperty.getItemPropertyId()
+									.toString());
+					Propertys propertys = propertysMapper.getById(itemPropertys
+							.getPropertyId().toString());
+					orderItemProperty.setPrice(itemPropertys.getPrice());
+					orderItemProperty.setPropertyName(propertys.getName());
+				}
+				orderItem.setOrderItemPropertys(orderItemPropertys);
+			}
+			order.setOrderItems(orderItems);
 		}
 		return new PageResult<Orders>(orders);
 	}
@@ -180,19 +208,31 @@ public class OrdersService {
 		Merchants merchants = merchantsMapper.getById(orders.getMerchantId()
 				.toString());
 
-		orders.setDeliverMoney(merchants.getDistributionFee()); // 运费
+		if(StringUtils.isNotBlank(orders.getUserAddress())){
+			orders.setDeliverMoney(merchants.getDistributionFee()); // 运费
+		}else{
+			orders.setDeliverMoney(0.0); // 运费
+		}
+		
 		orders.setStatus(1); // 1 待支付。2 待发货。 3 待收货 4 待评价 5 已完成 6退款/售后
 		orders.setIsPay(0); // 未支付
 		orders.setIsShip(0); // 未发货
 		orders.setIsReceipt(0); // 未收货
 		orders.setIsReceived(0); // 未接单
 		orders.setIsRefund(0); // 未退款
-		if (orders.getReservationDate() != null) {
+		
+		
+		if(StringUtils.isNotBlank(orders.getReservationTime())){
 			orders.setIsReservation(1); // 未预定
-			orders.setReservationDate(null);
-		} else {
+		}else{
 			orders.setIsReservation(0); // 未预定
 		}
+/*		if (orders.getReservationDate() != null) {
+			
+		} else {
+			orders.setIsReservation(0); // 未预定
+			orders.setReservationDate(null);
+		}*/
 		orders.setIsReminder(0); // 未催单
 		orders.setIsDistribution(0); // 配送中
 		orders.setIsInvoice(0); // 是否需要发票
@@ -258,23 +298,23 @@ public class OrdersService {
 		for (OrderItems orderItem : orders.getOrderItems()) {
 			ItemsDto items = itemsMapper.getById(orderItem.getItemId()
 					.toString()); // 查询数据库对应商品
-			totalPrice += Double.parseDouble(items.getPrice())
-					* orderItem.getItemNums(); // 增加商品价格*数量
-			realTotalMoney += Double.parseDouble(items.getPrice())
-					* orderItem.getItemNums(); // 增加商品价格*数量
+			totalPrice = PreciseCompute.add(totalPrice, Double.parseDouble(items.getPrice())
+					* orderItem.getItemNums()); // 增加商品价格*数量
+			realTotalMoney =  PreciseCompute.add(realTotalMoney, Double.parseDouble(items.getPrice())
+					* orderItem.getItemNums()); // 增加商品价格*数量
 			if (orderItem.getItemPropertys() != null) {
 				for (ItemPropertys ItemPropertys : orderItem.getItemPropertys()) {
 					ItemPropertys.setItemId(Integer.parseInt(items.getId()));
 					ItemPropertys ItemProperty = itemPropertysMapper
 							.getByItemIdAndPropertyId(ItemPropertys); // 查询数据库对应属性
-					totalPrice += ItemProperty.getPrice()
-							* orderItem.getItemNums(); // 增加商品属性价格*数量
-					realTotalMoney += ItemProperty.getPrice()
-							* orderItem.getItemNums(); // 增加商品属性价格*数量
+					totalPrice =PreciseCompute.add(totalPrice, ItemProperty.getPrice()
+							* orderItem.getItemNums()); // 增加商品属性价格*数量
+					realTotalMoney = PreciseCompute.add(realTotalMoney, ItemProperty.getPrice()
+							* orderItem.getItemNums()); // 增加商品属性价格*数量
 				}
 			}
-			packingCharge += Double.parseDouble(items.getPackingCharge())
-					* orderItem.getItemNums(); // 增加打包费*数量
+			packingCharge =PreciseCompute.add(packingCharge, Double.parseDouble(items.getPackingCharge())
+					* orderItem.getItemNums()); // 增加打包费*数量
 		}
 
 		List<Activitys> activitys = activitysMapper.getByMerchantId(merchantId);
@@ -293,7 +333,7 @@ public class OrdersService {
 				}
 			}
 		}
-		realTotalMoney = realTotalMoney - maxActivityMoney; // 扣减活动价
+		realTotalMoney =PreciseCompute.sub(realTotalMoney, maxActivityMoney); // 扣减活动价
 
 		Double maxCouponMoney = 0.0;
 		Integer maxCouponId = null;
@@ -304,14 +344,14 @@ public class OrdersService {
 				Double spendMoney = Double.parseDouble(couponsDto
 						.getSpendMoney()); // 最低消费金额
 				if (realTotalMoney >= spendMoney) {
-					maxCouponMoney += Double.parseDouble(couponsDto
+					maxCouponMoney = Double.parseDouble(couponsDto
 							.getCouponMoney()); // 优惠券实际面额
 					maxCouponId=Integer.parseInt(couponsDto.getId());
 				}
 			}
 		}
 
-		realTotalMoney = realTotalMoney - maxCouponMoney; // 扣减优惠券
+		realTotalMoney =PreciseCompute.sub(realTotalMoney, maxCouponMoney); // 扣减优惠券
 
 		// realTotalMoney=realTotalMoney+packingCharge; // 打包费
 		// Double distributionFee=merchants.getDistributionFee();
@@ -393,6 +433,12 @@ public class OrdersService {
 
 	public Orders getById(String id) {
 		Orders orders = ordersMapper.getById(id);
+		if(orders.getReservationDate()!=null){
+			orders.setReservationTime(DateUtil.parseDatetime(orders.getReservationDate()));
+		}
+		if(orders.getDistributionDate()!=null){
+			orders.setDistributionTime(DateUtil.parseDatetime(orders.getDistributionDate()));
+		}
 		List<OrderItems> orderItems = orderItemsMapper.getByOrderId(id);
 		for (OrderItems orderItem : orderItems) {
 			List<OrderItemPropertys> orderItemPropertys = orderItemPropertysMapper

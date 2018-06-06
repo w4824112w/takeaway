@@ -3,6 +3,7 @@ package com.takeaway.modular.dao.dto;
 public class BusinessReportDto {
 	private String settlTime; // 时间
 	private String totalPrice; // 总营业额
+	private String totalRealTotalMoney; // 总实际收入
 	private String allCount; // 全部订单数
 	private String successCount; // 成功订单数
 	private String refundCount; // 退款订单数
@@ -118,6 +119,14 @@ public class BusinessReportDto {
 
 	public void setMerchantId(String merchantId) {
 		this.merchantId = merchantId;
+	}
+
+	public String getTotalRealTotalMoney() {
+		return totalRealTotalMoney;
+	}
+
+	public void setTotalRealTotalMoney(String totalRealTotalMoney) {
+		this.totalRealTotalMoney = totalRealTotalMoney;
 	}
 
 }

@@ -67,7 +67,7 @@
 		and im.item_id = #{itemId,jdbcType=VARCHAR}
 	</select>
 
-	<select id="appIndex" resultType="com.takeaway.modular.dao.dto.MerchantsDto">
+	<select id="appIndex" parameterType="com.takeaway.modular.dao.dto.MerchantsDto" resultType="com.takeaway.modular.dao.dto.MerchantsDto">
 		select
 		m.id,m.type_id as typeId,m.name,m.code,m.short_name as shortName,m.province_id as provinceId,m.city_id as cityId,
 		m.address,m.manager_name as managerName,m.manager_phone as managerPhone,
@@ -76,8 +76,12 @@
 		m.starting_price as startingPrice,m.full_free_distribution as fullFreeDistribution,m.distribution_fee as distributionFee,
 		m.distribution_scope as distributionScope,m.deliveryTime,m.is_online as isOnline,
 		m.status,m.created_at as createdAt,m.updated_at as updatedAt,
-		(select ROUND(sum(goodsScore)/count(0)) from  tb_feedbacks f where f.merchant_id=m.id group by f.merchant_id) as star
-		from tb_merchants m where m.status=1 order by m.id desc
+		(select ROUND(sum(goodsScore)/count(0)) from  tb_feedbacks f where f.merchant_id=m.id group by f.merchant_id) as star 
+		from tb_merchants m where m.status=1 
+		<if test="name != null and name != ''">
+			and m.name LIKE "%"#{name,jdbcType=VARCHAR}"%"
+		</if>
+		order by m.id desc
 	</select>
 
 	<select id="homePage" parameterType="com.takeaway.modular.dao.dto.MerchantsDto"

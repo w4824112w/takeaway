@@ -31,6 +31,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.takeaway.commons.utils.DateUtil;
 import com.takeaway.commons.utils.HttpUtil;
 import com.takeaway.commons.utils.OrderUtils;
+import com.takeaway.commons.utils.PreciseCompute;
 import com.takeaway.commons.utils.RandomSequence;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.core.enums.PaymentType;
@@ -134,6 +135,8 @@ public class WeixinApiController {
 	@RequestMapping(value = "/wxpay", method = RequestMethod.POST)
 	public JSONObject callbackForWxpay(HttpServletRequest request,
 			HttpServletResponse response,@RequestBody Orders orders) {
+		Orders old_orders=ordersService.getByOrderNo(orders.getOrderNo());
+		
 		if(StringUtils.isNotBlank(orders.getReservationTime())){
 			String reservationTime=orders.getReservationTime();
 			DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -143,24 +146,36 @@ public class WeixinApiController {
 				log.info("格式化预定时间错误");
 			}
 		}
-		log.info("开始计算价格....orders:"+orders.toString());
-		Map money = ordersService.computePrice(orders);
-		log.info("开始计算价格结束...."+money.toString());
 		
-		log.info("开始判断价格是否正确.....");
-		Double realPayMoney=Double.parseDouble(money.get("realTotalMoney").toString())+Double.parseDouble(money.get("distributionFee").toString())+Double.parseDouble(money.get("packingCharge").toString());
-		Double realTotalMoney=orders.getRealTotalMoney();
-		log.info("realTotalMoney---"+realTotalMoney+"---realPayMoney----"+realPayMoney);
-		if((Math.abs(realTotalMoney-realPayMoney)>0)){
-			return ErrorEnums.getResult(ErrorEnums.ERROR, "下单", null);
+		Double realPayMoney=0.00;
+		if(old_orders==null){
+			log.info("开始计算价格....orders:"+orders.toString());
+			Map money = ordersService.computePrice(orders);
+			log.info("开始计算价格结束...."+money.toString());
+			
+			log.info("开始判断价格是否正确.....");
+			
+			realPayMoney=PreciseCompute.add(realPayMoney, Double.parseDouble(money.get("realTotalMoney").toString()));
+			if(StringUtils.isNotBlank(orders.getUserAddress())){
+				realPayMoney=PreciseCompute.add(realPayMoney, Double.parseDouble(money.get("distributionFee").toString()));
+				orders.setDeliverMoney(Double.parseDouble(money.get("distributionFee").toString()));
+			}else{
+				orders.setDeliverMoney(0.0);
+			}
+			realPayMoney=PreciseCompute.add(realPayMoney, Double.parseDouble(money.get("packingCharge").toString()));
+			Double realTotalMoney=orders.getRealTotalMoney();
+			log.info("realTotalMoney---"+realTotalMoney+"---realPayMoney----"+realPayMoney);
+			if((PreciseCompute.sub(realTotalMoney, realPayMoney)>0)){
+				return ErrorEnums.getResult(ErrorEnums.ERROR, "收货地址--"+orders.getUserAddress()+"--前端传的实际付款价格:"+realTotalMoney+"--后端计算后得出的价格: "+realPayMoney+"--价格不对，下单", money.toString());
+			}
+		}else{
+			realPayMoney=old_orders.getRealTotalMoney();
 		}
+
 		
 		String openid=orders.getOpenid();
 		Users users=usersService.getByOpenid(openid);
 		
-		Orders old_orders=ordersService.getByOrderNo(orders.getOrderNo());
-		
-
 		
 		String orderNo;
 		if(old_orders!=null){
@@ -173,7 +188,18 @@ public class WeixinApiController {
 			orderNo = OrderUtils.generateTradeNo(); // 订单编号
 			orders.setOrderNo(orderNo);
 			orders.setUserId(users.getId());
-			ordersService.save(orders);
+			
+			if(realPayMoney<=0){
+				orders.setIsPay(1);	// 0：未支付;1：已支付;
+				orders.setPayDate(new Date());
+				orders.setStatus(2); 	// 1 待支付。2 待发货。  3 待收货 4 待评价  5 已完成  6退款/售后
+				ordersService.save(orders);
+				return ErrorEnums.getResult(ErrorEnums.SUCCESS, "微信支付", null);
+				
+			}else{
+				ordersService.save(orders);
+			}
+			
 			orderNo=orders.getOrderNo();
 		}
 		

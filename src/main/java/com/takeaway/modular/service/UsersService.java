@@ -77,6 +77,20 @@ public class UsersService {
 	}
 
 	@Transactional
+	public JSONObject saveApp(Users user) {
+		int result;
+
+		user.setStatus(1);
+		user.setCreatedAt(new Date());
+		result = usersMapper.save(user);
+		if (result > 0) {
+			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "新增会员", result);
+		} else {
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "新增会员", null);
+		}
+	}
+	
+	@Transactional
 	public JSONObject update(Users user) {
 		int result;
 		user.setUpdatedAt(new Date());
@@ -102,12 +116,14 @@ public class UsersService {
 	
 	public Users getByOpenid(String openid) {
 		Users users=usersMapper.getByOpenid(openid);
-		UserRanksDto dto=new UserRanksDto();
-		dto.setUserScore(users.getUserScore().toString());
-		UserRanks userRanks=userRanksMapper.getCurrentUserRanks(dto);
-		if(userRanks!=null){
-			users.setUserRank(userRanks.getName());
-			users.setNextRankScore(userRanks.getEndScore()-users.getUserScore()+"");
+		if(users!=null){
+			UserRanksDto dto=new UserRanksDto();
+			dto.setUserScore(users.getUserScore().toString());
+			UserRanks userRanks=userRanksMapper.getCurrentUserRanks(dto);
+			if(userRanks!=null){
+				users.setUserRank(userRanks.getName());
+				users.setNextRankScore(userRanks.getEndScore()-users.getUserScore()+"");
+			}
 		}
 		return users;
 	}

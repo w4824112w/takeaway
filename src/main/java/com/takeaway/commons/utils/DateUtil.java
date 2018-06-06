@@ -142,6 +142,21 @@ public class DateUtil {
 		return null;
 	}
 
+	public static String parseDatetime(Date date) {
+		if (date == null) {
+			return null;
+		}
+
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		try {
+			return format.format(date);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	/**
 	 * 得到日期字符串 默认格式（yyyy-MM-dd） pattern可以为："yyyy-MM-dd" "HH:mm:ss" "E"
 	 * 

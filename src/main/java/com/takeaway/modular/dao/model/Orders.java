@@ -46,6 +46,7 @@ public class Orders {
 	private Date reminderDate; // 催单时间
 	private Integer isDistribution; // (0：配送中;1：已配送;)
 	private Date distributionDate; // 配送时间
+	private String distributionTime; // 配送时间
 	private Integer merchantType;
 	@ApiModelProperty(value = "订单备注", required = false)
 	private String remark; // 订单备注
@@ -76,6 +77,7 @@ public class Orders {
 	private String merchantName;
 	private String merchantTel;
 	private String merchantPicture;
+	
 
 	private String createdTime; // 创建时间
 
@@ -567,6 +569,14 @@ public class Orders {
 
 	public void setCouponId(Integer couponId) {
 		this.couponId = couponId;
+	}
+
+	public String getDistributionTime() {
+		return distributionTime;
+	}
+
+	public void setDistributionTime(String distributionTime) {
+		this.distributionTime = distributionTime;
 	}
 
 }

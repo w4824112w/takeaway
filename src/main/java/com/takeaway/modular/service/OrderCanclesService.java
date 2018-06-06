@@ -2,6 +2,7 @@ package com.takeaway.modular.service;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +15,19 @@ import com.takeaway.commons.page.PageList;
 import com.takeaway.commons.page.PageResult;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.OrderCanclesDto;
+import com.takeaway.modular.dao.mapper.ItemPropertysMapper;
 import com.takeaway.modular.dao.mapper.OrderCanclesMapper;
+import com.takeaway.modular.dao.mapper.OrderItemPropertysMapper;
 import com.takeaway.modular.dao.mapper.OrderItemsMapper;
 import com.takeaway.modular.dao.mapper.OrdersMapper;
+import com.takeaway.modular.dao.mapper.PropertysMapper;
+import com.takeaway.modular.dao.model.ItemPropertys;
 import com.takeaway.modular.dao.model.OrderCancles;
+import com.takeaway.modular.dao.model.OrderItemPropertys;
+import com.takeaway.modular.dao.model.OrderItems;
 import com.takeaway.modular.dao.model.OrderReserves;
 import com.takeaway.modular.dao.model.Orders;
+import com.takeaway.modular.dao.model.Propertys;
 
 /**
  * 本地的
@@ -37,12 +45,38 @@ public class OrderCanclesService {
 	
 	@Autowired
 	private OrdersMapper ordersMapper;
+	
+	@Autowired
+	private ItemPropertysMapper itemPropertysMapper;
+
+	@Autowired
+	private PropertysMapper propertysMapper;
+	
+	@Autowired
+	private OrderItemPropertysMapper orderItemPropertysMapper;
 
 	public PageResult<OrderCancles> findPage(PageBounds bounds, OrderCanclesDto dto) {
 		PageList<OrderCancles> orderCancles = OrderCanclesMapper.findPage(bounds, dto);
 		for(OrderCancles orderCancle:orderCancles){
-			orderCancle.setOrders(ordersMapper.getById(orderCancle.getOrderId().toString()));
-			orderCancle.setOrderItems(orderItemsMapper.getByOrderId(orderCancle.getOrderId().toString()));
+			Orders order=ordersMapper.getById(orderCancle.getOrderId().toString());
+			orderCancle.setOrders(order);
+			List<OrderItems> orderItems = orderItemsMapper.getByOrderId(order
+					.getId().toString());
+			for (OrderItems orderItem : orderItems) {
+				List<OrderItemPropertys> orderItemPropertys = orderItemPropertysMapper
+						.getByOrderItemId(orderItem.getId().toString());
+				for (OrderItemPropertys orderItemProperty : orderItemPropertys) {
+					ItemPropertys itemPropertys = itemPropertysMapper
+							.getById(orderItemProperty.getItemPropertyId()
+									.toString());
+					Propertys propertys = propertysMapper.getById(itemPropertys
+							.getPropertyId().toString());
+					orderItemProperty.setPrice(itemPropertys.getPrice());
+					orderItemProperty.setPropertyName(propertys.getName());
+				}
+				orderItem.setOrderItemPropertys(orderItemPropertys);
+			}
+			order.setOrderItems(orderItems);
 		}
 		return new PageResult<OrderCancles>(orderCancles);
 	}

@@ -207,8 +207,10 @@ public class MerchantsService {
 		return merchantsMapper.getByItemId(itemId);
 	}
 
-	public List<MerchantsDto> getAllByUserId(String lat,String lng,String userId) {
-		List<MerchantsDto> merchants = merchantsMapper.appIndex();
+	public List<MerchantsDto> getAllByUserId(String lat,String lng,String userId,String name) {
+		MerchantsDto merchants_query=new MerchantsDto();
+		merchants_query.setName(name);
+		List<MerchantsDto> merchants = merchantsMapper.appIndex(merchants_query);
 		for (MerchantsDto dto : merchants) {
 			if(StringUtils.isNotBlank(lat)&&StringUtils.isNotBlank(lng)&&StringUtils.isNotBlank(dto.getLat())&&StringUtils.isNotBlank(dto.getLng())){
 				dto.setDistance(MapDistance.getDistance(lat, lng, dto.getLat(), dto.getLng()));

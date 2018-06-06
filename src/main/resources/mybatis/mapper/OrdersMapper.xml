@@ -164,7 +164,7 @@
 		o.is_appraises as isAppraises,o.appraises_date as appraisesDate,o.userName,o.userPhone,o.userAddress,o.platform_commission as platformCommission,o.orderScore,
 		o.couponMoney,o.activityMoney,m.name as merchantName,oi.targetName as targetName
 		from tb_orders o,tb_merchants m,tb_order_items oi 
-		where o.merchant_id=m.id and o.id=oi.order_id and o.status not in(1,8) 
+		where o.merchant_id=m.id and o.id=oi.order_id and o.status not in(1,8) and o.is_reservation=0 
 		<if test="userId != null and userId != ''">
 			and o.user_id = #{userId,jdbcType=VARCHAR}
 		</if>
@@ -181,10 +181,10 @@
 		resultType="com.takeaway.modular.dao.dto.ReportDto">
 		select DATE_FORMAT(o.pay_date,'%Y-%m-%d') as settlTime,
 		sum(o.total_price) as totalPrice,
-		sum(o.deliverMoney) as totalDeliverMoney,
-		sum(o.couponMoney) as totalCouponMoney,
-		sum(o.activityMoney) as totalActivityMoney,
-		sum(o.realTotalMoney) as totalRealTotalMoney,
+		sum(o.deliverMoney) as deliverMoney,
+		sum(o.couponMoney) as couponMoney,
+		sum(o.activityMoney) as activityMoney,
+		sum(o.realTotalMoney) as realTotalMoney,
 		sum(o.refund_money) as totalRefundMoney,
 		(sum(o.realTotalMoney)-sum(o.platform_commission)) as realIncome,
 		(sum(o.realTotalMoney)-sum(o.platform_commission))*0.006 as wxProcedures,
@@ -204,12 +204,16 @@
 	
 	<select id="businessReport" parameterType="com.takeaway.modular.dao.dto.BusinessReportDto"
 		resultType="com.takeaway.modular.dao.dto.BusinessReportDto">
+	select settlTime,totalPrice,totalRealTotalMoney,successCount,totalPackingCharge,
+			totalDeliverMoney,totalCouponMoney,totalActivityMoney,
+		(select count(0) from tb_orders where is_pay=1 and DATE_FORMAT(pay_date,'%Y-%m-%d')=temp.settlTime) as allCount,
+		(select count(0) from tb_orders where is_refund=1 and DATE_FORMAT(pay_date,'%Y-%m-%d')=temp.settlTime) as refundCount,
+		(select sum(refund_money) from tb_orders where is_refund=1 and DATE_FORMAT(pay_date,'%Y-%m-%d')=temp.settlTime) as refundTotalMoney
+ 		from (		
 		select DATE_FORMAT(o.pay_date,'%Y-%m-%d') as settlTime,
 		sum(o.total_price) as totalPrice,
-		(select count(0) from tb_orders where is_pay=1) as allCount,
-		(select count(0) from tb_orders where is_pay=1 and status in(4,5) and is_refund=0 ) as successCount,
-		(select count(0) from tb_orders where is_pay=1 and is_refund=1) as refundCount,
-		(select sum(refund_money) from tb_orders where is_refund=1) as refundTotalMoney,
+		sum(o.realTotalMoney) as totalRealTotalMoney,
+		count(0) as successCount,
    		sum(o.packingCharge) as totalPackingCharge,
 		sum(o.deliverMoney) as totalDeliverMoney,
 		sum(o.couponMoney) as totalCouponMoney,
@@ -226,6 +230,7 @@
 		</if>
 		group by DATE_FORMAT(o.pay_date,'%Y-%m-%d') 
 		order by DATE_FORMAT(o.pay_date,'%Y-%m-%d') desc
+		) temp
 	</select>
 	
  	<select id="bossReport" parameterType="com.takeaway.modular.dao.dto.BossReportDto"
@@ -293,7 +298,7 @@
 		select
 		<include refid="Base_Column_List" />
 		from tb_orders 
-		where 1=1 and is_reservation=1 and status=2 
+		where 1=1 and is_reservation=1 and status not in(1,8) 
 		<if test="orderNo != null and orderNo != ''">
 			and order_no = #{orderNo,jdbcType=VARCHAR}
 		</if>

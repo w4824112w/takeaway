@@ -71,12 +71,14 @@ public class MerchantsApiController {
 	@ApiImplicitParams({ 
 		@ApiImplicitParam(name = "lat", value = "经度", required = true, dataType = "String", paramType = "query"),
 		@ApiImplicitParam(name = "lng", value = "纬度", required = true, dataType = "String", paramType = "query"),
-		@ApiImplicitParam(name = "openid", value = "openid", required = true, dataType = "String", paramType = "query") })
+		@ApiImplicitParam(name = "openid", value = "openid", required = true, dataType = "String", paramType = "query"),
+		@ApiImplicitParam(name = "name", value = "店铺名称", required = false, dataType = "String", paramType = "query")
+		})
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public JSONObject list(HttpServletRequest request,
-			HttpServletResponse response, String lat,String lng,String openid) {
+			HttpServletResponse response, String lat,String lng,String openid,String name) {
 		Users user=usersService.getByOpenid(openid);
-		List<MerchantsDto> merchants = merchantsService.getAllByUserId(lat,lng,user.getId().toString());
+		List<MerchantsDto> merchants = merchantsService.getAllByUserId(lat,lng,user.getId().toString(),name);
 		JSONObject result = new JSONObject();
 		result.put("merchants", merchants);
 

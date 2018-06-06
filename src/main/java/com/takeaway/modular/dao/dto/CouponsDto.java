@@ -16,6 +16,7 @@ public class CouponsDto {
 	private String sendStartTime;
 	private String sendEndTime;
 	private String couponSendType;
+	private String effectiveTime;
 	private String couponSendTypeName;
 	private String createdAt;
 	private String startDate;
@@ -185,6 +186,14 @@ public class CouponsDto {
 
 	public void setMerchantId(String merchantId) {
 		this.merchantId = merchantId;
+	}
+
+	public String getEffectiveTime() {
+		return effectiveTime;
+	}
+
+	public void setEffectiveTime(String effectiveTime) {
+		this.effectiveTime = effectiveTime;
 	}
 
 }

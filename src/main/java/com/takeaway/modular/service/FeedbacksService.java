@@ -22,11 +22,13 @@ import com.takeaway.modular.dao.dto.UserRanksDto;
 import com.takeaway.modular.dao.mapper.FeedbacksMapper;
 import com.takeaway.modular.dao.mapper.ItemsMapper;
 import com.takeaway.modular.dao.mapper.MerchantsMapper;
+import com.takeaway.modular.dao.mapper.OrderItemsMapper;
 import com.takeaway.modular.dao.mapper.OrdersMapper;
 import com.takeaway.modular.dao.mapper.UserRanksMapper;
 import com.takeaway.modular.dao.mapper.UsersMapper;
 import com.takeaway.modular.dao.model.Feedbacks;
 import com.takeaway.modular.dao.model.OrderHistorys;
+import com.takeaway.modular.dao.model.OrderItems;
 import com.takeaway.modular.dao.model.Orders;
 import com.takeaway.modular.dao.model.UserRanks;
 import com.takeaway.modular.dao.model.Users;
@@ -59,16 +61,24 @@ public class FeedbacksService {
 	
 	@Autowired
 	private UserRanksMapper userRanksMapper;
+	
+	@Autowired
+	private OrderItemsMapper orderItemsMapper;
 
 	public PageResult<FeedbacksDto> findPage(PageBounds bounds, FeedbacksDto dto) {
 		PageList<FeedbacksDto> feedbacks = feedbacksMapper
 				.findPage(bounds, dto);
 		for (FeedbacksDto feedback : feedbacks) {
+			if(feedback.getPid()!=null){
+				continue;
+			}
 			feedback.setUsers(usersMapper.getById(feedback.getUserId()));
 			feedback.setOrders(ordersMapper.getById(feedback.getOrderId()));
 			feedback.setMerchants(merchantsMapper.getById(feedback
 					.getMerchantId()));
-			feedback.setItems(itemsMapper.getById(feedback.getItemId()));
+			List<OrderItems> orderItems = orderItemsMapper.getByOrderId(feedback.getOrders().getId().toString());
+			feedback.setItems(itemsMapper.getById(orderItems.get(0).getItemId().toString()));
+			feedback.setSubFeedbacks(feedbacksMapper.getByPid(feedback.getId()));
 		}
 		return new PageResult<FeedbacksDto>(feedbacks);
 	}

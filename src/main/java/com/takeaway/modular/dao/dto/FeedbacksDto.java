@@ -1,5 +1,8 @@
 package com.takeaway.modular.dao.dto;
 
+import java.util.List;
+
+import com.takeaway.modular.dao.model.Feedbacks;
 import com.takeaway.modular.dao.model.Items;
 import com.takeaway.modular.dao.model.Merchants;
 import com.takeaway.modular.dao.model.Orders;
@@ -23,6 +26,8 @@ public class FeedbacksDto {
 	private Orders orders;
 	private Merchants merchants;
 	private ItemsDto items;
+	
+	private List<Feedbacks> subFeedbacks;
 
 	public String getId() {
 		return id;
@@ -150,6 +155,14 @@ public class FeedbacksDto {
 
 	public void setPid(String pid) {
 		this.pid = pid;
+	}
+
+	public List<Feedbacks> getSubFeedbacks() {
+		return subFeedbacks;
+	}
+
+	public void setSubFeedbacks(List<Feedbacks> subFeedbacks) {
+		this.subFeedbacks = subFeedbacks;
 	}
 
 

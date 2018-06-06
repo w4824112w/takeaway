@@ -1,5 +1,7 @@
 package com.takeaway.modular.service;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -11,8 +13,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageList;
 import com.takeaway.commons.page.PageResult;
+import com.takeaway.commons.utils.DateUtil;
 import com.takeaway.core.enums.ErrorEnums;
+import com.takeaway.modular.dao.dto.CouponsDto;
 import com.takeaway.modular.dao.dto.UserCouponsDto;
+import com.takeaway.modular.dao.mapper.CouponsMapper;
 import com.takeaway.modular.dao.mapper.UserCouponsMapper;
 import com.takeaway.modular.dao.model.UserCoupons;
 
@@ -26,6 +31,9 @@ import com.takeaway.modular.dao.model.UserCoupons;
 public class UserCouponsService {
 	@Autowired
 	private UserCouponsMapper userCouponsMapper;
+	
+	@Autowired
+	private CouponsMapper couponsMapper;
 
 	public PageResult<UserCoupons> findPage(PageBounds bounds, UserCouponsDto dto) {
 		PageList<UserCoupons> userCoupons = userCouponsMapper.findPage(bounds, dto);
@@ -36,6 +44,8 @@ public class UserCouponsService {
 	public JSONObject save(UserCoupons userCoupons) {
 		int result;
 		
+		CouponsDto coupons=couponsMapper.getById(userCoupons.getCouponId().toString());
+		
 		UserCouponsDto dto=new UserCouponsDto();
 		dto.setUserId(userCoupons.getUserId().toString());
 		dto.setCouponId(userCoupons.getCouponId().toString());
@@ -44,6 +54,19 @@ public class UserCouponsService {
 		if(old_userCoupons!=null&&old_userCoupons.size()>0){
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "已领取过首页优惠券,", null);
 		}
+		
+		userCoupons.setCouponName(coupons.getName());
+		Integer effectiveTime=Integer.parseInt(coupons.getEffectiveTime());	// 有效时间(单位：月)
+		
+		SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd"); //制定日期格式
+		Calendar c=Calendar.getInstance();
+		Date date=new Date();
+		c.setTime(date);
+		c.add(Calendar.MONTH,effectiveTime); //将当前日期加n个月
+		String validityDate=df.format(c.getTime());  //返回String型的时间
+		userCoupons.setEndDate(DateUtil.parseDateString(validityDate));
+		
+	//	userCoupons.setEndDate(DateUtil.parseDatetimeString(coupons.getEndDate()));
 		
 		userCoupons.setAmount(1);
 		userCoupons.setStartDate(new Date());
@@ -80,7 +103,8 @@ public class UserCouponsService {
 	public List<UserCouponsDto> getCoupons(String userId) {
 		UserCouponsDto dto=new UserCouponsDto();
 		dto.setUserId(userId);
-		return userCouponsMapper.getCoupons(dto);
+		List<UserCouponsDto> userCoupons=userCouponsMapper.getCoupons(dto);
+		return userCoupons;
 	}
 	
 	

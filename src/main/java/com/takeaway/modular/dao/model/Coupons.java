@@ -18,6 +18,7 @@ public class Coupons {
 	private Date sendStartTime;
 	private Date sendEndTime;
 	private Integer couponSendType;
+	private Integer effectiveTime;
 	private Date createdAt;
 	private Date startDate;
 	private Date endDate;
@@ -170,6 +171,14 @@ public class Coupons {
 
 	public void setPictures(List<CouponPictures> pictures) {
 		this.pictures = pictures;
+	}
+
+	public Integer getEffectiveTime() {
+		return effectiveTime;
+	}
+
+	public void setEffectiveTime(Integer effectiveTime) {
+		this.effectiveTime = effectiveTime;
 	}
 
 }

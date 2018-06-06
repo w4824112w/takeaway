@@ -15,13 +15,19 @@ import com.takeaway.commons.page.PageList;
 import com.takeaway.commons.page.PageResult;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.OrderHistorysDto;
+import com.takeaway.modular.dao.mapper.ItemPropertysMapper;
 import com.takeaway.modular.dao.mapper.OrderHistorysMapper;
+import com.takeaway.modular.dao.mapper.OrderItemPropertysMapper;
 import com.takeaway.modular.dao.mapper.OrderItemsMapper;
 import com.takeaway.modular.dao.mapper.OrdersMapper;
+import com.takeaway.modular.dao.mapper.PropertysMapper;
+import com.takeaway.modular.dao.model.ItemPropertys;
 import com.takeaway.modular.dao.model.OrderCancles;
 import com.takeaway.modular.dao.model.OrderHistorys;
+import com.takeaway.modular.dao.model.OrderItemPropertys;
 import com.takeaway.modular.dao.model.OrderItems;
 import com.takeaway.modular.dao.model.Orders;
+import com.takeaway.modular.dao.model.Propertys;
 
 /**
  * 本地的
@@ -40,11 +46,35 @@ public class OrderHistorysService {
 	@Autowired
 	private OrdersMapper ordersMapper;
 	
+	@Autowired
+	private ItemPropertysMapper itemPropertysMapper;
+
+	@Autowired
+	private PropertysMapper propertysMapper;
+	
+	@Autowired
+	private OrderItemPropertysMapper orderItemPropertysMapper;
+	
 	public PageResult<OrderHistorys> findPage(PageBounds bounds, OrderHistorysDto dto) {
 		PageList<OrderHistorys> orderHistorys = orderHistorysMapper.findPage(bounds, dto);
 		for(OrderHistorys orderHistory:orderHistorys){
 			Orders orders=ordersMapper.getByOrderNo(orderHistory.getOrderNo().toString());
-			List<OrderItems> orderItems=orderItemsMapper.getByOrderId(orders.getId().toString());
+			List<OrderItems> orderItems = orderItemsMapper.getByOrderId(orders
+					.getId().toString());
+			for (OrderItems orderItem : orderItems) {
+				List<OrderItemPropertys> orderItemPropertys = orderItemPropertysMapper
+						.getByOrderItemId(orderItem.getId().toString());
+				for (OrderItemPropertys orderItemProperty : orderItemPropertys) {
+					ItemPropertys itemPropertys = itemPropertysMapper
+							.getById(orderItemProperty.getItemPropertyId()
+									.toString());
+					Propertys propertys = propertysMapper.getById(itemPropertys
+							.getPropertyId().toString());
+					orderItemProperty.setPrice(itemPropertys.getPrice());
+					orderItemProperty.setPropertyName(propertys.getName());
+				}
+				orderItem.setOrderItemPropertys(orderItemPropertys);
+			}
 			orderHistory.setOrderItems(orderItems);
 		}
 		return new PageResult<OrderHistorys>(orderHistorys);

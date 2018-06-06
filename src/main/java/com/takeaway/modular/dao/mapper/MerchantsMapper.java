@@ -23,7 +23,7 @@ public interface MerchantsMapper {
 	
 	List<Merchants> getByItemId(String itemId);
 	
-	List<MerchantsDto> appIndex();
+	List<MerchantsDto> appIndex(MerchantsDto dto);
 	
 	int save(Merchants merchants);
 	

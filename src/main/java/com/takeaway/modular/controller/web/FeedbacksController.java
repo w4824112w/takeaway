@@ -98,7 +98,7 @@ public class FeedbacksController {
 	@ApiImplicitParams({ 
 		@ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer", paramType = "query"),
 		@ApiImplicitParam(name = "rows", value = "页数", required = true, dataType = "Integer", paramType = "query"),
-		@ApiImplicitParam(name = "evaluate", value = "评价(1~3)1:差评;2:一般;3:好评;", required = true, dataType = "String", paramType = "query"),
+		@ApiImplicitParam(name = "evaluate", value = "评价(1~3)1:差评;2:一般;3:好评;", required = false, dataType = "String", paramType = "query"),
 		@ApiImplicitParam(name = "merchantId", value = "店铺id", required = false, dataType = "String", paramType = "query") })
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public JSONObject page(HttpServletRequest request,
