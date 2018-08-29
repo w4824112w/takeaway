@@ -65,13 +65,17 @@ public class UserAddressApiController {
 	}
 
 	@ApiOperation(value = "列表", httpMethod = "GET", notes = "获取会员收货地址")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "openid", value = "openid", required = false, dataType = "Integer", paramType = "query") })
+	@ApiImplicitParams({ 
+		@ApiImplicitParam(name = "lat", value = "经度", required = true, dataType = "String", paramType = "query"),
+		@ApiImplicitParam(name = "lng", value = "纬度", required = true, dataType = "String", paramType = "query"),
+		@ApiImplicitParam(name = "distributionScope", value = "配送范围", required = true, dataType = "Integer", paramType = "query"),
+		@ApiImplicitParam(name = "openid", value = "openid", required = false, dataType = "Integer", paramType = "query") })
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public JSONObject list(HttpServletRequest request,
-			HttpServletResponse response, String openid) {
+			HttpServletResponse response, String lat,String lng,Integer distributionScope,String openid) {
 		Users user = usersService.getByOpenid(openid);
 		String userId = user.getId().toString();
-		List<UserAddress> userAddress = userAddressService.getByUserId(userId);
+		List<UserAddress> userAddress = userAddressService.getByUserId(lat,lng,distributionScope,userId);
 		JSONObject result = new JSONObject();
 		result.put("userAddress", userAddress);
 

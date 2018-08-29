@@ -1,10 +1,12 @@
 package com.takeaway.modular.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +16,7 @@ import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageList;
 import com.takeaway.commons.page.PageResult;
 import com.takeaway.commons.utils.MD5Util;
+import com.takeaway.commons.utils.MapDistance;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.modular.dao.dto.UserAddressDto;
 import com.takeaway.modular.dao.mapper.UserAddressMapper;
@@ -62,8 +65,29 @@ public class UserAddressService {
 		return userAddressMapper.getById(id);
 	}
 
-	public List<UserAddress> getByUserId(String userId) {
-		return userAddressMapper.getByUserId(userId);
+	public List<UserAddress> getByUserId(String lat,String lng,Integer distributionScope,String userId) {
+		List<UserAddress> userAddress=userAddressMapper.getByUserId(userId);
+		List<UserAddress> result=new ArrayList<UserAddress>();
+		List<UserAddress> front=new ArrayList<UserAddress>();
+		List<UserAddress> back=new ArrayList<UserAddress>();
+		for(UserAddress userAddres:userAddress){
+			if(StringUtils.isBlank(lat)||StringUtils.isBlank(lng)||StringUtils.isBlank(userAddres.getLng())||StringUtils.isBlank(userAddres.getLat())){
+				userAddres.setIsDistributionScope(0);
+				back.add(userAddres);
+				continue;
+			}
+			String distance=MapDistance.getDistance(lng,lat,userAddres.getLng(),userAddres.getLat());
+			if(Integer.parseInt(distance)<=distributionScope){
+				userAddres.setIsDistributionScope(1); // 是否在范围内(0:不在范围内 1:在范围内)
+				front.add(userAddres);
+			}else{
+				userAddres.setIsDistributionScope(0);
+				back.add(userAddres);
+			}
+		}
+		result.addAll(front);
+		result.addAll(back);
+		return result;
 	}
 	
 	@Transactional

@@ -77,7 +77,7 @@
 		m.distribution_scope as distributionScope,m.deliveryTime,m.is_online as isOnline,
 		m.status,m.created_at as createdAt,m.updated_at as updatedAt,
 		(select ROUND(sum(goodsScore)/count(0)) from  tb_feedbacks f where f.merchant_id=m.id group by f.merchant_id) as star 
-		from tb_merchants m where m.status=1 
+		from tb_merchants m where m.status=1 and m.is_online=1 
 		<if test="name != null and name != ''">
 			and m.name LIKE "%"#{name,jdbcType=VARCHAR}"%"
 		</if>
@@ -170,56 +170,89 @@
 
 	<update id="update" parameterType="com.takeaway.modular.dao.model.Merchants">
 		update tb_merchants
-		set
-		type_id
-		= #{typeId,jdbcType=INTEGER},
-		name = #{name,jdbcType=VARCHAR},
-		code =
-		#{code,jdbcType=VARCHAR},
-		province_id = #{provinceId,jdbcType=INTEGER},
-		city_id = #{cityId,jdbcType=INTEGER},
-		address =
-		#{address,jdbcType=VARCHAR},
-		star = #{star,jdbcType=INTEGER},
-		manager_name = #{managerName,jdbcType=VARCHAR},
-		manager_phone =
-		#{managerPhone,jdbcType=VARCHAR},
-		description =
-		#{description,jdbcType=VARCHAR},
-		platform_commission =
-		#{platformCommission,jdbcType=DECIMAL},
-		tel =
-		#{tel,jdbcType=VARCHAR},
-		lat = #{lat,jdbcType=VARCHAR},
-		lng =
-		#{lng,jdbcType=VARCHAR},
-		logo =
-		#{logo,jdbcType=VARCHAR},
-		notice =
-		#{notice,jdbcType=VARCHAR},
-		start_date =
-		#{startDate,jdbcType=TIMESTAMP},
-		end_date =
-		#{endDate,jdbcType=TIMESTAMP},
-		distribution_info =
-		#{distributionInfo,jdbcType=VARCHAR},
-		starting_price =
-		#{startingPrice,jdbcType=DECIMAL},
-		full_free_distribution =
-		#{fullFreeDistribution,jdbcType=DECIMAL},
-		distribution_fee =
-		#{distributionFee,jdbcType=DECIMAL},
-		distribution_scope =
-		#{distributionScope,jdbcType=VARCHAR},
-		deliveryTime =
-		#{deliveryTime,jdbcType=VARCHAR},
-		is_online =
-		#{isOnline,jdbcType=INTEGER},
-		status =
-		#{status,jdbcType=INTEGER},
-		updated_at =
-		#{updatedAt,jdbcType=TIMESTAMP}
-		where id =
-		#{id,jdbcType=INTEGER}
+		<set>
+			<if test="typeId != null">
+				type_id= #{typeId,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				code =#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="provinceId != null">
+				province_id = #{provinceId,jdbcType=INTEGER},
+			</if>
+			<if test="cityId != null">
+				city_id = #{cityId,jdbcType=INTEGER},
+			</if>
+			<if test="address != null">
+				address =#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="star != null">
+				star = #{star,jdbcType=INTEGER},
+			</if>
+			<if test="managerName != null">
+				manager_name = #{managerName,jdbcType=VARCHAR},
+			</if>
+			<if test="managerPhone != null">
+				manager_phone =#{managerPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				description =#{description,jdbcType=VARCHAR},
+			</if>
+			<if test="platformCommission != null">
+				platform_commission =#{platformCommission,jdbcType=DECIMAL},
+			</if>
+			<if test="tel != null">
+				tel =#{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="lat != null">
+				lat = #{lat,jdbcType=VARCHAR},
+			</if>
+			<if test="lng != null">
+				lng =#{lng,jdbcType=VARCHAR},
+			</if>
+			<if test="logo != null">
+				logo =#{logo,jdbcType=VARCHAR},
+			</if>
+			<if test="notice != null">
+				notice =#{notice,jdbcType=VARCHAR},
+			</if>
+			<if test="startDate != null">
+				start_date =#{startDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endDate != null">
+				end_date =#{endDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="distributionInfo != null">
+				distribution_info =#{distributionInfo,jdbcType=VARCHAR},
+			</if>
+			<if test="startingPrice != null">
+				starting_price =#{startingPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="fullFreeDistribution != null">
+				full_free_distribution =#{fullFreeDistribution,jdbcType=DECIMAL},
+			</if>
+			<if test="distributionFee != null">
+				distribution_fee =#{distributionFee,jdbcType=DECIMAL},
+			</if>
+			<if test="distributionFee != null">
+				distribution_scope =#{distributionScope,jdbcType=VARCHAR},
+			</if>
+			<if test="deliveryTime != null">
+				deliveryTime =#{deliveryTime,jdbcType=VARCHAR},
+			</if>
+			<if test="isOnline != null">
+				is_online =#{isOnline,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				status =#{status,jdbcType=INTEGER},
+			</if>
+			<if test="updatedAt != null">
+				updated_at =#{updatedAt,jdbcType=TIMESTAMP}
+			</if>
+		</set>
+		where id =#{id,jdbcType=INTEGER}
 	</update>
 </mapper>

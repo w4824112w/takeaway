@@ -6,6 +6,11 @@ public class UserAddressDto {
 	private String name;
 	private String phone;
 	private String address;
+	
+	private String lat;
+	private String lng;
+	
+	private String isDistributionScope;	// 是否在范围内(0:不在范围内 1:在范围内)
 	private String createdAt;
 
 	public String getId() {
@@ -54,6 +59,30 @@ public class UserAddressDto {
 
 	public void setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public String getLat() {
+		return lat;
+	}
+
+	public void setLat(String lat) {
+		this.lat = lat;
+	}
+
+	public String getLng() {
+		return lng;
+	}
+
+	public void setLng(String lng) {
+		this.lng = lng;
+	}
+
+	public String getIsDistributionScope() {
+		return isDistributionScope;
+	}
+
+	public void setIsDistributionScope(String isDistributionScope) {
+		this.isDistributionScope = isDistributionScope;
 	}
 
 }

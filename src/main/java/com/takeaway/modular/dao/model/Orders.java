@@ -20,7 +20,7 @@ public class Orders {
 	private Double packingCharge; // 打包费
 	@ApiModelProperty(value = "运费", required = false)
 	private Double deliverMoney; // 运费
-	private Integer status; // (1 待支付。2 待发货。 3 待收货 4 待评价 5 已完成 6退款/售后)
+	private Integer status; // (1 待支付。2 待发货。  3 待收货 4 待评价  5 已完成  6退款/售后 7 已退款 8 超时未支付作废 9 已删除)
 	private Date createdAt; // 创建时间
 	private Date updatedAt; // 更新时间
 	private Integer isPay; // (0：未支付;1：已支付;)
@@ -71,12 +71,18 @@ public class Orders {
 	@ApiModelProperty(value = "openid", required = false)
 	private String openid;
 	
+	private String lat;	//	经度
+	private String lng;	//	纬度
+	
 	private Integer activityId;
 	private Integer couponId;
 
 	private String merchantName;
 	private String merchantTel;
 	private String merchantPicture;
+	
+	private String issorderno;	// 闪送平台订单号
+	
 	
 
 	private String createdTime; // 创建时间
@@ -577,6 +583,30 @@ public class Orders {
 
 	public void setDistributionTime(String distributionTime) {
 		this.distributionTime = distributionTime;
+	}
+
+	public String getLat() {
+		return lat;
+	}
+
+	public void setLat(String lat) {
+		this.lat = lat;
+	}
+
+	public String getLng() {
+		return lng;
+	}
+
+	public void setLng(String lng) {
+		this.lng = lng;
+	}
+
+	public String getIssorderno() {
+		return issorderno;
+	}
+
+	public void setIssorderno(String issorderno) {
+		this.issorderno = issorderno;
 	}
 
 }

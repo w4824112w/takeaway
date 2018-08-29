@@ -51,13 +51,14 @@
 		<result column="activityMoney" property="activityMoney" jdbcType="DECIMAL" />	
 		<result column="activity_id" property="activityId" jdbcType="INTEGER" />
 		<result column="coupon_id" property="couponId" jdbcType="INTEGER" />
+		<result column="issorderno" property="issorderno" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		id,order_no,merchant_id,user_id,order_type,meals,total_price,packingCharge,deliverMoney,
 		status,created_at,updated_at,is_pay,pay_date,pay_sno,realTotalMoney,is_ship,ship_date,is_receipt,receipt_date,
 		is_received,received_date,refund_apply_date,is_refund,refund_date,refund_money,refundSrcStatus,is_reservation,reservation_date,is_reminder,
 		reminder_date,is_distribution,distribution_date,merchant_type,remark,pay_type,is_invoice,invoiceClient,is_appraises,appraises_date,userName,userPhone,
-		userAddress,platform_commission,orderScore,couponMoney,activityMoney,activity_id,coupon_id
+		userAddress,platform_commission,orderScore,couponMoney,activityMoney,activity_id,coupon_id,issorderno
 	</sql>
 
 	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -162,7 +163,7 @@
 		o.is_reservation as isReservation,o.reservation_date as reservationDate,o.is_reminder as isReminder,o.reminder_date as reminderDate,
 		o.is_distribution as isDistribution,o.distribution_date as distributionDate,o.merchant_type as merchantType,o.remark,o.pay_type as payType,o.is_invoice as isInvoice,o.invoiceClient,
 		o.is_appraises as isAppraises,o.appraises_date as appraisesDate,o.userName,o.userPhone,o.userAddress,o.platform_commission as platformCommission,o.orderScore,
-		o.couponMoney,o.activityMoney,m.name as merchantName,oi.targetName as targetName
+		o.couponMoney,o.activityMoney,o.issorderno,m.name as merchantName,oi.targetName as targetName
 		from tb_orders o,tb_merchants m,tb_order_items oi 
 		where o.merchant_id=m.id and o.id=oi.order_id and o.status not in(1,8) and o.is_reservation=0 
 		<if test="userId != null and userId != ''">
@@ -416,7 +417,10 @@
 			is_appraises = #{isAppraises,jdbcType=INTEGER},
 		</if>
 		<if test="appraisesDate != null">
-			appraises_date = #{appraisesDate,jdbcType=TIMESTAMP} 
+			appraises_date = #{appraisesDate,jdbcType=TIMESTAMP}, 
+		</if>
+		<if test="issorderno != null">
+			issorderno = #{issorderno,jdbcType=VARCHAR} 
 		</if>
     </set>
     where id = #{id,jdbcType=INTEGER}

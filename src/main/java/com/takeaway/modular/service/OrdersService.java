@@ -1,5 +1,6 @@
 package com.takeaway.modular.service;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,14 +12,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageList;
 import com.takeaway.commons.page.PageResult;
 import com.takeaway.commons.utils.DateUtil;
+import com.takeaway.commons.utils.MapDistance;
+import com.takeaway.commons.utils.OrderUtils;
 import com.takeaway.commons.utils.PreciseCompute;
 import com.takeaway.commons.utils.RandomSequence;
 import com.takeaway.core.enums.ErrorEnums;
+import com.takeaway.core.netpay.wxpay.utils.HttpsRequest;
 import com.takeaway.core.websocket.WebSocketServer;
 import com.takeaway.modular.dao.dto.BossReportDto;
 import com.takeaway.modular.dao.dto.BusinessReportDto;
@@ -104,6 +109,9 @@ public class OrdersService {
 
 	@Autowired
 	private OrderItemPropertysMapper orderItemPropertysMapper;
+	
+	@Autowired
+	private DistributionsService distributionsService;
 
 	public PageResult<OrdersDto> findPage(PageBounds bounds, OrdersDto dto) {
 		PageList<OrdersDto> orders = ordersMapper.findPage(bounds, dto);
@@ -208,11 +216,11 @@ public class OrdersService {
 		Merchants merchants = merchantsMapper.getById(orders.getMerchantId()
 				.toString());
 
-		if(StringUtils.isNotBlank(orders.getUserAddress())){
+/*		if(StringUtils.isNotBlank(orders.getUserAddress())){
 			orders.setDeliverMoney(merchants.getDistributionFee()); // 运费
 		}else{
 			orders.setDeliverMoney(0.0); // 运费
-		}
+		}*/
 		
 		orders.setStatus(1); // 1 待支付。2 待发货。 3 待收货 4 待评价 5 已完成 6退款/售后
 		orders.setIsPay(0); // 未支付
@@ -223,16 +231,18 @@ public class OrdersService {
 		
 		
 		if(StringUtils.isNotBlank(orders.getReservationTime())){
-			orders.setIsReservation(1); // 未预定
+			orders.setIsReservation(1); // 已预定
 		}else{
 			orders.setIsReservation(0); // 未预定
 		}
-/*		if (orders.getReservationDate() != null) {
+		
+		if (orders.getReservationDate() != null) {
 			
 		} else {
 			orders.setIsReservation(0); // 未预定
 			orders.setReservationDate(null);
-		}*/
+		}
+		
 		orders.setIsReminder(0); // 未催单
 		orders.setIsDistribution(0); // 配送中
 		orders.setIsInvoice(0); // 是否需要发票
@@ -287,7 +297,19 @@ public class OrdersService {
 		}
 	}
 
+	public Map computeDistributionPrice(Map param){
+		Map ret=new HashMap();
+		
+		return ret;
+	}
+	
 	public Map computePrice(Orders orders) {
+		Orders old_orders = ordersMapper.getByOrderNo(orders.getOrderNo());
+		if(old_orders==null){
+			String orderNo = OrderUtils.generateTradeNo(); // 订单编号
+			orders.setOrderNo(orderNo); // 订单编号
+		}
+		
 		Map ret = new HashMap<String, Double>();
 		Double realTotalMoney = 0.0;	// 实际付款金额
 		Double totalPrice = 0.0;	// 营业额
@@ -366,7 +388,69 @@ public class OrdersService {
 
 		ret.put("totalPrice", totalPrice);	// 营业额
 		ret.put("realTotalMoney", realTotalMoney);	// 实际价格
-		ret.put("distributionFee", merchants.getDistributionFee()); // 运费
+		
+/*		if(StringUtils.isNotBlank(orders.getUserAddress())){
+			String lat=orders.getLat();
+			String lng=orders.getLng();
+		//	orders.setDeliverMoney(merchants.getDistributionFee()); // 运费
+			if(StringUtils.isNotBlank(lat)&&StringUtils.isNotBlank(lng)&&StringUtils.isNotBlank(merchants.getLat())&&StringUtils.isNotBlank(merchants.getLng())){
+				int distance=Integer.parseInt(MapDistance.getDistance(lng,lat,merchants.getLng(),merchants.getLat()));
+				ret.put("distance", distance); // 距离店铺多少km
+				if(distance<=3000){
+					orders.setDeliverMoney(6.0); // <=3km,运费6元
+				}else if(distance>3000&&distance<=4000){
+					orders.setDeliverMoney(7.0); // <=4km,运费7元
+				}else if(distance>4000&&distance<=5000){
+					orders.setDeliverMoney(9.0); // <=5km,运费9元
+				}else if(distance>5000&&distance<=6000){
+					orders.setDeliverMoney(10.0); // <=6km,运费10元
+				}else if(distance>6000&&distance<=8000){
+					orders.setDeliverMoney(15.0); // <=8km,运费15元
+				}else if(distance>8000&&distance<=11000){
+					orders.setDeliverMoney(20.0); // <=11km,运费20元
+				}else if(distance>11000&&distance<=12000){
+					orders.setDeliverMoney(25.0); // <=12km,运费25元
+				}else if(distance>12000&&distance<=14000){
+					orders.setDeliverMoney(40.0); // <=14km,运费40元
+				}else{
+					orders.setDeliverMoney(40.0); // >14km,运费40元
+				}
+			}else{
+				ret.put("distance", 0); // 距离店铺多少km
+				orders.setDeliverMoney(0.0); // 运费
+			}
+		}else{
+			ret.put("distance", 0); // 距离店铺多少km
+			orders.setDeliverMoney(0.0); // 运费
+		}
+		ret.put("distributionFee", orders.getDeliverMoney()); // 运费
+*/	//	ret.put("distributionFee", merchants.getDistributionFee()); // 运费
+		
+		
+		if(StringUtils.isNotBlank(orders.getUserAddress())){
+			String lat=orders.getLat();
+			String lng=orders.getLng();
+			if(StringUtils.isNotBlank(lat)&&StringUtils.isNotBlank(lng)&&StringUtils.isNotBlank(merchants.getLat())&&StringUtils.isNotBlank(merchants.getLng())){
+				Map<String, Object> distribution=distributionsService.computePrice(orders, merchants);
+				if(distribution.get("status").toString().equals("OK")){
+					Map data=(Map) distribution.get("data");
+					Double amount=BigDecimal.valueOf(Long.valueOf(data.get("amount").toString())).divide(new BigDecimal(100)).doubleValue();	//分转元
+					orders.setDeliverMoney(amount); // 运费:xx元
+					ret.put("distance", data.get("distance").toString()); // 距离店铺多少km
+				}else{
+					ret.put("distance", 0); // 距离店铺多少km
+					orders.setDeliverMoney(0.0); // 运费
+				}
+			}else{
+				ret.put("distance", 0); // 距离店铺多少km
+				orders.setDeliverMoney(0.0); // 运费
+			}
+		}else{
+			ret.put("distance", 0); // 距离店铺多少km
+			orders.setDeliverMoney(0.0); // 运费
+		}
+		ret.put("distributionFee", orders.getDeliverMoney()); // 运费
+		
 		ret.put("packingCharge", packingCharge); // 打包费
 		ret.put("maxActivityMoney", maxActivityMoney); // 活动最大减免费
 		ret.put("maxActivityName", maxActivityName); // 活动最大减免费名称
@@ -592,6 +676,10 @@ public class OrdersService {
 
 	@Transactional
 	public int delete(String id) {
+		Orders orders = ordersMapper.getById(id);
+		if(orders.getStatus()==2||orders.getStatus()==3){
+			return -1;
+		}
 		return ordersMapper.delete(id);
 	}
 

@@ -34,6 +34,7 @@ public class MerchantsDto {
 	private String distributionFee;
 	private String distributionScope;	//	店铺范围
 	private String distance;	//两个坐标点间的距离
+	private String duration;	//两个坐标点间的距离使用汽车所需时间(单位：分)
 	private String deliveryTime;
 	private String isOnline;
 	private String createdAt;
@@ -424,6 +425,14 @@ public class MerchantsDto {
 
 	public void setScore(String score) {
 		this.score = score;
+	}
+
+	public String getDuration() {
+		return duration;
+	}
+
+	public void setDuration(String duration) {
+		this.duration = duration;
 	}
 
 

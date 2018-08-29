@@ -4,13 +4,15 @@
 	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.UserAddress">
 		<id column="id" property="id" jdbcType="INTEGER" />
 		<result column="user_id" property="userId" jdbcType="INTEGER" />
-		<result column="name" property="name" jdbcType="INTEGER" />
-		<result column="phone" property="phone" jdbcType="INTEGER" />
-		<result column="address" property="address" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="lat" property="lat" jdbcType="VARCHAR" />
+		<result column="lng" property="lng" jdbcType="VARCHAR" />
 		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		id, user_id,name,phone, address,created_at
+		id, user_id,name,phone, address,lat,lng,created_at
 	</sql>
 
 	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -52,11 +54,12 @@
 			LAST_INSERT_ID()
 		</selectKey>
 		insert into tb_user_address (
-		user_id,name,phone, address,created_at
+		user_id,name,phone, address,lat,lng,created_at
 		)
 		values
 		(#{userId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
 		#{phone,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},
+		#{lat,jdbcType=VARCHAR},#{lng,jdbcType=VARCHAR},
 		#{createdAt,jdbcType=TIMESTAMP}
 		)
 	</insert>
@@ -67,7 +70,9 @@
 		user_id= #{userId,jdbcType=INTEGER}, 
 		name= #{name,jdbcType=VARCHAR},
 		phone= #{phone,jdbcType=VARCHAR},
-		address= #{address,jdbcType=VARCHAR}
+		address= #{address,jdbcType=VARCHAR},
+		lat= #{lat,jdbcType=VARCHAR},
+		lng= #{lng,jdbcType=VARCHAR}
 		where id = #{id,jdbcType=INTEGER}
 	</update>
 </mapper>

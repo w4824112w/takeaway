@@ -1,5 +1,7 @@
 package com.takeaway.commons.utils;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,21 +35,25 @@ public class MapDistance {
 
 		double radLat1 = rad(lat1);
 		double radLat2 = rad(lat2);
-		double difference = radLat1 - radLat2;
-		double mdifference = rad(lng1) - rad(lng2);
+		double difference = new BigDecimal(radLat1).subtract(new BigDecimal(radLat2)).doubleValue();
+		double mdifference = new BigDecimal(rad(lng1)).subtract(new BigDecimal(rad(lng2))).doubleValue();
 		double distance = 2 * Math.asin(Math.sqrt(Math.pow(
 				Math.sin(difference / 2), 2)
 				+ Math.cos(radLat1)
 				* Math.cos(radLat2)
 				* Math.pow(Math.sin(mdifference / 2), 2)));
 		distance = distance * EARTH_RADIUS;
-		distance = Math.round(distance * 10000) / 10000;
+		distance = Math.round(distance * 10000)/10;
 		String distanceStr = distance + "";
 		distanceStr = distanceStr.substring(0, distanceStr.indexOf("."));
+		
 
+		
 		return distanceStr;
 	}
 
+	
+	
 	/**
 	 * 获取当前用户一定距离以内的经纬度值 单位米 return minLat 最小经度 minLng 最小纬度 maxLat 最大经度 maxLng
 	 * 最大纬度 minLat
@@ -88,9 +94,14 @@ public class MapDistance {
 	public static void main(String[] args) {
 		// 测试经纬度：117.11811 36.68484
 		// 测试经纬度2：117.00999000000002 36.66123
-		// System.out.println(getDistance("117.11811","36.68484","117.00999000000002","36.66123"));
+		 System.out.println(getDistance("28.228863","112.994224","26.907657","112.558938"));
+		 
+	//	getDistanceFromTwoPoints(28.228863,112.994224,26.907657,112.558938);
+		 
+	//	 String temp=getLatLngDistance("112.994224","28.228863","112.558938","26.907657");
+	//	 System.out.println(temp);
 
-		System.out.println(getAround("117.11811", "36.68484", "13000"));
+	//	System.out.println(getAround("117.11811", "36.68484", "13000"));
 		// 117.01028712333508(Double), 117.22593287666493(Double),
 		// 36.44829619896034(Double), 36.92138380103966(Double)
 

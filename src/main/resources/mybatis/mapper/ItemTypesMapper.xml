@@ -41,6 +41,7 @@
 		from tb_item_types it,tb_items i,tb_item_merchants im 
 		where it.id=i.item_type and i.id=im.item_id 
 		and im.merchant_id = #{merchantId,jdbcType=VARCHAR}
+		order by it.code
 	</select>
 	
 	<delete id="delete" parameterType="java.lang.String">

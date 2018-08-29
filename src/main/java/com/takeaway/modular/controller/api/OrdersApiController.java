@@ -274,5 +274,24 @@ public class OrdersApiController {
 		}
 
 	}
+	
+	@ApiOperation(value = "删除", httpMethod = "GET", notes = "删除订单信息")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "订单id", required = true, dataType = "String", paramType = "query") })
+	@RequestMapping(value = "/delete", method = RequestMethod.GET)
+	public JSONObject delete(HttpServletRequest request,
+			HttpServletResponse response, String id) {
+		try {
+			int result = ordersService.delete(id);
+			if (result > 0) {
+				return ErrorEnums.getResult(ErrorEnums.SUCCESS, "删除订单", null);
+			} else {
+				return ErrorEnums.getResult(ErrorEnums.ERROR, "删除订单", null);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ErrorEnums.getResult(ErrorEnums.ERROR, "删除订单", null);
+		}
+
+	}
 
 }

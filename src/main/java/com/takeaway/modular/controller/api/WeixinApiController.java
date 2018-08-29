@@ -42,10 +42,13 @@ import com.takeaway.core.netpay.wxpay.utils.Configure;
 import com.takeaway.core.netpay.wxpay.utils.MapUtil;
 import com.takeaway.core.netpay.wxpay.utils.Signature;
 import com.takeaway.core.websocket.WebSocketServer;
+import com.takeaway.modular.dao.mapper.MerchantsMapper;
 import com.takeaway.modular.dao.mapper.OrderItemsMapper;
+import com.takeaway.modular.dao.model.Merchants;
 import com.takeaway.modular.dao.model.Orders;
 import com.takeaway.modular.dao.model.Users;
 import com.takeaway.modular.dao.model.WxPayNotifys;
+import com.takeaway.modular.service.DistributionsService;
 import com.takeaway.modular.service.OrdersService;
 import com.takeaway.modular.service.PayRequestsService;
 import com.takeaway.modular.service.UsersService;
@@ -68,10 +71,16 @@ public class WeixinApiController {
 	private OrderItemsMapper orderItemsMapper;
 	
 	@Autowired
+	private MerchantsMapper merchantsMapper;
+	
+	@Autowired
 	private PayRequestsService payRequestsService;
 	
 	@Autowired
 	private WxPayNotifysService wxPayNotifysService;
+	
+	@Autowired
+	private DistributionsService distributionsService;
 	
 	@RequestMapping(value = "/callback", method = RequestMethod.POST)
 	public void callback(HttpServletRequest request,
@@ -112,6 +121,15 @@ public class WeixinApiController {
 				order.setIsPay(1);	// 0：未支付;1：已支付;
 				order.setPayDate(new Date());
 				order.setStatus(2); 	// 1 待支付。2 待发货。  3 待收货 4 待评价  5 已完成  6退款/售后
+				
+				//调用闪送接口开始配送
+				Merchants merchants = merchantsMapper.getById(order.getMerchantId().toString());
+				Map<String, Object> distribution=distributionsService.saveOrder(order,merchants);
+				if(distribution.get("status").toString().equals("OK")){
+					order.setIssorderno(distribution.get("data").toString());
+				}else{
+					order.setIssorderno(null);
+				}
 				ordersService.update(order);
 				
 				JSONObject json = new JSONObject();
@@ -185,8 +203,8 @@ public class WeixinApiController {
 				return ErrorEnums.getResult(ErrorEnums.ERROR, "该订单已经付款", null);
 			}
 		}else{
-			orderNo = OrderUtils.generateTradeNo(); // 订单编号
-			orders.setOrderNo(orderNo);
+		//	orderNo = OrderUtils.generateTradeNo(); // 订单编号
+		//	orders.setOrderNo(orderNo);
 			orders.setUserId(users.getId());
 			
 			if(realPayMoney<=0){

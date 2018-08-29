@@ -68,6 +68,8 @@ public class OrdersDto {
 	private String startTime; // 开始日期
 	private String endTime; // 结束日期
 	
+	private String issorderno;	// 闪送平台订单号
+	
 	private List<OrderItems> orderItems;
 
 	
@@ -534,6 +536,14 @@ public class OrdersDto {
 
 	public void setCouponId(String couponId) {
 		this.couponId = couponId;
+	}
+
+	public String getIssorderno() {
+		return issorderno;
+	}
+
+	public void setIssorderno(String issorderno) {
+		this.issorderno = issorderno;
 	}
 
 }

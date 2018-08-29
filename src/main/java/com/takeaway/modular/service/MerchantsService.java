@@ -1,14 +1,22 @@
 package com.takeaway.modular.service;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.takeaway.commons.page.PageBounds;
 import com.takeaway.commons.page.PageList;
@@ -16,6 +24,8 @@ import com.takeaway.commons.page.PageResult;
 import com.takeaway.commons.utils.MD5Util;
 import com.takeaway.commons.utils.MapDistance;
 import com.takeaway.core.enums.ErrorEnums;
+import com.takeaway.core.netpay.wxpay.utils.Configure;
+import com.takeaway.core.netpay.wxpay.utils.HttpsRequest;
 import com.takeaway.modular.controller.web.UploadController;
 import com.takeaway.modular.dao.dto.FeedbacksDto;
 import com.takeaway.modular.dao.dto.MerchantsDto;
@@ -65,6 +75,9 @@ public class MerchantsService {
 	
 	@Autowired
 	private FeedbacksMapper feedbacksMapper;
+	
+	@Autowired
+	private RestTemplate restTemplate;
 
 	public PageResult<MerchantsDto> findPage(PageBounds bounds, MerchantsDto dto) {
 		PageList<MerchantsDto> merchants = merchantsMapper
@@ -207,13 +220,33 @@ public class MerchantsService {
 		return merchantsMapper.getByItemId(itemId);
 	}
 
-	public List<MerchantsDto> getAllByUserId(String lat,String lng,String userId,String name) {
+	public List<MerchantsDto> getAllByUserId(String lat,String lng,String userId,String name){
 		MerchantsDto merchants_query=new MerchantsDto();
 		merchants_query.setName(name);
 		List<MerchantsDto> merchants = merchantsMapper.appIndex(merchants_query);
 		for (MerchantsDto dto : merchants) {
 			if(StringUtils.isNotBlank(lat)&&StringUtils.isNotBlank(lng)&&StringUtils.isNotBlank(dto.getLat())&&StringUtils.isNotBlank(dto.getLng())){
-				dto.setDistance(MapDistance.getDistance(lat, lng, dto.getLat(), dto.getLng()));
+				dto.setDistance(MapDistance.getDistance(lng,lat,dto.getLng(),dto.getLat()));
+				
+			    //HTTP请求器
+				String result="";
+				try {
+					HttpsRequest httpsRequest = new HttpsRequest("noCert");
+					String origins=lng+","+lat;
+					String destinations=dto.getLng()+","+dto.getLat();
+					result = httpsRequest.sendGet("http://api.map.baidu.com/routematrix/v2/driving",origins,destinations);
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				
+				if(StringUtils.isNotBlank(result)){
+					JSONObject obj=(JSONObject) JSONObject.parse(result);
+					JSONArray ret_array=(JSONArray) obj.get("result");
+					JSONObject ret_obj=(JSONObject) ret_array.get(0);
+					Map duration=(Map) ret_obj.get("duration");
+					int time=Integer.parseInt(duration.get("value").toString())/60;
+					dto.setDuration(time+"");
+				}
 			}
 			
 			String merchantId = dto.getId().toString();
@@ -238,7 +271,20 @@ public class MerchantsService {
 			String score=feedbacksMapper.getTotalScoreByMerchantId(query_score);
 			dto.setScore(score);
 		}
+		
+		 Collections.sort(merchants,new Comparator () {
+	            @Override
+	            public int compare(Object o1, Object o2) {
+	                if(o1 instanceof MerchantsDto && o2 instanceof MerchantsDto){
+	                	MerchantsDto m1 = (MerchantsDto) o1;
+	                	MerchantsDto m2 = (MerchantsDto) o2;
+	                    return Integer.parseInt(m1.getDistance()) - Integer.parseInt(m2.getDistance());
+	                }
+	                throw new ClassCastException("不能转换为MerchantsDto类型");
+	            }
+	        });
 		return merchants;
 	}
 
+	
 }
