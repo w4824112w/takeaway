@@ -76,12 +76,17 @@ public class PreciseCompute {
 	}  
 	  
 	public static void main(String args[]){
-		Double temp=0.00;
+/*		Double temp=0.00;
 		temp=add(0.00,5.44);
 		System.out.println("temp---"+temp);
 		temp=sub(temp,5.44);
 		System.out.println("temp123---"+temp);
 		int qpk=(int)sub(5.74,5.14);
-		System.out.println("temp666---"+(sub(5.14,5.14)!=0));
+		System.out.println("temp666---"+(sub(5.14,5.14)!=0));*/
+		
+		System.out.println("temp123---"+sub(67.0,47.0));
+		if(47.0!=67.0){
+			System.out.println("true");
+		}
 	}
 }

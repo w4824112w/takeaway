@@ -36,6 +36,8 @@ public interface OrdersMapper {
 	
 	List<Orders> getByNotAppraises();
 	
+	List<Orders> getByNotReceipt();
+	
 	List<Orders> getByNotPay();
 	
 	PageList<Orders> getByRefund(PageBounds bounds,String userId);

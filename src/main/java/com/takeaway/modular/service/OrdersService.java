@@ -125,10 +125,12 @@ public class OrdersService {
 					ItemPropertys itemPropertys = itemPropertysMapper
 							.getById(orderItemProperty.getItemPropertyId()
 									.toString());
-					Propertys propertys = propertysMapper.getById(itemPropertys
-							.getPropertyId().toString());
-					orderItemProperty.setPrice(itemPropertys.getPrice());
-					orderItemProperty.setPropertyName(propertys.getName());
+					if(itemPropertys!=null){
+						Propertys propertys = propertysMapper.getById(itemPropertys
+								.getPropertyId().toString());
+						orderItemProperty.setPrice(itemPropertys.getPrice());
+						orderItemProperty.setPropertyName(propertys.getName());
+					}
 				}
 				orderItem.setOrderItemPropertys(orderItemPropertys);
 			}
@@ -197,10 +199,12 @@ public class OrdersService {
 					ItemPropertys itemPropertys = itemPropertysMapper
 							.getById(orderItemProperty.getItemPropertyId()
 									.toString());
+					if(itemPropertys!=null){
 					Propertys propertys = propertysMapper.getById(itemPropertys
 							.getPropertyId().toString());
 					orderItemProperty.setPrice(itemPropertys.getPrice());
 					orderItemProperty.setPropertyName(propertys.getName());
+					}
 				}
 				orderItem.setOrderItemPropertys(orderItemPropertys);
 			}
@@ -432,6 +436,7 @@ public class OrdersService {
 			String lng=orders.getLng();
 			if(StringUtils.isNotBlank(lat)&&StringUtils.isNotBlank(lng)&&StringUtils.isNotBlank(merchants.getLat())&&StringUtils.isNotBlank(merchants.getLng())){
 				Map<String, Object> distribution=distributionsService.computePrice(orders, merchants);
+				ret.put("distribution_result", distribution); // 闪送调用计算结果
 				if(distribution.get("status").toString().equals("OK")){
 					Map data=(Map) distribution.get("data");
 					Double amount=BigDecimal.valueOf(Long.valueOf(data.get("amount").toString())).divide(new BigDecimal(100)).doubleValue();	//分转元
@@ -636,6 +641,11 @@ public class OrdersService {
 
 	public List<Orders> getAllByNotAppraises() {
 		List<Orders> orders = ordersMapper.getByNotAppraises();
+		return orders;
+	}
+	
+	public List<Orders> getAllByNotReceipt() {
+		List<Orders> orders = ordersMapper.getByNotReceipt();
 		return orders;
 	}
 

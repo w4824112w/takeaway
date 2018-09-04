@@ -69,6 +69,7 @@ public class OrdersDto {
 	private String endTime; // 结束日期
 	
 	private String issorderno;	// 闪送平台订单号
+	private String syncstatus;	// 闪送平台订单状态
 	
 	private List<OrderItems> orderItems;
 
@@ -544,6 +545,14 @@ public class OrdersDto {
 
 	public void setIssorderno(String issorderno) {
 		this.issorderno = issorderno;
+	}
+
+	public String getSyncstatus() {
+		return syncstatus;
+	}
+
+	public void setSyncstatus(String syncstatus) {
+		this.syncstatus = syncstatus;
 	}
 
 }

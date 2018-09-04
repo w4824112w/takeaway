@@ -1,5 +1,6 @@
 package com.takeaway.modular.controller.api;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.takeaway.core.enums.ErrorEnums;
+import com.takeaway.core.netpay.wxpay.api.PayUtils;
 import com.takeaway.modular.dao.model.Activitys;
 import com.takeaway.modular.dao.model.Managers;
 import com.takeaway.modular.dao.model.Orders;
@@ -50,25 +52,38 @@ public class DistributionsApiController {
 
 	@Autowired
 	private DistributionsService distributionsService;
-	
+
 	@Autowired
 	private OrdersService ordersService;
 
+	@RequestMapping(value = "/syncstatus", method = RequestMethod.GET)
+	public void syncstatus(HttpServletRequest request,
+			HttpServletResponse response, String partnerno, String orderno,
+			String mobile, String signature, String issorderno, String status,
+			String statuscode)throws IOException {
+		Orders orders=ordersService.getByOrderNo(orderno);
+		if(orders!=null){
+			orders.setSyncstatus(statuscode);
+			ordersService.update(orders);
+		}
+		response.getWriter().write("回调结束");
+	}
+
 	@ApiOperation(value = "订单查询", httpMethod = "GET", notes = "查询闪送订单配送状态")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "orderNo", value = "订单号", required = true, dataType = "String", paramType = "query")
-		})
+	@ApiImplicitParams({ @ApiImplicitParam(name = "orderNo", value = "订单号", required = true, dataType = "String", paramType = "query") })
 	@RequestMapping(value = "/queryOrder", method = RequestMethod.GET)
 	public JSONObject queryOrder(HttpServletRequest request,
-			HttpServletResponse response,
-			String orderNo) {
+			HttpServletResponse response, String orderNo) {
 		try {
 			Orders orders = ordersService.getByOrderNo(orderNo);
-			if(StringUtils.isBlank(orders.getIssorderno())){
-				return ErrorEnums.getResult(ErrorEnums.ERROR, "闪送平台订单号不存在，查询配送信息", null);
+			if (StringUtils.isBlank(orders.getIssorderno())) {
+				return ErrorEnums.getResult(ErrorEnums.ERROR,
+						"闪送平台订单号不存在，查询配送信息", null);
 			}
-			Map<String, Object> result=distributionsService.queryOrder(orders.getOrderNo(), orders.getIssorderno());
-			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "闪送订单配送状态查询", result);
+			Map<String, Object> result = distributionsService.queryOrder(
+					orders.getOrderNo(), orders.getIssorderno());
+			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "闪送订单配送状态查询",
+					result);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "系统出现异常", null);
@@ -77,24 +92,24 @@ public class DistributionsApiController {
 	}
 
 	@ApiOperation(value = "订单轨迹", httpMethod = "GET", notes = "查询闪送订单配送轨迹")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "orderNo", value = "订单号", required = true, dataType = "String", paramType = "query")
-		})
+	@ApiImplicitParams({ @ApiImplicitParam(name = "orderNo", value = "订单号", required = true, dataType = "String", paramType = "query") })
 	@RequestMapping(value = "/queryTrail", method = RequestMethod.GET)
 	public JSONObject queryTrail(HttpServletRequest request,
-			HttpServletResponse response,
-			String orderNo) {
+			HttpServletResponse response, String orderNo) {
 		try {
 			Orders orders = ordersService.getByOrderNo(orderNo);
-			if(StringUtils.isBlank(orders.getIssorderno())){
-				return ErrorEnums.getResult(ErrorEnums.ERROR, "闪送平台订单号不存在，查询配送信息", null);
+			if (StringUtils.isBlank(orders.getIssorderno())) {
+				return ErrorEnums.getResult(ErrorEnums.ERROR,
+						"闪送平台订单号不存在，查询配送信息", null);
 			}
-			Map<String, Object> result=distributionsService.queryTrail(orders.getOrderNo(), orders.getIssorderno());
-			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "闪送订单配送轨迹查询", result);
+			Map<String, Object> result = distributionsService.queryTrail(
+					orders.getOrderNo(), orders.getIssorderno());
+			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "闪送订单配送轨迹查询",
+					result);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ErrorEnums.getResult(ErrorEnums.ERROR, "系统出现异常", null);
 		}
 	}
-	
+
 }

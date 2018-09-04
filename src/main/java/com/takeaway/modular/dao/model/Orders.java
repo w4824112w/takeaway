@@ -83,6 +83,8 @@ public class Orders {
 	
 	private String issorderno;	// 闪送平台订单号
 	
+	private String syncstatus;	// 闪送平台订单状态
+	
 	
 
 	private String createdTime; // 创建时间
@@ -607,6 +609,14 @@ public class Orders {
 
 	public void setIssorderno(String issorderno) {
 		this.issorderno = issorderno;
+	}
+
+	public String getSyncstatus() {
+		return syncstatus;
+	}
+
+	public void setSyncstatus(String syncstatus) {
+		this.syncstatus = syncstatus;
 	}
 
 }

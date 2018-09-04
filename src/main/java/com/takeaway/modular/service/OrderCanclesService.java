@@ -69,10 +69,12 @@ public class OrderCanclesService {
 					ItemPropertys itemPropertys = itemPropertysMapper
 							.getById(orderItemProperty.getItemPropertyId()
 									.toString());
+					if(itemPropertys!=null){
 					Propertys propertys = propertysMapper.getById(itemPropertys
 							.getPropertyId().toString());
 					orderItemProperty.setPrice(itemPropertys.getPrice());
 					orderItemProperty.setPropertyName(propertys.getName());
+					}
 				}
 				orderItem.setOrderItemPropertys(orderItemPropertys);
 			}

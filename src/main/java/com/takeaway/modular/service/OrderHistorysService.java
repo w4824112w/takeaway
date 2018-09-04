@@ -59,6 +59,9 @@ public class OrderHistorysService {
 		PageList<OrderHistorys> orderHistorys = orderHistorysMapper.findPage(bounds, dto);
 		for(OrderHistorys orderHistory:orderHistorys){
 			Orders orders=ordersMapper.getByOrderNo(orderHistory.getOrderNo().toString());
+			if(orders==null){
+				continue;
+			}
 			List<OrderItems> orderItems = orderItemsMapper.getByOrderId(orders
 					.getId().toString());
 			for (OrderItems orderItem : orderItems) {
@@ -68,10 +71,12 @@ public class OrderHistorysService {
 					ItemPropertys itemPropertys = itemPropertysMapper
 							.getById(orderItemProperty.getItemPropertyId()
 									.toString());
+					if(itemPropertys!=null){
 					Propertys propertys = propertysMapper.getById(itemPropertys
 							.getPropertyId().toString());
 					orderItemProperty.setPrice(itemPropertys.getPrice());
 					orderItemProperty.setPropertyName(propertys.getName());
+					}
 				}
 				orderItem.setOrderItemPropertys(orderItemPropertys);
 			}

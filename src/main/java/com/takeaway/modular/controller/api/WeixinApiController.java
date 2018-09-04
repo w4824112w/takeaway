@@ -183,7 +183,10 @@ public class WeixinApiController {
 			realPayMoney=PreciseCompute.add(realPayMoney, Double.parseDouble(money.get("packingCharge").toString()));
 			Double realTotalMoney=orders.getRealTotalMoney();
 			log.info("realTotalMoney---"+realTotalMoney+"---realPayMoney----"+realPayMoney);
-			if((PreciseCompute.sub(realTotalMoney, realPayMoney)>0)){
+			/*if((PreciseCompute.sub(realTotalMoney, realPayMoney)>0)){
+				return ErrorEnums.getResult(ErrorEnums.ERROR, "收货地址--"+orders.getUserAddress()+"--前端传的实际付款价格:"+realTotalMoney+"--后端计算后得出的价格: "+realPayMoney+"--价格不对，下单", money.toString());
+			}*/
+			if(realTotalMoney.compareTo(realPayMoney)!=0){
 				return ErrorEnums.getResult(ErrorEnums.ERROR, "收货地址--"+orders.getUserAddress()+"--前端传的实际付款价格:"+realTotalMoney+"--后端计算后得出的价格: "+realPayMoney+"--价格不对，下单", money.toString());
 			}
 		}else{

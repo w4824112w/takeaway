@@ -273,17 +273,6 @@ public class DistributionsService {
 
 	public static Map<String, Object> getForJson(String url,
 			Map<String, Object> params) {
-		/*
-		 * String url =
-		 * "https://api.weixin.qq.com/sns/jscode2session?appid={appid}&secret={secret}&js_code={js_code}&grant_type={grant_type}"
-		 * ;
-		 * 
-		 * Map<String, Object> parms = new HashMap<String, Object>();
-		 * parms.put("appid", Configure.getAppid()); parms.put("secret",
-		 * Configure.getSecret()); parms.put("js_code", code);
-		 * parms.put("grant_type", "authorization_code");
-		 */
-
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getMessageConverters().set(1,
 				new StringHttpMessageConverter(StandardCharsets.UTF_8));
@@ -312,9 +301,10 @@ public class DistributionsService {
 	}
 
 	public static void main(String args[]) {
-		// String url=devUrl+"openapi/order/v3/calc";
-		String url = prodUrl + "openapi/order/v3/calc";
-		String orderNo="No100001";
+		String url=devUrl+"openapi/order/v3/calc";
+	//	String url = prodUrl + "openapi/order/v3/calc";
+	//	String url = prodUrl + "openapi/order/v3/save";
+		String orderNo="20180830093503194QKA51";
 		
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("partnerNo", partnerNo);
@@ -324,40 +314,40 @@ public class DistributionsService {
 
 		Map<String, Object> order = new HashMap<String, Object>();
 		order.put("orderNo", orderNo);
-		order.put("goods", "蛋糕");
+		order.put("goods", "test");
 		order.put("weight", 1);
-		order.put("addition", 500);
+		order.put("addition", 0);
 		order.put("appointTime", null);
-		order.put("remark", "轻拿轻放!");
+		order.put("remark", "123456");
 
 		Map<String, String> merchant = new HashMap<String, String>();
 		merchant.put("id", mchId);
 		merchant.put("mobile", mchPhone);
-		merchant.put("name", "紫竹林");
+		merchant.put("name", "葵花里居委会");
 		merchant.put("token", mchToken);
 
 		order.put("merchant", merchant);
 
 		Map<String, String> sender = new HashMap<String, String>();
-		sender.put("mobile", "13241887706");
-		sender.put("name", "朱建波");
-		sender.put("city", "北京市");
-		sender.put("addr", "北京市海淀区上地三街9号嘉华大厦");
-		sender.put("addrDetail", "D座403室");
-		sender.put("lng", "116.314423");
-		sender.put("lat", "40.042802");
+		sender.put("mobile", "17773433888");
+		sender.put("name", "徐总");
+		sender.put("city", "衡阳市");
+		sender.put("addr", "衡阳市珠晖区葵花里居委会");
+	//	sender.put("addrDetail", "D座403室");
+		sender.put("lng", "116.40");
+		sender.put("lat", "39.91");
 
 		order.put("sender", sender);
 
 		List<Map<String, String>> receiverList = new ArrayList<Map<String, String>>();
 		Map<String, String> receiver = new HashMap<String, String>();
-		receiver.put("mobile", "13241887706");
-		receiver.put("name", "朱建波");
-		receiver.put("city", "北京市");
-		receiver.put("addr", "北京市海淀区上地三街9号嘉华大厦");
-		receiver.put("addrDetail", "D座403室");
-		receiver.put("lng", "116.314423");
-		receiver.put("lat", "40.042802");
+		receiver.put("mobile", "17773433888");
+		receiver.put("name", "string");
+		receiver.put("city", "衡阳市");
+		receiver.put("addr", "string");
+	//	receiver.put("addrDetail", "D座403室");
+		receiver.put("lng", "116.28307342529294");
+		receiver.put("lat", "40.04860781805171");
 		receiverList.add(receiver);
 
 		order.put("receiverList", receiverList);
@@ -369,4 +359,5 @@ public class DistributionsService {
 		System.out.println("url------" + url + "---json------" + json);
 		Map<String, Object> result=postForJson(url, param);
 	}
+	
 }
