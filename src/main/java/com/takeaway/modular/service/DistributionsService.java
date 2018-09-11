@@ -105,7 +105,7 @@ public class DistributionsService {
 		order.put("merchant", merchant);
 
 		Map<String, String> sender = new HashMap<String, String>();
-		sender.put("mobile", merchants.getTel());
+		sender.put("mobile", "13575240810");
 		sender.put("name", merchants.getManagerName());
 		sender.put("city", "衡阳市");
 		sender.put("addr", merchants.getAddress());
@@ -169,7 +169,7 @@ public class DistributionsService {
 		order.put("merchant", merchant);
 
 		Map<String, String> sender = new HashMap<String, String>();
-		sender.put("mobile", "13241887706");
+		sender.put("mobile", "13575240810");
 		sender.put("name", merchants.getManagerName());
 		sender.put("city", "衡阳市");
 		sender.put("addr", merchants.getAddress());
@@ -302,7 +302,6 @@ public class DistributionsService {
 
 	public static void main(String args[]) {
 		String url=devUrl+"openapi/order/v3/calc";
-	//	String url = prodUrl + "openapi/order/v3/calc";
 	//	String url = prodUrl + "openapi/order/v3/save";
 		String orderNo="20180830093503194QKA51";
 		
@@ -329,7 +328,7 @@ public class DistributionsService {
 		order.put("merchant", merchant);
 
 		Map<String, String> sender = new HashMap<String, String>();
-		sender.put("mobile", "17773433888");
+		sender.put("mobile", "13575240810");
 		sender.put("name", "徐总");
 		sender.put("city", "衡阳市");
 		sender.put("addr", "衡阳市珠晖区葵花里居委会");

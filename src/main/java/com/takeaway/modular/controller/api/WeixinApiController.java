@@ -123,13 +123,16 @@ public class WeixinApiController {
 				order.setStatus(2); 	// 1 待支付。2 待发货。  3 待收货 4 待评价  5 已完成  6退款/售后
 				
 				//调用闪送接口开始配送
-				Merchants merchants = merchantsMapper.getById(order.getMerchantId().toString());
-				Map<String, Object> distribution=distributionsService.saveOrder(order,merchants);
-				if(distribution.get("status").toString().equals("OK")){
-					order.setIssorderno(distribution.get("data").toString());
-				}else{
-					order.setIssorderno(null);
+				if(order.getIsReservation()==1){	// 已预定
+					Merchants merchants = merchantsMapper.getById(order.getMerchantId().toString());
+					Map<String, Object> distribution=distributionsService.saveOrder(order,merchants);
+					if(distribution.get("status").toString().equals("OK")){
+						order.setIssorderno(distribution.get("data").toString());
+					}else{
+						order.setIssorderno(null);
+					}
 				}
+				
 				ordersService.update(order);
 				
 				JSONObject json = new JSONObject();

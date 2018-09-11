@@ -459,6 +459,14 @@ public class OrdersService {
 		ret.put("packingCharge", packingCharge); // 打包费
 		ret.put("maxActivityMoney", maxActivityMoney); // 活动最大减免费
 		ret.put("maxActivityName", maxActivityName); // 活动最大减免费名称
+		
+		if(StringUtils.isBlank(orders.getUserAddress())){
+			ret.put("distributionFee", 0.0); // 运费
+			ret.put("packingCharge", 0.0); // 打包费
+			
+			orders.setDeliverMoney(0.0); // 运费
+			orders.setPackingCharge(0.0);// 打包费
+		}
 		return ret;
 	}
 
