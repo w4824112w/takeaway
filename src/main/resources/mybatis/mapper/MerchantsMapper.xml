@@ -30,6 +30,7 @@
 			jdbcType="DECIMAL" />
 		<result column="full_free_distribution" property="fullFreeDistribution"
 			jdbcType="DECIMAL" />
+		<result column="distribution_type" property="distributionType" jdbcType="INTEGER" />	
 		<result column="distribution_fee" property="distributionFee"
 			jdbcType="DECIMAL" />
 		<result column="distribution_scope" property="distributionScope"
@@ -43,7 +44,7 @@
 	<sql id="Base_Column_List">
 		id,type_id,name,code,short_name,province_id,city_id,address,star,manager_name,manager_phone,
 		description,platform_commission,tel,lat,lng,logo,notice,start_date,end_date,distribution_info,
-		starting_price,full_free_distribution,distribution_fee,distribution_scope,deliveryTime,is_online,
+		starting_price,full_free_distribution,distribution_type,distribution_fee,distribution_scope,deliveryTime,is_online,
 		status,created_at,updated_at
 	</sql>
 
@@ -112,7 +113,7 @@
 		resultType="com.takeaway.modular.dao.dto.MerchantsDto">
 		select
 		m.id,m.is_online as isOnline,m.`name`,m.type_id as typeId,m.`code`,mt.`name` as
-		typeName,m.tel,m.address,
+		typeName,m.tel,m.address,m.distribution_type,
 		(select sum(o.total_price) from tb_orders o
 		where month(created_at) = month(now()) and o.merchant_id=m.id ) as
 		monthPrice,
@@ -152,7 +153,7 @@
 		insert into tb_merchants (
 		type_id,name,code,province_id,city_id,address,star,manager_name,manager_phone,
 		description,platform_commission,tel,lat,lng,logo,notice,start_date,end_date,distribution_info,
-		starting_price,full_free_distribution,distribution_fee,distribution_scope,deliveryTime,is_online,
+		starting_price,full_free_distribution,distribution_type,distribution_fee,distribution_scope,deliveryTime,is_online,
 		status,created_at
 		)
 		values (#{typeId,jdbcType=INTEGER},
@@ -163,8 +164,8 @@
 		#{lat,jdbcType=VARCHAR},#{lng,jdbcType=VARCHAR},#{logo,jdbcType=VARCHAR},
 		#{notice,jdbcType=VARCHAR},#{startDate,jdbcType=TIMESTAMP},#{endDate,jdbcType=TIMESTAMP},
 		#{distributionInfo,jdbcType=VARCHAR},#{startingPrice,jdbcType=DECIMAL},#{fullFreeDistribution,jdbcType=DECIMAL},
-		#{distributionFee,jdbcType=DECIMAL},#{distributionScope,jdbcType=VARCHAR},#{deliveryTime,jdbcType=VARCHAR},
-		#{isOnline,jdbcType=INTEGER},#{status,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP}
+		#{distributionType,jdbcType=INTEGER},#{distributionFee,jdbcType=DECIMAL},#{distributionScope,jdbcType=VARCHAR},
+		#{deliveryTime,jdbcType=VARCHAR},#{isOnline,jdbcType=INTEGER},#{status,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP}
 		)
 	</insert>
 
@@ -234,10 +235,13 @@
 			<if test="fullFreeDistribution != null">
 				full_free_distribution =#{fullFreeDistribution,jdbcType=DECIMAL},
 			</if>
+			<if test="distributionType != null">
+				distribution_type= #{distributionType,jdbcType=INTEGER},
+			</if>
 			<if test="distributionFee != null">
 				distribution_fee =#{distributionFee,jdbcType=DECIMAL},
 			</if>
-			<if test="distributionFee != null">
+			<if test="distributionScope != null">
 				distribution_scope =#{distributionScope,jdbcType=VARCHAR},
 			</if>
 			<if test="deliveryTime != null">

@@ -31,6 +31,7 @@ public class MerchantsDto {
 	private String distributionInfo;
 	private String startingPrice;
 	private String fullFreeDistribution;
+	private String distributionType;
 	private String distributionFee;
 	private String distributionScope;	//	店铺范围
 	private String distance;	//两个坐标点间的距离
@@ -433,6 +434,14 @@ public class MerchantsDto {
 
 	public void setDuration(String duration) {
 		this.duration = duration;
+	}
+
+	public String getDistributionType() {
+		return distributionType;
+	}
+
+	public void setDistributionType(String distributionType) {
+		this.distributionType = distributionType;
 	}
 
 

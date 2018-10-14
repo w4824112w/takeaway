@@ -77,6 +77,7 @@ public class Orders {
 	private Integer activityId;
 	private Integer couponId;
 
+	private String distributionType;
 	private String merchantName;
 	private String merchantTel;
 	private String merchantPicture;
@@ -617,6 +618,14 @@ public class Orders {
 
 	public void setSyncstatus(String syncstatus) {
 		this.syncstatus = syncstatus;
+	}
+
+	public String getDistributionType() {
+		return distributionType;
+	}
+
+	public void setDistributionType(String distributionType) {
+		this.distributionType = distributionType;
 	}
 
 }

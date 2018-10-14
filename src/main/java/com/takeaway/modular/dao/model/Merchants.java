@@ -27,6 +27,7 @@ public class Merchants {
 	private String distributionInfo;
 	private Double startingPrice;
 	private Double fullFreeDistribution;
+	private Integer distributionType;
 	private Double distributionFee;
 	private String distributionScope;
 	private String deliveryTime;
@@ -303,6 +304,14 @@ public class Merchants {
 
 	public void setDeliveryTime(String deliveryTime) {
 		this.deliveryTime = deliveryTime;
+	}
+
+	public Integer getDistributionType() {
+		return distributionType;
+	}
+
+	public void setDistributionType(Integer distributionType) {
+		this.distributionType = distributionType;
 	}
 
 }

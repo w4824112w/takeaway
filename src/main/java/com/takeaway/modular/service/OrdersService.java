@@ -393,55 +393,58 @@ public class OrdersService {
 		ret.put("totalPrice", totalPrice);	// 营业额
 		ret.put("realTotalMoney", realTotalMoney);	// 实际价格
 		
-/*		if(StringUtils.isNotBlank(orders.getUserAddress())){
-			String lat=orders.getLat();
-			String lng=orders.getLng();
-		//	orders.setDeliverMoney(merchants.getDistributionFee()); // 运费
-			if(StringUtils.isNotBlank(lat)&&StringUtils.isNotBlank(lng)&&StringUtils.isNotBlank(merchants.getLat())&&StringUtils.isNotBlank(merchants.getLng())){
-				int distance=Integer.parseInt(MapDistance.getDistance(lng,lat,merchants.getLng(),merchants.getLat()));
-				ret.put("distance", distance); // 距离店铺多少km
-				if(distance<=3000){
-					orders.setDeliverMoney(6.0); // <=3km,运费6元
-				}else if(distance>3000&&distance<=4000){
-					orders.setDeliverMoney(7.0); // <=4km,运费7元
-				}else if(distance>4000&&distance<=5000){
-					orders.setDeliverMoney(9.0); // <=5km,运费9元
-				}else if(distance>5000&&distance<=6000){
-					orders.setDeliverMoney(10.0); // <=6km,运费10元
-				}else if(distance>6000&&distance<=8000){
-					orders.setDeliverMoney(15.0); // <=8km,运费15元
-				}else if(distance>8000&&distance<=11000){
-					orders.setDeliverMoney(20.0); // <=11km,运费20元
-				}else if(distance>11000&&distance<=12000){
-					orders.setDeliverMoney(25.0); // <=12km,运费25元
-				}else if(distance>12000&&distance<=14000){
-					orders.setDeliverMoney(40.0); // <=14km,运费40元
+		if(merchants.getDistributionType()==0){
+			if(StringUtils.isNotBlank(orders.getUserAddress())){
+				String lat=orders.getLat();
+				String lng=orders.getLng();
+				if(StringUtils.isNotBlank(lat)&&StringUtils.isNotBlank(lng)&&StringUtils.isNotBlank(merchants.getLat())&&StringUtils.isNotBlank(merchants.getLng())){
+					int distance=Integer.parseInt(MapDistance.getDistance(lng,lat,merchants.getLng(),merchants.getLat()));
+					ret.put("distance", distance); // 距离店铺多少km
+					if(distance<=3000){
+						orders.setDeliverMoney(6.0); // <=3km,运费6元
+					}else if(distance>3000&&distance<=4000){
+						orders.setDeliverMoney(7.0); // <=4km,运费7元
+					}else if(distance>4000&&distance<=5000){
+						orders.setDeliverMoney(9.0); // <=5km,运费9元
+					}else if(distance>5000&&distance<=6000){
+						orders.setDeliverMoney(10.0); // <=6km,运费10元
+					}else if(distance>6000&&distance<=8000){
+						orders.setDeliverMoney(15.0); // <=8km,运费15元
+					}else if(distance>8000&&distance<=11000){
+						orders.setDeliverMoney(20.0); // <=11km,运费20元
+					}else if(distance>11000&&distance<=12000){
+						orders.setDeliverMoney(25.0); // <=12km,运费25元
+					}else if(distance>12000&&distance<=14000){
+						orders.setDeliverMoney(40.0); // <=14km,运费40元
+					}else{
+						orders.setDeliverMoney(40.0); // >14km,运费40元
+					}
 				}else{
-					orders.setDeliverMoney(40.0); // >14km,运费40元
+					ret.put("distance", 0); // 距离店铺多少km
+					orders.setDeliverMoney(0.0); // 运费
 				}
 			}else{
 				ret.put("distance", 0); // 距离店铺多少km
 				orders.setDeliverMoney(0.0); // 运费
 			}
-		}else{
-			ret.put("distance", 0); // 距离店铺多少km
-			orders.setDeliverMoney(0.0); // 运费
-		}
-		ret.put("distributionFee", orders.getDeliverMoney()); // 运费
-*/	//	ret.put("distributionFee", merchants.getDistributionFee()); // 运费
-		
-		
-		if(StringUtils.isNotBlank(orders.getUserAddress())){
-			String lat=orders.getLat();
-			String lng=orders.getLng();
-			if(StringUtils.isNotBlank(lat)&&StringUtils.isNotBlank(lng)&&StringUtils.isNotBlank(merchants.getLat())&&StringUtils.isNotBlank(merchants.getLng())){
-				Map<String, Object> distribution=distributionsService.computePrice(orders, merchants);
-				ret.put("distribution_result", distribution); // 闪送调用计算结果
-				if(distribution.get("status").toString().equals("OK")){
-					Map data=(Map) distribution.get("data");
-					Double amount=BigDecimal.valueOf(Long.valueOf(data.get("amount").toString())).divide(new BigDecimal(100)).doubleValue();	//分转元
-					orders.setDeliverMoney(amount); // 运费:xx元
-					ret.put("distance", data.get("distance").toString()); // 距离店铺多少km
+		//	orders.setDeliverMoney(merchants.getDistributionFee()); // 运费
+		//	ret.put("distributionFee", merchants.getDistributionFee()); // 运费
+		}else if(merchants.getDistributionType()==1){
+			if(StringUtils.isNotBlank(orders.getUserAddress())){
+				String lat=orders.getLat();
+				String lng=orders.getLng();
+				if(StringUtils.isNotBlank(lat)&&StringUtils.isNotBlank(lng)&&StringUtils.isNotBlank(merchants.getLat())&&StringUtils.isNotBlank(merchants.getLng())){
+					Map<String, Object> distribution=distributionsService.computePrice(orders, merchants);
+					ret.put("distribution_result", distribution); // 闪送调用计算结果
+					if(distribution.get("status").toString().equals("OK")){
+						Map data=(Map) distribution.get("data");
+						Double amount=BigDecimal.valueOf(Long.valueOf(data.get("amount").toString())).divide(new BigDecimal(100)).doubleValue();	//分转元
+						orders.setDeliverMoney(amount); // 运费:xx元
+						ret.put("distance", data.get("distance").toString()); // 距离店铺多少km
+					}else{
+						ret.put("distance", 0); // 距离店铺多少km
+						orders.setDeliverMoney(0.0); // 运费
+					}
 				}else{
 					ret.put("distance", 0); // 距离店铺多少km
 					orders.setDeliverMoney(0.0); // 运费
@@ -454,6 +457,7 @@ public class OrdersService {
 			ret.put("distance", 0); // 距离店铺多少km
 			orders.setDeliverMoney(0.0); // 运费
 		}
+		
 		ret.put("distributionFee", orders.getDeliverMoney()); // 运费
 		
 		ret.put("packingCharge", packingCharge); // 打包费

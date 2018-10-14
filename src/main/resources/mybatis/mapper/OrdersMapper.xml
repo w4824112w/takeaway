@@ -66,7 +66,7 @@
 
 	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
-		o.*,m.name as merchantName,m.tel as merchantTel  
+		o.*,m.name as merchantName,m.tel as merchantTel,m.distribution_type as distributionType  
 		from tb_orders o,tb_merchants m 
 		where o.merchant_id=m.id and  o.id = #{id,jdbcType=VARCHAR}
 	</select>
@@ -174,7 +174,7 @@
 		o.is_reservation as isReservation,o.reservation_date as reservationDate,o.is_reminder as isReminder,o.reminder_date as reminderDate,
 		o.is_distribution as isDistribution,o.distribution_date as distributionDate,o.merchant_type as merchantType,o.remark,o.pay_type as payType,o.is_invoice as isInvoice,o.invoiceClient,
 		o.is_appraises as isAppraises,o.appraises_date as appraisesDate,o.userName,o.userPhone,o.userAddress,o.platform_commission as platformCommission,o.orderScore,
-		o.couponMoney,o.activityMoney,o.issorderno,o.syncstatus,o.lat,o.lng,m.name as merchantName,oi.targetName as targetName
+		o.couponMoney,o.activityMoney,o.issorderno,o.syncstatus,o.lat,o.lng,m.name as merchantName,oi.targetName as targetName,m.distribution_type as distributionType 
 		from tb_orders o,tb_merchants m,tb_order_items oi 
 		where o.merchant_id=m.id and o.id=oi.order_id and o.status not in(1,8) and o.is_reservation=0 
 		<if test="userId != null and userId != ''">

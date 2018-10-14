@@ -70,6 +70,7 @@ public class OrdersDto {
 	
 	private String issorderno;	// 闪送平台订单号
 	private String syncstatus;	// 闪送平台订单状态
+	private String distributionType;
 	
 	private List<OrderItems> orderItems;
 
@@ -553,6 +554,14 @@ public class OrdersDto {
 
 	public void setSyncstatus(String syncstatus) {
 		this.syncstatus = syncstatus;
+	}
+
+	public String getDistributionType() {
+		return distributionType;
+	}
+
+	public void setDistributionType(String distributionType) {
+		this.distributionType = distributionType;
 	}
 
 }

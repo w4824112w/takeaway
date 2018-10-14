@@ -301,8 +301,8 @@ public class DistributionsService {
 	}
 
 	public static void main(String args[]) {
-		String url=devUrl+"openapi/order/v3/calc";
-	//	String url = prodUrl + "openapi/order/v3/save";
+	//	String url=devUrl+"openapi/order/v3/calc";
+		String url = prodUrl + "openapi/order/v3/save";
 		String orderNo="20180830093503194QKA51";
 		
 		Map<String, Object> param = new HashMap<String, Object>();
