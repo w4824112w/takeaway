@@ -427,8 +427,6 @@ public class OrdersService {
 				ret.put("distance", 0); // 距离店铺多少km
 				orders.setDeliverMoney(0.0); // 运费
 			}
-		//	orders.setDeliverMoney(merchants.getDistributionFee()); // 运费
-		//	ret.put("distributionFee", merchants.getDistributionFee()); // 运费
 		}else if(merchants.getDistributionType()==1){
 			if(StringUtils.isNotBlank(orders.getUserAddress())){
 				String lat=orders.getLat();
@@ -457,6 +455,7 @@ public class OrdersService {
 			ret.put("distance", 0); // 距离店铺多少km
 			orders.setDeliverMoney(0.0); // 运费
 		}
+		
 		
 		ret.put("distributionFee", orders.getDeliverMoney()); // 运费
 		
