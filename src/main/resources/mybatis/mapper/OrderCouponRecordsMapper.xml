@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.takeaway.modular.dao.mapper.OrderCouponRecordsMapper">
+	<resultMap id="BaseResultMap" type="com.takeaway.modular.dao.model.OrderCouponRecords">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="order_id" property="orderId" jdbcType="INTEGER" />
+		<result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+		<result column="coupon_code" property="couponCode" jdbcType="VARCHAR" />
+		<result column="coupon_type" property="couponType" jdbcType="INTEGER" />
+		<result column="coupon_amout" property="couponAmout" jdbcType="DECIMAL" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="user_name" property="userName" jdbcType="INTEGER" />
+		<result column="merchant_id" property="merchantId" jdbcType="INTEGER" />
+		<result column="user_coupon_id" property="userCouponId" jdbcType="INTEGER" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, order_id,order_no,coupon_code,coupon_type,coupon_amout,user_id,user_name,merchant_id,user_coupon_id,created_at
+	</sql>
+
+
+	<select id="getByOrderNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_order_coupon_records
+		where order_no = #{orderNo,jdbcType=VARCHAR}
+	</select>
+	
+
+	<insert id="save" parameterType="com.takeaway.modular.dao.model.OrderCouponRecords">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into tb_order_coupon_records (
+		order_id,order_no,coupon_code,coupon_type,coupon_amout,user_id,user_name,merchant_id,user_coupon_id,created_at
+		)
+		values
+		(
+		#{orderId,jdbcType=INTEGER},
+		#{orderNo,jdbcType=VARCHAR},
+		#{couponCode,jdbcType=VARCHAR},
+		#{couponType,jdbcType=INTEGER},
+		#{couponAmout,jdbcType=DECIMAL},
+		#{userId,jdbcType=INTEGER},
+		#{userName,jdbcType=VARCHAR},
+		#{merchantId,jdbcType=INTEGER},
+		#{userCouponId,jdbcType=INTEGER},
+		#{createdAt,jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+	
+</mapper>

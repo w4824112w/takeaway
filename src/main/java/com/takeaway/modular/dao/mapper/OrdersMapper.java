@@ -38,6 +38,10 @@ public interface OrdersMapper {
 	
 	List<Orders> getByNotReceipt();
 	
+	List<Orders> getByNotComplete();
+	
+	List<Orders> getByNotPrint();
+	
 	List<Orders> getByNotPay();
 	
 	PageList<Orders> getByRefund(PageBounds bounds,String userId);

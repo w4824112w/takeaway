@@ -49,6 +49,13 @@
 		where user_id = #{userId,jdbcType=VARCHAR}
 	</select>
 	
+	<select id="getByUserIdAndCouponId" parameterType="com.takeaway.modular.dao.model.UserCoupons" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_user_coupons
+		where status=1 and user_id = #{userId,jdbcType=INTEGER} and coupon_id = #{couponId,jdbcType=INTEGER}
+	</select>
+	
 	<select id="getByUserIdAndCouponSendType" parameterType="com.takeaway.modular.dao.dto.UserCouponsDto" resultMap="BaseResultMap">
 		select 
 		uc.* 
@@ -111,6 +118,13 @@
 		user_id= #{userId,jdbcType=INTEGER}, 
 		favorite_type= #{favoriteType,jdbcType=INTEGER}, 
 		targetId= #{targetId,jdbcType=INTEGER}, 
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<update id="updateStatus" parameterType="com.takeaway.modular.dao.model.UserCoupons">
+		update tb_user_coupons
+		set
+		status= 0
 		where id = #{id,jdbcType=INTEGER}
 	</update>
 </mapper>

@@ -12,6 +12,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,13 +45,16 @@ import com.takeaway.core.netpay.wxpay.utils.Signature;
 import com.takeaway.core.websocket.WebSocketServer;
 import com.takeaway.modular.dao.mapper.MerchantsMapper;
 import com.takeaway.modular.dao.mapper.OrderItemsMapper;
+import com.takeaway.modular.dao.model.Coupons;
 import com.takeaway.modular.dao.model.Merchants;
 import com.takeaway.modular.dao.model.Orders;
+import com.takeaway.modular.dao.model.UserCoupons;
 import com.takeaway.modular.dao.model.Users;
 import com.takeaway.modular.dao.model.WxPayNotifys;
 import com.takeaway.modular.service.DistributionsService;
 import com.takeaway.modular.service.OrdersService;
 import com.takeaway.modular.service.PayRequestsService;
+import com.takeaway.modular.service.UserCouponsService;
 import com.takeaway.modular.service.UsersService;
 import com.takeaway.modular.service.WxPayNotifysService;
 
@@ -66,6 +70,9 @@ public class WeixinApiController {
 
 	@Autowired
 	private UsersService usersService;
+	
+	@Autowired
+	private UserCouponsService userCouponsService;
 
 	@Autowired
 	private OrderItemsMapper orderItemsMapper;
@@ -143,16 +150,21 @@ public class WeixinApiController {
 					}
 				}
 
+				if(StringUtils.isBlank(order.getIssorderno())){	
+					JSONObject json = new JSONObject();
+					json.put("code", 200);
+					json.put("type", 1);
+					json.put("order", order);
+					json.put("pickupPassword", "");
+					json.put("merchantName", merchants.getName());
+
+					log.info("开始发送websocket消息........" + json.toJSONString());
+					WebSocketServer.sendInfo(order.getMerchantId().toString(),
+							json.toJSONString());
+				}
+				
 				ordersService.update(order);
 
-				JSONObject json = new JSONObject();
-				json.put("code", 200);
-				json.put("type", 1);
-				json.put("order", order);
-
-				log.info("开始发送websocket消息........" + json.toJSONString());
-				WebSocketServer.sendInfo(order.getMerchantId().toString(),
-						json.toJSONString());
 				response.getWriter().write(
 						PayUtils.generatePaySuccessReplyXML());
 			} else {
@@ -164,6 +176,15 @@ public class WeixinApiController {
 					PayUtils.generateReplyXML("FAIL", "数据签名异常"));
 		}
 
+	}
+	
+	@ApiOperation(value = "测试", httpMethod = "POST", notes = "测试")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "orderNo", value = "订单号", required = true, dataType = "String", paramType = "query") })
+	@RequestMapping(value = "/test", method = RequestMethod.POST)
+	public void test(HttpServletRequest request,
+			HttpServletResponse response,String orderNo) throws IOException {
+		Orders order = ordersService.getByOrderNo(orderNo);
+		ordersService.update(order);
 	}
 
 	@ApiOperation(value = "支付", httpMethod = "POST", notes = "微信支付")
@@ -250,7 +271,7 @@ public class WeixinApiController {
 
 			orderNo = orders.getOrderNo();
 		}
-
+		
 		String itemName = "紫竹林外卖" + orderNo;
 		String amount = (int) (realPayMoney * 100) + ""; // 元转分
 		payRequestsService.save(null, PaymentType.weixin.getName(), orderNo,
@@ -279,6 +300,7 @@ public class WeixinApiController {
 					Map<String, String> map = PayUtils
 							.generateAppPay(prePayInfo);
 					log.info("成功:" + map.toString());
+					
 					return ErrorEnums
 							.getResult(ErrorEnums.SUCCESS, "微信支付", map);
 				} else {

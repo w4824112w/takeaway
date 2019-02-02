@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 import com.takeaway.core.enums.ErrorEnums;
 import com.takeaway.core.netpay.wxpay.api.PayUtils;
+import com.takeaway.core.websocket.WebSocketServer;
 import com.takeaway.modular.dao.model.Activitys;
 import com.takeaway.modular.dao.model.Managers;
 import com.takeaway.modular.dao.model.Orders;
@@ -57,16 +59,66 @@ public class DistributionsApiController {
 	private OrdersService ordersService;
 
 	@RequestMapping(value = "/syncstatus", method = RequestMethod.GET)
-	public void syncstatus(HttpServletRequest request,
-			HttpServletResponse response, String partnerno, String orderno,
-			String mobile, String signature, String issorderno, String status,
-			String statuscode)throws IOException {
-		Orders orders=ordersService.getByOrderNo(orderno);
-		if(orders!=null){
+	public JSONObject syncstatus(HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable(value = "partnerno") String partnerno,
+			@PathVariable(value = "orderno") String orderno,
+			@PathVariable(value = "mobile") String mobile,
+			@PathVariable(value = "signature") String signature,
+			@PathVariable(value = "issorderno") String issorderno,
+			@PathVariable(value = "status") String status,
+			@PathVariable(value = "statuscode") String statuscode)
+			throws IOException {
+		log.info("partnerno--" + partnerno + "--orderno--" + orderno
+				+ "--mobile--" + mobile + "--signature--" + signature
+				+ "--issorderno--" + issorderno + "--status--" + status
+				+ "--statuscode--" + statuscode);
+		log.info("闪送返回订单状态回调start.....");
+
+		Orders orders = ordersService.getByOrderNo(orderno);
+		JSONObject result = new JSONObject();
+		if (orders != null) {
 			orders.setSyncstatus(statuscode);
 			ordersService.update(orders);
+
+			if (StringUtils.isNotBlank(statuscode) && statuscode.equals("30")) {
+				log.info("闪送待取件推送消息给打印机.....");
+				Map<String, Object> shansong_order = distributionsService
+						.queryOrder(orders.getOrderNo(), orders.getIssorderno());
+
+				if (shansong_order != null) {
+					log.info("闪送订单查询....." + shansong_order.toString());
+					Map shansong_data = (Map) shansong_order.get("data");
+					if (shansong_data != null) {
+						String pickupPassword = shansong_data
+								.get("pickupPassword") == null ? ""
+								: shansong_data.get("pickupPassword")
+										.toString();
+						if (StringUtils.isNotBlank(pickupPassword)) {
+							JSONObject json = new JSONObject();
+							json.put("code", 200);
+							json.put("type", 1);
+							json.put("order", orders);
+							json.put("pickupPassword", pickupPassword);
+
+							log.info("开始发送websocket消息........"
+									+ json.toJSONString());
+							WebSocketServer.sendInfo(orders.getMerchantId()
+									.toString(), json.toJSONString());
+						}
+					}
+				}
+
+			}
+
+			result.put("status", "OK");
+			result.put("errMsg", null);
+			return result;
+		} else {
+			result.put("status", "ER");
+			result.put("errMsg", "订单号不存在");
+			return result;
 		}
-		response.getWriter().write("回调结束");
 	}
 
 	@ApiOperation(value = "订单查询", httpMethod = "GET", notes = "查询闪送订单配送状态")

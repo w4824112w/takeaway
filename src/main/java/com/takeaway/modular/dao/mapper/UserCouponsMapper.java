@@ -21,11 +21,15 @@ public interface UserCouponsMapper {
 	
 	List<UserCoupons> getByUserId(String userId);
 	
+	List<UserCoupons> getByUserIdAndCouponId(UserCoupons userCoupons);
+	
 	List<UserCouponsDto> getCoupons(UserCouponsDto dto);
 	
 	int save(UserCoupons userCoupons);
 	
 	int update(UserCoupons userCoupons);
+	
+	int updateStatus(UserCoupons userCoupons);
 	
 	int delete(String id);
 	

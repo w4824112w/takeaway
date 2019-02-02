@@ -136,7 +136,7 @@ public class FeedbacksService {
 	public List<Feedbacks> getByUserId(String userId) {
 		List<Feedbacks> feedbacks = feedbacksMapper.getByUserId(userId);
 		for (Feedbacks feedback : feedbacks) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			feedback.setCreatedTime(sdf.format(feedback.getCreatedAt()));
 			
 			Users users=usersMapper.getById(feedback.getUserId().toString());
@@ -156,7 +156,7 @@ public class FeedbacksService {
 	public List<Feedbacks> getByMerchantId(String merchantId) {
 		List<Feedbacks> feedbacks = feedbacksMapper.getByMerchantId(merchantId);
 		for (Feedbacks feedback : feedbacks) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			feedback.setCreatedTime(sdf.format(feedback.getCreatedAt()));
 			
 			Users users=usersMapper.getById(feedback.getUserId().toString());

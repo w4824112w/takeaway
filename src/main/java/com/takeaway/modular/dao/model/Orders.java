@@ -86,8 +86,8 @@ public class Orders {
 	
 	private String syncstatus;	// 闪送平台订单状态
 	
+	private Integer isPrint; // (0：未打印;1：已打印;)
 	
-
 	private String createdTime; // 创建时间
 
 	private List<OrderItems> orderItems;
@@ -626,6 +626,14 @@ public class Orders {
 
 	public void setDistributionType(String distributionType) {
 		this.distributionType = distributionType;
+	}
+
+	public Integer getIsPrint() {
+		return isPrint;
+	}
+
+	public void setIsPrint(Integer isPrint) {
+		this.isPrint = isPrint;
 	}
 
 }

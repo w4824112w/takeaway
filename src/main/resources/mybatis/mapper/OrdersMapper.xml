@@ -55,13 +55,14 @@
 		<result column="syncstatus" property="syncstatus" jdbcType="VARCHAR" />
 		<result column="lat" property="lat" jdbcType="VARCHAR" />
 		<result column="lng" property="lng" jdbcType="VARCHAR" />
+		<result column="is_print" property="isPrint" jdbcType="INTEGER" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		id,order_no,merchant_id,user_id,order_type,meals,total_price,packingCharge,deliverMoney,
 		status,created_at,updated_at,is_pay,pay_date,pay_sno,realTotalMoney,is_ship,ship_date,is_receipt,receipt_date,
 		is_received,received_date,refund_apply_date,is_refund,refund_date,refund_money,refundSrcStatus,is_reservation,reservation_date,is_reminder,
 		reminder_date,is_distribution,distribution_date,merchant_type,remark,pay_type,is_invoice,invoiceClient,is_appraises,appraises_date,userName,userPhone,
-		userAddress,platform_commission,orderScore,couponMoney,activityMoney,activity_id,coupon_id,issorderno,syncstatus,lat,lng
+		userAddress,platform_commission,orderScore,couponMoney,activityMoney,activity_id,coupon_id,issorderno,syncstatus,lat,lng,is_print
 	</sql>
 
 	<select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -126,6 +127,22 @@
 		order by created_at desc
 	</select>
 	
+	<select id="getByNotComplete"  resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List" />
+		from tb_orders 
+		where is_pay=1 and status=2 and is_refund=0 
+		order by created_at desc
+	</select>
+	
+	<select id="getByNotPrint"  resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List" />
+		from tb_orders 
+		where is_print=0 and is_pay=1 and issorderno is not null 
+		order by created_at desc limit 10
+	</select>
+	
 	<select id="getByNotPay"  resultMap="BaseResultMap">
 		select 
 		<include refid="Base_Column_List" />
@@ -176,7 +193,7 @@
 		o.is_appraises as isAppraises,o.appraises_date as appraisesDate,o.userName,o.userPhone,o.userAddress,o.platform_commission as platformCommission,o.orderScore,
 		o.couponMoney,o.activityMoney,o.issorderno,o.syncstatus,o.lat,o.lng,m.name as merchantName,oi.targetName as targetName,m.distribution_type as distributionType 
 		from tb_orders o,tb_merchants m,tb_order_items oi 
-		where o.merchant_id=m.id and o.id=oi.order_id and o.status not in(1,8) and o.is_reservation=0 
+		where o.merchant_id=m.id and o.id=oi.order_id and o.status not in(1,8) and o.is_reservation=0  
 		<if test="userId != null and userId != ''">
 			and o.user_id = #{userId,jdbcType=VARCHAR}
 		</if>
@@ -435,9 +452,11 @@
 			issorderno = #{issorderno,jdbcType=VARCHAR}, 
 		</if>
 		<if test="syncstatus != null">
-			syncstatus = #{syncstatus,jdbcType=VARCHAR} 
+			syncstatus = #{syncstatus,jdbcType=VARCHAR}, 
 		</if>
-		
+		<if test="isPrint != null">
+			is_print = #{isPrint,jdbcType=INTEGER} 
+		</if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   	</update>

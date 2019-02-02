@@ -2,7 +2,11 @@ package com.takeaway.core.websocket;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -159,13 +163,29 @@ public class WebSocketServer {
 	 * 连接关闭调用的方法
 	 */
 	@OnClose
-	public void onClose() {
-		if (StringUtils.isNotBlank(merchantId)) {
+	public void onClose(Session session) {
+		log.error("正常退出......"+webSocketSet);
+		Iterator<Entry<String, List<Session>>> entries = webSocketSet.entrySet().iterator();  
+		while (entries.hasNext()) {
+			Entry<String, List<Session>> entry = entries.next(); 
+			log.info("Key = " + entry.getKey() + ", Value = " + entry.getValue()); 
+			List<Session> list=webSocketSet.get(entry.getKey());
+			for(Session obj:list){
+				if(session==obj){
+					list.remove(obj);
+					subOnlineCount(); // 在线数减1
+					log.info("有一连接关闭！当前在线人数为" + getOnlineCount());
+				}
+			}
+			webSocketSet.put(entry.getKey(), list);
+		}
+		
+/*		if (StringUtils.isNotBlank(merchantId)) {
 			this.webSocketSet.remove(merchantId); // 从map中删除
 			subOnlineCount(); // 在线数减1
 			log.info("有一连接关闭！当前在线人数为" + getOnlineCount());
-		}
-		log.info("连接关闭！");
+		}*/
+		log.info("正常退出,连接关闭......"+webSocketSet);
 	}
 
 	/**
@@ -193,13 +213,29 @@ public class WebSocketServer {
 	 */
 	@OnError
 	public void onError(Session session, Throwable error) {
-		log.error("发生错误");
+		log.error("发生错误......"+webSocketSet);
+		Iterator<Entry<String, List<Session>>> entries = webSocketSet.entrySet().iterator();  
+		while (entries.hasNext()) {
+			Entry<String, List<Session>> entry = entries.next(); 
+			log.info("Key = " + entry.getKey() + ", Value = " + entry.getValue()); 
+			List<Session> list=webSocketSet.get(entry.getKey());
+			if(list!=null&&list.size()>0){
+				for(Session obj:list){
+					if(session==obj){
+						list.remove(obj);
+					}
+				}
+				webSocketSet.put(entry.getKey(), list);
+			}
+		}
+		
 /*		if (StringUtils.isNotBlank(merchantId)) {
 			this.webSocketSet.remove(merchantId); // 从map中删除
 			subOnlineCount(); // 在线数减1
 			log.info("有一连接关闭！当前在线人数为" + getOnlineCount());
 		}*/
-		error.printStackTrace();
+		log.info("发生错误,连接关闭......"+webSocketSet);
+	//	error.printStackTrace();
 	}
 
 	public static void sendMessage(Session session, String message)
@@ -246,4 +282,14 @@ public class WebSocketServer {
 		WebSocketServer.onlineCount--;
 	}
 
+	public static void main(String args[]){
+		ConcurrentHashMap<String, List<Object>> webSocketSet = new ConcurrentHashMap<String, List<Object>>();
+		List<Object> newList = new ArrayList<Object>();
+		for(int i=0;i<2;i++){
+			newList.add(new Object());
+		}
+		webSocketSet.put("21", newList);
+		System.out.println("webSocketSet---"+webSocketSet.toString());
+	}
 }
+

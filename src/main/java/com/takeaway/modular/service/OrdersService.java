@@ -39,6 +39,7 @@ import com.takeaway.modular.dao.mapper.ItemPropertysMapper;
 import com.takeaway.modular.dao.mapper.ItemsMapper;
 import com.takeaway.modular.dao.mapper.MerchantPicturesMapper;
 import com.takeaway.modular.dao.mapper.MerchantsMapper;
+import com.takeaway.modular.dao.mapper.OrderCouponRecordsMapper;
 import com.takeaway.modular.dao.mapper.OrderItemPropertysMapper;
 import com.takeaway.modular.dao.mapper.OrderItemsMapper;
 import com.takeaway.modular.dao.mapper.OrdersMapper;
@@ -52,6 +53,7 @@ import com.takeaway.modular.dao.model.ItemPropertys;
 import com.takeaway.modular.dao.model.Items;
 import com.takeaway.modular.dao.model.MerchantPictures;
 import com.takeaway.modular.dao.model.Merchants;
+import com.takeaway.modular.dao.model.OrderCouponRecords;
 import com.takeaway.modular.dao.model.OrderItemPropertys;
 import com.takeaway.modular.dao.model.OrderItems;
 import com.takeaway.modular.dao.model.Orders;
@@ -112,6 +114,9 @@ public class OrdersService {
 	
 	@Autowired
 	private DistributionsService distributionsService;
+	
+	@Autowired
+	private OrderCouponRecordsMapper orderCouponRecordsMapper;
 
 	public PageResult<OrdersDto> findPage(PageBounds bounds, OrdersDto dto) {
 		PageList<OrdersDto> orders = ordersMapper.findPage(bounds, dto);
@@ -291,9 +296,41 @@ public class OrdersService {
 
 		}
 
+		if (orders.getCoupons() != null) {
+			if(orders.getUserId()==null){
+				return ErrorEnums.getResult(ErrorEnums.ERROR, "下单用户id不能为空,请传入userId参数,当前传入的userId参数为:"+orders.getUserId(), null);
+			}
+			
+			for (Coupons coupon : orders.getCoupons()) {
+				CouponsDto couponsDto = couponsMapper.getById(coupon.getId()
+						.toString()); // 查询数据库对应优惠券
+				
+				UserCoupons query=new UserCoupons();
+				query.setUserId(orders.getUserId());
+				query.setCouponId(coupon.getId());
+				List<UserCoupons> userCoupons=userCouponsMapper.getByUserIdAndCouponId(query);
+				if(userCoupons.size()<0){
+					break;
+				}
+				
+				OrderCouponRecords orderCouponRecords=new OrderCouponRecords();
+				orderCouponRecords.setOrderId(orders.getId());
+				orderCouponRecords.setOrderNo(orders.getOrderNo());
+				orderCouponRecords.setCouponType(coupon.getCouponSendType());
+				orderCouponRecords.setCouponAmout(coupon.getCouponMoney());
+				orderCouponRecords.setUserId(orders.getUserId());
+				orderCouponRecords.setMerchantId(orders.getMerchantId());
+				orderCouponRecords.setUserCouponId(userCoupons.get(0).getId());
+				orderCouponRecords.setCreatedAt(new Date());
+				orderCouponRecordsMapper.save(orderCouponRecords);
+			}
+			
+		}
+		
 		// JSONObject ret = new JSONObject();
 		// ret.put("orders", orders);
-
+		
+		
 		if (result > 0) {
 			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "新增订单", null);
 		} else {
@@ -400,33 +437,36 @@ public class OrdersService {
 				if(StringUtils.isNotBlank(lat)&&StringUtils.isNotBlank(lng)&&StringUtils.isNotBlank(merchants.getLat())&&StringUtils.isNotBlank(merchants.getLng())){
 					int distance=Integer.parseInt(MapDistance.getDistance(lng,lat,merchants.getLng(),merchants.getLat()));
 					ret.put("distance", distance); // 距离店铺多少km
-					if(distance<=3000){
-						orders.setDeliverMoney(6.0); // <=3km,运费6元
-					}else if(distance>3000&&distance<=4000){
-						orders.setDeliverMoney(7.0); // <=4km,运费7元
+					if(distance<=1000){
+						orders.setDeliverMoney(6.0); // <=1km,运费6元
+					}else if(distance>1000&&distance<=2000){
+						orders.setDeliverMoney(7.0); // <=2km,运费7元
+					}else if(distance>2000&&distance<=3000){
+						orders.setDeliverMoney(8.0); // <=3km,运费8元
+					}else if(distance>3000&&distance<=3500){
+						orders.setDeliverMoney(10.0); // <=3.5km,运费10元
+					}else if(distance>3500&&distance<=4000){
+						orders.setDeliverMoney(11.0); // <=4km,运费11元
 					}else if(distance>4000&&distance<=5000){
-						orders.setDeliverMoney(9.0); // <=5km,运费9元
-					}else if(distance>5000&&distance<=6000){
-						orders.setDeliverMoney(10.0); // <=6km,运费10元
-					}else if(distance>6000&&distance<=8000){
-						orders.setDeliverMoney(15.0); // <=8km,运费15元
-					}else if(distance>8000&&distance<=11000){
-						orders.setDeliverMoney(20.0); // <=11km,运费20元
-					}else if(distance>11000&&distance<=12000){
-						orders.setDeliverMoney(25.0); // <=12km,运费25元
-					}else if(distance>12000&&distance<=14000){
-						orders.setDeliverMoney(40.0); // <=14km,运费40元
+						orders.setDeliverMoney(15.0); // <=5km,运费15元
+					}else if(distance>5000&&distance<=7000){
+						orders.setDeliverMoney(20.0); // <=7km,运费20元
+					}else if(distance>7000&&distance<=8500){
+						orders.setDeliverMoney(25.0); // <=8.5km,运费25元
+					}else if(distance>8500&&distance<=95000){
+						orders.setDeliverMoney(30.0); // <=9.5km,运费30元
 					}else{
-						orders.setDeliverMoney(40.0); // >14km,运费40元
+						orders.setDeliverMoney(30.0); // >9.5km,运费30元
 					}
 				}else{
 					ret.put("distance", 0); // 距离店铺多少km
-					orders.setDeliverMoney(0.0); // 运费
+					orders.setDeliverMoney(0.0);
 				}
 			}else{
 				ret.put("distance", 0); // 距离店铺多少km
 				orders.setDeliverMoney(0.0); // 运费
 			}
+			ret.put("distribution_result", "");
 		}else if(merchants.getDistributionType()==1){
 			if(StringUtils.isNotBlank(orders.getUserAddress())){
 				String lat=orders.getLat();
@@ -446,14 +486,17 @@ public class OrdersService {
 				}else{
 					ret.put("distance", 0); // 距离店铺多少km
 					orders.setDeliverMoney(0.0); // 运费
+					ret.put("distribution_result", "");
 				}
 			}else{
 				ret.put("distance", 0); // 距离店铺多少km
 				orders.setDeliverMoney(0.0); // 运费
+				ret.put("distribution_result", "");
 			}
 		}else{
 			ret.put("distance", 0); // 距离店铺多少km
 			orders.setDeliverMoney(0.0); // 运费
+			ret.put("distribution_result", "");
 		}
 		
 		
@@ -478,6 +521,14 @@ public class OrdersService {
 		int result;
 		orders.setUpdatedAt(new Date());
 		result = ordersMapper.update(orders);
+		
+		List<OrderCouponRecords> orderCouponRecords=orderCouponRecordsMapper.getByOrderNo(orders.getOrderNo());
+		for(OrderCouponRecords obj:orderCouponRecords){
+			UserCoupons update_dict=new UserCoupons();
+			update_dict.setId(obj.getUserCouponId());
+			userCouponsMapper.updateStatus(update_dict);
+		}
+		
 		if (result > 0) {
 			return ErrorEnums.getResult(ErrorEnums.SUCCESS, "更新订单", result);
 		} else {
@@ -593,7 +644,7 @@ public class OrdersService {
 			if (oldPictures != null && oldPictures.size() > 0) {
 				order.setMerchantPicture(oldPictures.get(0).getUrl());
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			order.setCreatedTime(sdf.format(order.getCreatedAt()));
 		}
 		return new PageResult<Orders>(orders);
@@ -610,7 +661,7 @@ public class OrdersService {
 			if (oldPictures != null && oldPictures.size() > 0) {
 				order.setMerchantPicture(oldPictures.get(0).getUrl());
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			order.setCreatedTime(sdf.format(order.getCreatedAt()));
 		}
 		return new PageResult<Orders>(orders);
@@ -627,7 +678,7 @@ public class OrdersService {
 			if (oldPictures != null && oldPictures.size() > 0) {
 				order.setMerchantPicture(oldPictures.get(0).getUrl());
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			order.setCreatedTime(sdf.format(order.getCreatedAt()));
 		}
 		return new PageResult<Orders>(orders);
@@ -644,7 +695,7 @@ public class OrdersService {
 			if (oldPictures != null && oldPictures.size() > 0) {
 				order.setMerchantPicture(oldPictures.get(0).getUrl());
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			order.setCreatedTime(sdf.format(order.getCreatedAt()));
 		}
 		return new PageResult<Orders>(orders);
@@ -657,6 +708,16 @@ public class OrdersService {
 	
 	public List<Orders> getAllByNotReceipt() {
 		List<Orders> orders = ordersMapper.getByNotReceipt();
+		return orders;
+	}
+	
+	public List<Orders> getAllByNotComplete() {
+		List<Orders> orders = ordersMapper.getByNotComplete();
+		return orders;
+	}
+	
+	public List<Orders> getAllByNotPrint() {
+		List<Orders> orders = ordersMapper.getByNotPrint();
 		return orders;
 	}
 
@@ -676,7 +737,7 @@ public class OrdersService {
 			if (oldPictures != null && oldPictures.size() > 0) {
 				order.setMerchantPicture(oldPictures.get(0).getUrl());
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			order.setCreatedTime(sdf.format(order.getCreatedAt()));
 		}
 		return new PageResult<Orders>(orders);

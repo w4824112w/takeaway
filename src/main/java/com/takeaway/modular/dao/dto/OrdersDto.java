@@ -72,6 +72,8 @@ public class OrdersDto {
 	private String syncstatus;	// 闪送平台订单状态
 	private String distributionType;
 	
+	private String isPrint; // (0：未打印;1：已打印;)
+	
 	private List<OrderItems> orderItems;
 
 	
@@ -562,6 +564,14 @@ public class OrdersDto {
 
 	public void setDistributionType(String distributionType) {
 		this.distributionType = distributionType;
+	}
+
+	public String getIsPrint() {
+		return isPrint;
+	}
+
+	public void setIsPrint(String isPrint) {
+		this.isPrint = isPrint;
 	}
 
 }
